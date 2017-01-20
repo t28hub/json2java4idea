@@ -16,6 +16,7 @@ import com.squareup.javapoet.TypeSpec;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import java.io.File;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -62,28 +63,53 @@ public class Factory {
             final String childName = field.getKey();
             final JsonNode childNode = field.getValue();
 
+            if (childNode.isBoolean()) {
+                appendProperty(boolean.class, childName, classBuilder, constructorBuilder);
+                return;
+            }
+            if (childNode.isInt()) {
+                appendProperty(int.class, childName, classBuilder, constructorBuilder);
+                return;
+            }
+            if (childNode.isLong()) {
+                appendProperty(long.class, childName, classBuilder, constructorBuilder);
+                return;
+            }
+            if (childNode.isFloat()) {
+                appendProperty(float.class, childName, classBuilder, constructorBuilder);
+                return;
+            }
+            if (childNode.isDouble()) {
+                appendProperty(double.class, childName, classBuilder, constructorBuilder);
+                return;
+            }
             if (childNode.isTextual()) {
-                constructorBuilder.addParameter(ParameterSpec.builder(String.class, childName)
-                        .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
-                                .addMember("value", "$S", childName)
-                                .build())
-                        .build())
-                        .addStatement("this.$1L = $1L", childName);
-                classBuilder.addField(FieldSpec.builder(String.class, childName)
-                        .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                        .build());
-                classBuilder.addMethod(MethodSpec.methodBuilder(childName)
-                        .returns(String.class)
-                        .addModifiers(Modifier.PUBLIC)
-                        .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
-                                .addMember("value", "$S", childName)
-                                .build())
-                        .addStatement("return $L", childName)
-                        .build());
+                appendProperty(String.class, childName, classBuilder, constructorBuilder);
+                return;
             }
         });
         classBuilder.addMethod(constructorBuilder.build());
         return classBuilder.build();
+    }
+
+    private void appendProperty(@Nonnull Type type, @Nonnull String childName, @Nonnull TypeSpec.Builder classBuilder, @Nonnull MethodSpec.Builder constructorBuilder) {
+        constructorBuilder.addParameter(ParameterSpec.builder(type, childName)
+                .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
+                        .addMember("value", "$S", childName)
+                        .build())
+                .build())
+                .addStatement("this.$1L = $1L", childName);
+        classBuilder.addField(FieldSpec.builder(type, childName)
+                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                .build());
+        classBuilder.addMethod(MethodSpec.methodBuilder(childName)
+                .returns(String.class)
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
+                        .addMember("value", "$S", childName)
+                        .build())
+                .addStatement("return $L", childName)
+                .build());
     }
 
     public static void main(String[] args) throws Exception {
