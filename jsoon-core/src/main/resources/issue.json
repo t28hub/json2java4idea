@@ -30,13 +30,15 @@
     "site_admin": false
   },
   "labels": [
-    {
-      "id": 208045946,
-      "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
-      "name": "bug",
-      "color": "f29513",
-      "is_default": true
-    }
+    [
+      {
+        "id": 208045946,
+        "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
+        "name": "bug",
+        "color": "f29513",
+        "is_default": true
+      }
+    ]
   ],
   "assignee": {
     "login": "octocat",

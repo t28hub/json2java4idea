@@ -16,6 +16,7 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.jsoon.core.element.JsonElement;
 
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
@@ -39,12 +40,18 @@ public class Factory {
             throw new IllegalArgumentException();
         }
 
-        final TypeSpec typeSpec = create(className, rootNode)
-                .toBuilder()
-                .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
-                        .addMember("value", "$S", "all")
-                        .build())
-                .build();
+        final JsonElement element = JsonElement.create(className, rootNode);
+        final JacksonClassFactory factory = new JacksonClassFactory(className);
+        element.accept(factory);
+        final TypeSpec typeSpec = factory.create();
+
+//
+//        final TypeSpec typeSpec = create(className, rootNode)
+//                .toBuilder()
+//                .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
+//                        .addMember("value", "$S", "all")
+//                        .build())
+//                .build();
         final JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
                 .indent("    ")
                 .skipJavaLangImports(true)
