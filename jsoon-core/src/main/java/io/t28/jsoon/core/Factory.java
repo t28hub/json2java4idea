@@ -5,12 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.CaseFormat;
 import com.google.common.io.Files;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.Nonnull;
@@ -49,7 +52,8 @@ public class Factory {
 
     @Nonnull
     private TypeSpec create(String name, JsonNode node) {
-        final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(name)
+        final String className = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name);
+        final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addAnnotation(AnnotationSpec.builder(JsonIgnoreProperties.class)
                         .addMember("ignoreUnknown", "$L", true)
@@ -62,6 +66,14 @@ public class Factory {
         fields.forEach(field -> {
             final String childName = field.getKey();
             final JsonNode childNode = field.getValue();
+
+            if (childNode.isObject()) {
+                final TypeSpec enclosedClass = create(childName, childNode);
+                final TypeName enclosedClassName = ClassName.bestGuess(enclosedClass.name);
+                classBuilder.addType(enclosedClass);
+                appendProperty(enclosedClassName, childName, classBuilder, constructorBuilder);
+                return;
+            }
 
             if (childNode.isBoolean()) {
                 appendProperty(boolean.class, childName, classBuilder, constructorBuilder);
@@ -92,6 +104,26 @@ public class Factory {
         return classBuilder.build();
     }
 
+    private void appendProperty(@Nonnull TypeName type, @Nonnull String childName, @Nonnull TypeSpec.Builder classBuilder, @Nonnull MethodSpec.Builder constructorBuilder) {
+        constructorBuilder.addParameter(ParameterSpec.builder(type, childName)
+                .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
+                        .addMember("value", "$S", childName)
+                        .build())
+                .build())
+                .addStatement("this.$1L = $1L", childName);
+        classBuilder.addField(FieldSpec.builder(type, childName)
+                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                .build());
+        classBuilder.addMethod(MethodSpec.methodBuilder(childName)
+                .returns(type)
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
+                        .addMember("value", "$S", childName)
+                        .build())
+                .addStatement("return $L", childName)
+                .build());
+    }
+
     private void appendProperty(@Nonnull Type type, @Nonnull String childName, @Nonnull TypeSpec.Builder classBuilder, @Nonnull MethodSpec.Builder constructorBuilder) {
         constructorBuilder.addParameter(ParameterSpec.builder(type, childName)
                 .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
@@ -103,7 +135,7 @@ public class Factory {
                 .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                 .build());
         classBuilder.addMethod(MethodSpec.methodBuilder(childName)
-                .returns(String.class)
+                .returns(type)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
                         .addMember("value", "$S", childName)
@@ -113,7 +145,7 @@ public class Factory {
     }
 
     public static void main(String[] args) throws Exception {
-        final File file = new File("jsoon-core/src/main/resources/user.json");
+        final File file = new File("jsoon-core/src/main/resources/issue.json");
         final String json = Files.toString(file, StandardCharsets.UTF_8);
         final Factory factory = new Factory(new ObjectMapper());
         final String javaFile = factory.create("io.t28.jsoon.example", "Example", json);
