@@ -13,6 +13,7 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -21,6 +22,7 @@ import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 public class Factory {
@@ -72,6 +74,66 @@ public class Factory {
                 final TypeName enclosedClassName = ClassName.bestGuess(enclosedClass.name);
                 classBuilder.addType(enclosedClass);
                 appendProperty(enclosedClassName, childName, classBuilder, constructorBuilder);
+                return;
+            }
+
+            if (childNode.isArray()) {
+                if (childNode.size() == 0) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, Object.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                final JsonNode grandChildNode = childNode.get(0);
+                if (grandChildNode.isObject()) {
+                    final TypeSpec enclosedClass = create(childName, grandChildNode);
+                    final TypeName enclosedClassName = ClassName.bestGuess(enclosedClass.name);
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(ClassName.get(List.class), enclosedClassName);
+                    classBuilder.addType(enclosedClass);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                if (grandChildNode.isArray()) {
+                    // TODO
+                    return;
+                }
+
+                if (grandChildNode.isBoolean()) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, Boolean.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                if (grandChildNode.isInt()) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, Integer.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                if (grandChildNode.isLong()) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, Long.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                if (grandChildNode.isFloat()) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, Float.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                if (grandChildNode.isDouble()) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, Double.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
+
+                if (grandChildNode.isTextual()) {
+                    final ParameterizedTypeName typeName = ParameterizedTypeName.get(List.class, String.class);
+                    appendProperty(typeName, childName, classBuilder, constructorBuilder);
+                    return;
+                }
                 return;
             }
 
