@@ -1,8 +1,8 @@
-package io.t28.jsoon.core.element;
+package io.t28.jsonmodel;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.t28.jsoon.core.Visitor;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
@@ -16,22 +16,55 @@ public abstract class JsonElement {
     }
 
     @Nonnull
-    public static JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-        final ValueType found = Stream.of(ValueType.values())
-                .filter(type -> type.isAcceptable(node))
-                .findFirst()
-                .orElse(ValueType.UNKNOWN);
-        return found.create(name, node);
+    @CheckReturnValue
+    public static JsonElement create(@Nonnull JsonNode node) {
+        return create("", node);
     }
 
     @Nonnull
+    @CheckReturnValue
+    public static JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
+        return Stream.of(ValueType.values())
+                .filter(type -> type.isAcceptable(node))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported node(" + node + ") type was given"))
+                .create(name, node);
+    }
+
+    @Nonnull
+    @CheckReturnValue
     public String getName() {
         return name;
     }
 
-    @Nonnull
-    public JsonNode getNode() {
-        return node;
+    @CheckReturnValue
+    public boolean isNull() {
+        return false;
+    }
+
+    @CheckReturnValue
+    public boolean isBoolean() {
+        return this instanceof JsonBoolean;
+    }
+
+    @CheckReturnValue
+    public boolean isNumber() {
+        return this instanceof JsonNumber;
+    }
+
+    @CheckReturnValue
+    public boolean isString() {
+        return this instanceof JsonString;
+    }
+
+    @CheckReturnValue
+    public boolean isArray() {
+        return this instanceof JsonArray;
+    }
+
+    @CheckReturnValue
+    public boolean isObject() {
+        return this instanceof JsonObject;
     }
 
     public abstract void accept(@Nonnull Visitor visitor);
@@ -46,7 +79,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new PrimitiveElement(name, node, boolean.class);
+                return new JsonBoolean(name, node);
             }
         },
         INT {
@@ -58,7 +91,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new PrimitiveElement(name, node, int.class);
+                return new JsonNumber(name, node, int.class);
             }
         },
         LONG {
@@ -70,7 +103,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new PrimitiveElement(name, node, long.class);
+                return new JsonNumber(name, node, long.class);
             }
         },
         FLOAT {
@@ -82,7 +115,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new PrimitiveElement(name, node, float.class);
+                return new JsonNumber(name, node, float.class);
             }
         },
         DOUBLE {
@@ -94,7 +127,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new PrimitiveElement(name, node, double.class);
+                return new JsonNumber(name, node, double.class);
             }
         },
         STRING {
@@ -106,7 +139,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new PrimitiveElement(name, node, String.class);
+                return new JsonString(name, node);
             }
         },
         ARRAY {
@@ -118,7 +151,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new ArrayElement(name, node);
+                return new JsonArray(name, node);
             }
         },
         OBJECT {
@@ -130,7 +163,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new ObjectElement(name, node);
+                return new JsonObject(name, node);
             }
         },
         NULL {
@@ -142,19 +175,7 @@ public abstract class JsonElement {
             @Nonnull
             @Override
             JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return new NullElement(name, node);
-            }
-        },
-        UNKNOWN {
-            @Override
-            boolean isAcceptable(@Nonnull JsonNode node) {
-                return false;
-            }
-
-            @Nonnull
-            @Override
-            JsonElement create(@Nonnull String name, @Nonnull JsonNode node) {
-                return null;
+                return new JsonNull(name, node);
             }
         };
 
