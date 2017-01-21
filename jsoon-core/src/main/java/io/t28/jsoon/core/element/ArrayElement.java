@@ -12,26 +12,6 @@ public class ArrayElement extends JsonElement {
     }
 
     @Override
-    public boolean isNull() {
-        return false;
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return false;
-    }
-
-    @Override
-    public boolean isArray() {
-        return true;
-    }
-
-    @Override
-    public boolean isObject() {
-        return false;
-    }
-
-    @Override
     public void accept(@Nonnull Visitor visitor) {
         visitor.visit(this);
     }
