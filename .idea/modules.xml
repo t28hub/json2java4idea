@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_main.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_test.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/jsoon.iml" filepath="$PROJECT_DIR$/.idea/modules/jsoon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jsoon-core/jsoon-core.iml" filepath="$PROJECT_DIR$/.idea/modules/jsoon-core/jsoon-core.iml" group="jsoon-core" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jsoon-core/jsoon-core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/jsoon-core/jsoon-core_main.iml" group="jsoon-core" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jsoon-core/jsoon-core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/jsoon-core/jsoon-core_test.iml" group="jsoon-core" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/jsoon_main.iml" filepath="$PROJECT_DIR$/.idea/modules/jsoon_main.iml" group="jsoon" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/jsoon_test.iml" filepath="$PROJECT_DIR$/.idea/modules/jsoon_test.iml" group="jsoon" />
     </modules>
