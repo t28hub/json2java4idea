@@ -5,7 +5,7 @@ import com.squareup.javapoet.TypeName;
 
 import javax.annotation.Nonnull;
 
-public class JsonString extends JsonValue<String> {
+public class JsonString extends JsonValue {
     private final String value;
 
     public JsonString(@Nonnull String value) {

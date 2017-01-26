@@ -12,9 +12,10 @@ repositories {
 }
 
 dependencies {
-    compile 'com.squareup:javapoet:1.8.0'
     compile 'com.google.code.findbugs:jsr305:3.0.1'
     compile 'com.google.guava:guava:21.0'
+    compile 'com.squareup:javapoet:1.8.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
 
     testCompile 'junit:junit:4.12'
 }

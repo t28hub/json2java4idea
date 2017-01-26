@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class JsonArray extends JsonValue<List<Object>> {
+public class JsonArray extends JsonValue {
     private final List<Object> value;
 
     public JsonArray(@Nonnull List<Object> value) {
@@ -30,7 +30,7 @@ public class JsonArray extends JsonValue<List<Object>> {
 
     @Nonnull
     @CheckReturnValue
-    public Stream<JsonValue<?>> stream() {
+    public Stream<JsonValue> stream() {
         return value.stream().map(JsonValue::wrap);
     }
 }

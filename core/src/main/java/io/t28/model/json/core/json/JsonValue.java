@@ -8,10 +8,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-public abstract class JsonValue<T> {
+public abstract class JsonValue {
     @Nonnull
     @CheckReturnValue
-    public static JsonValue<?> wrap(@Nullable Object value) {
+    public static JsonValue wrap(@Nullable Object value) {
         return Stream.of(ValueType.values())
                 .filter(type -> type.isAcceptable(value))
                 .findFirst()
@@ -22,8 +22,7 @@ public abstract class JsonValue<T> {
     @Nonnull
     public abstract TypeName getType();
 
-    @Nonnull
-    public abstract T getValue();
+    public abstract Object getValue();
 
     @Override
     public String toString() {

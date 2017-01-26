@@ -5,7 +5,7 @@ import com.squareup.javapoet.TypeName;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 
-public class JsonNumber extends JsonValue<Number> {
+public class JsonNumber extends JsonValue {
     private final Type type;
     private final Number value;
 
