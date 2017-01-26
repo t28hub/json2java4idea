@@ -3,6 +3,8 @@ package io.t28.model.json.core.json;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +97,36 @@ enum ValueType {
                 return new JsonNumber(double.class, (Double) value);
             }
             throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Double");
+        }
+    },
+    BIG_INTEGER {
+        @Override
+        boolean isAcceptable(@Nullable Object value) {
+            return value instanceof BigInteger;
+        }
+
+        @Nonnull
+        @Override
+        JsonValue wrap(@Nullable Object value) {
+            if (isAcceptable(value)) {
+                return new JsonNumber(BigInteger.class, (BigInteger) value);
+            }
+            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of BigInteger");
+        }
+    },
+    BIG_DECIMAL {
+        @Override
+        boolean isAcceptable(@Nullable Object value) {
+            return value instanceof BigDecimal;
+        }
+
+        @Nonnull
+        @Override
+        JsonValue wrap(@Nullable Object value) {
+            if (isAcceptable(value)) {
+                return new JsonNumber(BigDecimal.class, (BigDecimal) value);
+            }
+            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of BigDecimal");
         }
     },
     STRING {
