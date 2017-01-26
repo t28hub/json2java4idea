@@ -3,17 +3,18 @@ package io.t28.model.json.core.json;
 import com.squareup.javapoet.TypeName;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class JsonNull extends JsonValue<Object> {
+public class JsonNull extends JsonValue {
     @Nonnull
     @Override
     public TypeName getType() {
         return TypeName.OBJECT;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public Object getValue() {
-        throw new UnsupportedOperationException("JsonNull does not support to return value due to null");
+        return null;
     }
 }

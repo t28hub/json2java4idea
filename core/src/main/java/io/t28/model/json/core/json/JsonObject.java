@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class JsonObject extends JsonValue<Map<String, Object>> {
+public class JsonObject extends JsonValue {
     private final Map<String, Object> value;
 
     public JsonObject(@Nonnull Map<String, Object> value) {
@@ -31,13 +31,13 @@ public class JsonObject extends JsonValue<Map<String, Object>> {
 
     @Nonnull
     @CheckReturnValue
-    public Stream<Map.Entry<String, JsonValue<?>>> stream() {
+    public Stream<Map.Entry<String, JsonValue>> stream() {
         return value.entrySet()
                 .stream()
                 .map(entry -> {
                     final String name = entry.getKey();
                     final Object value = entry.getValue();
-                    return new HashMap.SimpleImmutableEntry<String, JsonValue<?>>(name, JsonValue.wrap(value));
+                    return new HashMap.SimpleImmutableEntry<String, JsonValue>(name, JsonValue.wrap(value));
                 });
     }
 }

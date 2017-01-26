@@ -4,7 +4,7 @@ import com.squareup.javapoet.TypeName;
 
 import javax.annotation.Nonnull;
 
-public class JsonBoolean extends JsonValue<Boolean> {
+public class JsonBoolean extends JsonValue {
     private final boolean value;
 
     public JsonBoolean(boolean value) {
