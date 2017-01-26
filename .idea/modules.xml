@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_main.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_test.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/model-json.iml" filepath="$PROJECT_DIR$/.idea/modules/model-json.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/model-json_main.iml" filepath="$PROJECT_DIR$/.idea/modules/model-json_main.iml" group="model-json" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/model-json_test.iml" filepath="$PROJECT_DIR$/.idea/modules/model-json_test.iml" group="model-json" />
