@@ -1,2 +1,3 @@
 rootProject.name = 'model-json'
+include 'core'
 
