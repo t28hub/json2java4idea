@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.model.json.core.Context;
 import io.t28.model.json.core.naming.NamingCase;
-import io.t28.model.json.core.naming.NamingStrategy;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;
@@ -19,18 +19,14 @@ import java.util.Set;
 @Value.Enclosing
 public abstract class ClassBuilder {
     private final String name;
-    private final NamingStrategy fieldNameStrategy;
-    private final NamingStrategy methodNameStrategy;
+    private final Context context;
     private final Set<Modifier> modifiers;
     private final List<Property> properties;
     private final List<TypeSpec> innerClasses;
 
-    protected ClassBuilder(@Nonnull String name,
-                           @Nonnull NamingStrategy fieldNameStrategy,
-                           @Nonnull NamingStrategy methodNameStrategy) {
+    protected ClassBuilder(@Nonnull String name, @Nonnull Context context) {
         this.name = name;
-        this.fieldNameStrategy = fieldNameStrategy;
-        this.methodNameStrategy = methodNameStrategy;
+        this.context = context;
         this.modifiers = new HashSet<>();
         this.properties = new ArrayList<>();
         this.innerClasses = new ArrayList<>();
@@ -63,13 +59,8 @@ public abstract class ClassBuilder {
     }
 
     @Nonnull
-    protected NamingStrategy getFieldNameStrategy() {
-        return fieldNameStrategy;
-    }
-
-    @Nonnull
-    protected NamingStrategy getMethodNameStrategy() {
-        return methodNameStrategy;
+    protected Context getContext() {
+        return context;
     }
 
     @Nonnull
@@ -105,16 +96,4 @@ public abstract class ClassBuilder {
         }
     }
 
-    public enum Type {
-        MODEL {
-            @Nonnull
-            @Override
-            public ClassBuilder create(@Nonnull String className, @Nonnull NamingStrategy fieldNameStrategy, @Nonnull NamingStrategy methodNameStrategy) {
-                return new ModelClassBuilder(className, fieldNameStrategy, methodNameStrategy);
-            }
-        };
-
-        @Nonnull
-        public abstract ClassBuilder create(@Nonnull String className, @Nonnull NamingStrategy fieldNameRule, @Nonnull NamingStrategy methodNameStrategy);
-    }
 }

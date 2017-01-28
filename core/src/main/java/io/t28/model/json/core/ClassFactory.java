@@ -4,6 +4,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.model.json.core.builder.BuilderType;
 import io.t28.model.json.core.builder.ClassBuilder;
 import io.t28.model.json.core.json.JsonArray;
 import io.t28.model.json.core.json.JsonNull;
@@ -16,22 +17,10 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ClassFactory {
-    private final ClassBuilder.Type builderType;
-    private final NamingCase nameCase;
-    private final NamingStrategy classNameStrategy;
-    private final NamingStrategy fieldNameStrategy;
-    private final NamingStrategy methodNameStrategy;
+    private final Context context;
 
-    public ClassFactory(@Nonnull ClassBuilder.Type builderType,
-                        @Nonnull NamingCase nameCase,
-                        @Nonnull NamingStrategy classNameStrategy,
-                        @Nonnull NamingStrategy fieldNameStrategy,
-                        @Nonnull NamingStrategy methodNameStrategy) {
-        this.builderType = builderType;
-        this.nameCase = nameCase;
-        this.classNameStrategy = classNameStrategy;
-        this.fieldNameStrategy = fieldNameStrategy;
-        this.methodNameStrategy = methodNameStrategy;
+    public ClassFactory(@Nonnull Context context) {
+        this.context = context;
     }
 
     @Nonnull
@@ -47,7 +36,11 @@ public class ClassFactory {
 
     @Nonnull
     private TypeSpec create(@Nonnull String className, @Nonnull JsonObject object) {
-        final ClassBuilder builder = builderType.create(className, fieldNameStrategy, methodNameStrategy);
+        final BuilderType builderType = context.builderType();
+        final ClassBuilder builder = builderType.create(className, context);
+
+        final NamingCase nameCase = context.nameCase();
+        final NamingStrategy classNameStrategy = context.classNameStrategy();
         object.stream().forEach(child -> {
             final String name = child.getKey();
             final JsonValue value = child.getValue();

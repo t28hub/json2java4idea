@@ -1,18 +1,23 @@
-package io.t28.model.json.core.naming;
+package io.t28.model.json.core.naming.defaults;
 
 import com.google.common.base.Strings;
 import com.squareup.javapoet.TypeName;
+import io.t28.model.json.core.naming.NamingCase;
+import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DefaultNamingStrategy implements NamingStrategy {
-    private final NamingCase namingCase;
+public class FieldNamingStrategy implements NamingStrategy {
     private final String prefix;
     private final String suffix;
 
-    public DefaultNamingStrategy(@Nonnull NamingCase namingCase, @Nullable String prefix, @Nullable String suffix) {
-        this.namingCase = namingCase;
+    public FieldNamingStrategy() {
+        this.prefix = null;
+        this.suffix = null;
+    }
+
+    public FieldNamingStrategy(@Nullable String prefix, @Nullable String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
     }
@@ -30,6 +35,6 @@ public class DefaultNamingStrategy implements NamingStrategy {
         if (!Strings.isNullOrEmpty(suffix)) {
             builder.append(NamingCase.KEBAB_CASE_DELIMITER).append(suffix);
         }
-        return NamingCase.UPPER_KEBAB_CASE.to(namingCase, builder.toString());
+        return NamingCase.UPPER_KEBAB_CASE.to(NamingCase.LOWER_CAMEL_CASE, builder.toString());
     }
 }
