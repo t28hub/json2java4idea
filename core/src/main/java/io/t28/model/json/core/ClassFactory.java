@@ -10,7 +10,7 @@ import io.t28.model.json.core.json.JsonNull;
 import io.t28.model.json.core.json.JsonObject;
 import io.t28.model.json.core.json.JsonValue;
 import io.t28.model.json.core.naming.NamingCase;
-import io.t28.model.json.core.naming.NamingRule;
+import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -18,20 +18,20 @@ import java.util.List;
 public class ClassFactory {
     private final ClassBuilder.Type builderType;
     private final NamingCase nameCase;
-    private final NamingRule classNameRule;
-    private final NamingRule fieldNameRule;
-    private final NamingRule methodNameRule;
+    private final NamingStrategy classNameStrategy;
+    private final NamingStrategy fieldNameStrategy;
+    private final NamingStrategy methodNameStrategy;
 
     public ClassFactory(@Nonnull ClassBuilder.Type builderType,
                         @Nonnull NamingCase nameCase,
-                        @Nonnull NamingRule classNameRule,
-                        @Nonnull NamingRule fieldNameRule,
-                        @Nonnull NamingRule methodNameRule) {
+                        @Nonnull NamingStrategy classNameStrategy,
+                        @Nonnull NamingStrategy fieldNameStrategy,
+                        @Nonnull NamingStrategy methodNameStrategy) {
         this.builderType = builderType;
         this.nameCase = nameCase;
-        this.classNameRule = classNameRule;
-        this.fieldNameRule = fieldNameRule;
-        this.methodNameRule = methodNameRule;
+        this.classNameStrategy = classNameStrategy;
+        this.fieldNameStrategy = fieldNameStrategy;
+        this.methodNameStrategy = methodNameStrategy;
     }
 
     @Nonnull
@@ -47,12 +47,12 @@ public class ClassFactory {
 
     @Nonnull
     private TypeSpec create(@Nonnull String className, @Nonnull JsonObject object) {
-        final ClassBuilder builder = builderType.create(className, fieldNameRule, methodNameRule);
+        final ClassBuilder builder = builderType.create(className, fieldNameStrategy, methodNameStrategy);
         object.stream().forEach(child -> {
             final String name = child.getKey();
             final JsonValue value = child.getValue();
             if (value.isObject()) {
-                final String innerClassName = classNameRule.format(nameCase, name);
+                final String innerClassName = classNameStrategy.apply(TypeName.OBJECT, name, nameCase);
                 final TypeSpec innerClass = create(innerClassName, value.asObject());
                 builder.addInnerClass(innerClass);
 
@@ -66,7 +66,7 @@ public class ClassFactory {
             }
 
             if (value.isArray()) {
-                final String innerClassName = classNameRule.format(nameCase, name);
+                final String innerClassName = classNameStrategy.apply(TypeName.OBJECT, name, nameCase);
                 final JsonValue firstValue = value.asArray().stream().findFirst().orElse(new JsonNull());
                 final TypeName listType = createListType(innerClassName, firstValue, builder);
                 builder.addProperty(ClassBuilder.Property.builder()

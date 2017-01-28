@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.t28.model.json.core.naming.NamingCase;
-import io.t28.model.json.core.naming.NamingRule;
+import io.t28.model.json.core.naming.NamingStrategy;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;
@@ -19,16 +19,18 @@ import java.util.Set;
 @Value.Enclosing
 public abstract class ClassBuilder {
     private final String name;
-    private final NamingRule fieldNameRule;
-    private final NamingRule methodNameRule;
+    private final NamingStrategy fieldNameStrategy;
+    private final NamingStrategy methodNameStrategy;
     private final Set<Modifier> modifiers;
     private final List<Property> properties;
     private final List<TypeSpec> innerClasses;
 
-    protected ClassBuilder(@Nonnull String name, @Nonnull NamingRule fieldNameRule, @Nonnull NamingRule methodNameRule) {
+    protected ClassBuilder(@Nonnull String name,
+                           @Nonnull NamingStrategy fieldNameStrategy,
+                           @Nonnull NamingStrategy methodNameStrategy) {
         this.name = name;
-        this.fieldNameRule = fieldNameRule;
-        this.methodNameRule = methodNameRule;
+        this.fieldNameStrategy = fieldNameStrategy;
+        this.methodNameStrategy = methodNameStrategy;
         this.modifiers = new HashSet<>();
         this.properties = new ArrayList<>();
         this.innerClasses = new ArrayList<>();
@@ -61,13 +63,13 @@ public abstract class ClassBuilder {
     }
 
     @Nonnull
-    protected NamingRule getFieldNameRule() {
-        return fieldNameRule;
+    protected NamingStrategy getFieldNameStrategy() {
+        return fieldNameStrategy;
     }
 
     @Nonnull
-    protected NamingRule getMethodNameRule() {
-        return methodNameRule;
+    protected NamingStrategy getMethodNameStrategy() {
+        return methodNameStrategy;
     }
 
     @Nonnull
@@ -89,18 +91,13 @@ public abstract class ClassBuilder {
     @SuppressWarnings("NullableProblems")
     public interface Property {
         @Nonnull
-        NamingCase nameCase();
+        TypeName type();
 
         @Nonnull
         String name();
 
         @Nonnull
-        TypeName type();
-
-        @Nonnull
-        default String format(@Nonnull NamingRule rule) {
-            return rule.format(nameCase(), name());
-        }
+        NamingCase nameCase();
 
         @Nonnull
         static ImmutableClassBuilder.Property.Builder builder() {
@@ -112,12 +109,12 @@ public abstract class ClassBuilder {
         MODEL {
             @Nonnull
             @Override
-            public ClassBuilder create(@Nonnull String className, @Nonnull NamingRule fieldNameRule, @Nonnull NamingRule methodNameRule) {
-                return new ModelClassBuilder(className, fieldNameRule, methodNameRule);
+            public ClassBuilder create(@Nonnull String className, @Nonnull NamingStrategy fieldNameStrategy, @Nonnull NamingStrategy methodNameStrategy) {
+                return new ModelClassBuilder(className, fieldNameStrategy, methodNameStrategy);
             }
         };
 
         @Nonnull
-        public abstract ClassBuilder create(@Nonnull String className, @Nonnull NamingRule fieldNameRule, @Nonnull NamingRule methodNameRule);
+        public abstract ClassBuilder create(@Nonnull String className, @Nonnull NamingStrategy fieldNameRule, @Nonnull NamingStrategy methodNameStrategy);
     }
 }

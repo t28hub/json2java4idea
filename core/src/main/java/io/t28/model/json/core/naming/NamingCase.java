@@ -18,6 +18,12 @@ public enum NamingCase {
         }
     };
 
+    @SuppressWarnings("unused")
+    public static final String SNAKE_CASE_DELIMITER = "_";
+
+    @SuppressWarnings("unused")
+    public static final String KEBAB_CASE_DELIMITER = "-";
+
     private final CaseFormat format;
 
     NamingCase(@Nonnull CaseFormat format) {
