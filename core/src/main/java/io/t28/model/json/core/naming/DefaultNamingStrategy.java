@@ -19,7 +19,7 @@ public class DefaultNamingStrategy implements NamingStrategy {
 
     @Nonnull
     @Override
-    public String apply(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase) {
+    public String transform(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase) {
         final StringBuilder builder = new StringBuilder(name.length());
         if (!Strings.isNullOrEmpty(prefix)) {
             builder.append(prefix).append(NamingCase.KEBAB_CASE_DELIMITER);
