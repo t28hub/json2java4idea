@@ -5,6 +5,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.model.json.core.Context;
 import io.t28.model.json.core.naming.NamingCase;
 import io.t28.model.json.core.naming.NamingStrategy;
 
@@ -12,8 +13,8 @@ import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 
 class ModelClassBuilder extends ClassBuilder {
-    ModelClassBuilder(@Nonnull String name, @Nonnull NamingStrategy fieldNameStrategy, @Nonnull NamingStrategy methodNameStrategy) {
-        super(name, fieldNameStrategy, methodNameStrategy);
+    ModelClassBuilder(@Nonnull String name, @Nonnull Context context) {
+        super(name, context);
     }
 
     @Nonnull
@@ -22,12 +23,13 @@ class ModelClassBuilder extends ClassBuilder {
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(getName());
         getModifiers().forEach(classBuilder::addModifiers);
 
-        final NamingStrategy fieldNameStrategy = getFieldNameStrategy();
-        final NamingStrategy methodNameStrategy = getMethodNameStrategy();
+        final Context context = getContext();
+        final NamingCase nameCase = context.nameCase();
+        final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
+        final NamingStrategy methodNameStrategy = context.methodNameStrategy();
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
         getProperties().forEach(property -> {
             final String name = property.name();
-            final NamingCase nameCase = property.nameCase();
             final TypeName type = property.type();
 
             final String fieldName = fieldNameStrategy.transform(type, name, nameCase);
@@ -42,9 +44,10 @@ class ModelClassBuilder extends ClassBuilder {
                     .addStatement("return $L", fieldName)
                     .build());
 
-            constructorBuilder.addParameter(ParameterSpec.builder(type, fieldName)
+            final String propertyName = context.propertyNameStrategy().transform(type, name, nameCase);
+            constructorBuilder.addParameter(ParameterSpec.builder(type, propertyName)
                     .build())
-                    .addStatement("this.$1L = $1L", fieldName);
+                    .addStatement("this.$L = $L", fieldName, propertyName);
 
         });
         classBuilder.addMethod(constructorBuilder.build());
