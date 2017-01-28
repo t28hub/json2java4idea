@@ -4,7 +4,7 @@ import com.google.common.base.CaseFormat;
 
 import javax.annotation.Nonnull;
 
-public enum CaseRule {
+public enum NamingCase {
     LOWER_CAMEL_CASE(CaseFormat.LOWER_CAMEL),
     UPPER_CAMEL_CASE(CaseFormat.UPPER_CAMEL),
     LOWER_SNAKE_CASE(CaseFormat.LOWER_UNDERSCORE),
@@ -13,23 +13,23 @@ public enum CaseRule {
     UPPER_KEBAB_CASE(CaseFormat.LOWER_HYPHEN) {
         @Nonnull
         @Override
-        public String to(@Nonnull CaseRule rule, @Nonnull String text) {
+        public String to(@Nonnull NamingCase rule, @Nonnull String text) {
             return super.to(rule, text.toLowerCase());
         }
     };
 
     private final CaseFormat format;
 
-    CaseRule(@Nonnull CaseFormat format) {
+    NamingCase(@Nonnull CaseFormat format) {
         this.format = format;
     }
 
     @Nonnull
-    public String to(@Nonnull CaseRule rule, @Nonnull String text) {
+    public String to(@Nonnull NamingCase rule, @Nonnull String text) {
         if (this == rule) {
             return text;
         }
-        if (rule == CaseRule.UPPER_KEBAB_CASE) {
+        if (rule == NamingCase.UPPER_KEBAB_CASE) {
             return this.format.to(rule.format, text).toUpperCase();
         }
         return this.format.to(rule.format, text);

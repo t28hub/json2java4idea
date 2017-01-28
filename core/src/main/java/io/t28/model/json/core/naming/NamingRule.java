@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface NamingRule {
     @Nonnull
     @CheckReturnValue
-    CaseRule rule();
+    NamingCase namingCase();
 
     @Nonnull
     @CheckReturnValue
@@ -22,12 +22,12 @@ public interface NamingRule {
     Optional<String> suffix();
 
     @Nonnull
-    default String format(@Nonnull CaseRule rule, @Nonnull String name) {
+    default String format(@Nonnull NamingCase fromCase, @Nonnull String name) {
         final StringBuilder builder = new StringBuilder(name.length());
-        builder.append(rule.to(CaseRule.UPPER_KEBAB_CASE, name));
         prefix().ifPresent(prefix -> builder.append(prefix).append("-"));
+        builder.append(fromCase.to(NamingCase.UPPER_KEBAB_CASE, name));
         suffix().ifPresent(suffix -> builder.append("-").append(suffix));
-        return CaseRule.UPPER_KEBAB_CASE.to(rule(), builder.toString());
+        return NamingCase.UPPER_KEBAB_CASE.to(namingCase(), builder.toString());
     }
 
     @Nonnull
