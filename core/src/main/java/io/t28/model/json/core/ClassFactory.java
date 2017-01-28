@@ -52,7 +52,7 @@ public class ClassFactory {
             final String name = child.getKey();
             final JsonValue value = child.getValue();
             if (value.isObject()) {
-                final String innerClassName = classNameStrategy.apply(TypeName.OBJECT, name, nameCase);
+                final String innerClassName = classNameStrategy.transform(TypeName.OBJECT, name, nameCase);
                 final TypeSpec innerClass = create(innerClassName, value.asObject());
                 builder.addInnerClass(innerClass);
 
@@ -66,7 +66,7 @@ public class ClassFactory {
             }
 
             if (value.isArray()) {
-                final String innerClassName = classNameStrategy.apply(TypeName.OBJECT, name, nameCase);
+                final String innerClassName = classNameStrategy.transform(TypeName.OBJECT, name, nameCase);
                 final JsonValue firstValue = value.asArray().stream().findFirst().orElse(new JsonNull());
                 final TypeName listType = createListType(innerClassName, firstValue, builder);
                 builder.addProperty(ClassBuilder.Property.builder()
