@@ -6,7 +6,7 @@ import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
 
-public class MethodNamingStrategy implements NamingStrategy {
+public class MethodNameStrategy implements NamingStrategy {
     private static final String BOOLEAN_PREFIX = "is";
     private static final String GENERAL_PREFIX = "get";
 

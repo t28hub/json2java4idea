@@ -6,10 +6,10 @@ import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
 
-public class PropertyNamingStrategy implements NamingStrategy {
+public class ClassNameStrategy implements NamingStrategy {
     @Nonnull
     @Override
     public String transform(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase) {
-        return nameCase.to(NamingCase.LOWER_CAMEL_CASE, name);
+        return nameCase.to(NamingCase.UPPER_CAMEL_CASE, name);
     }
 }
