@@ -23,14 +23,16 @@ class ModelClassBuilder extends ClassBuilder {
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(getName());
         getModifiers().forEach(classBuilder::addModifiers);
 
+        final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
+        constructorBuilder.addModifiers(Modifier.PUBLIC);
+
         final Context context = getContext();
         final NamingCase nameCase = context.nameCase();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         final NamingStrategy methodNameStrategy = context.methodNameStrategy();
-        final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
-        getProperties().forEach(property -> {
-            final String name = property.name();
-            final TypeName type = property.type();
+        getProperties().entrySet().forEach(property -> {
+            final String name = property.getKey();
+            final TypeName type = property.getValue();
 
             final String fieldName = fieldNameStrategy.transform(type, name, nameCase);
             classBuilder.addField(FieldSpec.builder(type, fieldName)
