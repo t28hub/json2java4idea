@@ -6,5 +6,5 @@ import javax.annotation.Nonnull;
 
 public interface NamingStrategy {
     @Nonnull
-    String transform(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase);
+    String transform(@Nonnull String name, @Nonnull TypeName type);
 }
