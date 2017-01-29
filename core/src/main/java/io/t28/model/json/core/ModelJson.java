@@ -3,6 +3,7 @@ package io.t28.model.json.core;
 import com.google.common.io.Files;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.model.json.core.builder.BuilderType;
 import io.t28.model.json.core.json.JsonValue;
 import io.t28.model.json.core.parser.JacksonParser;
 import io.t28.model.json.core.parser.JsonParser;
@@ -15,7 +16,9 @@ public class ModelJson {
     public static void main(String[] args) throws Exception {
         final File file = new File("core/src/main/resources/repositories.json");
         final String json = Files.toString(file, StandardCharsets.UTF_8);
-        final Context context = Context.builder().build();
+        final Context context = Context.builder()
+                .builderType(BuilderType.GSON)
+                .build();
         final ModelJson modelJson = new ModelJson(context);
         final String java = modelJson.generate("io.t28.mode.json.example", "Repository", json);
         System.out.println(java);

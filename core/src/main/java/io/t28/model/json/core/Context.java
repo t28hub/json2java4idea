@@ -23,6 +23,7 @@ public interface Context {
     }
 
     @Nonnull
+    @Value.Default
     default BuilderType builderType() {
         return BuilderType.MODEL;
     }
@@ -30,7 +31,7 @@ public interface Context {
     @Nonnull
     @Value.Default
     default NamingCase nameCase() {
-        return NamingCase.LOWER_CAMEL_CASE;
+        return NamingCase.LOWER_SNAKE_CASE;
     }
 
     @Nonnull

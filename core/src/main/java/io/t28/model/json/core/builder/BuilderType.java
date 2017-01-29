@@ -11,6 +11,20 @@ public enum BuilderType {
         public ClassBuilder create(@Nonnull String className, @Nonnull Context context) {
             return new ModelClassBuilder(className, context);
         }
+    },
+    GSON {
+        @Nonnull
+        @Override
+        public ClassBuilder create(@Nonnull String className, @Nonnull Context context) {
+            return new GsonClassBuilder(className, context);
+        }
+    },
+    JACKSON {
+        @Nonnull
+        @Override
+        public ClassBuilder create(@Nonnull String className, @Nonnull Context context) {
+            return new JacksonClassBuilder(className, context);
+        }
     };
 
     @Nonnull
