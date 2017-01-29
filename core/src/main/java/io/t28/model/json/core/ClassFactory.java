@@ -14,6 +14,7 @@ import io.t28.model.json.core.naming.NamingCase;
 import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
+import javax.lang.model.element.Modifier;
 import java.util.List;
 
 public class ClassFactory {
@@ -26,7 +27,7 @@ public class ClassFactory {
     @Nonnull
     public TypeSpec create(@Nonnull String className, @Nonnull JsonValue value) {
         if (value.isObject()) {
-            return create(className, value.asObject());
+            return create(className, value.asObject(), Modifier.PUBLIC);
         }
         if (value.isArray()) {
             return create(className, value.asArray());
@@ -35,9 +36,10 @@ public class ClassFactory {
     }
 
     @Nonnull
-    private TypeSpec create(@Nonnull String className, @Nonnull JsonObject object) {
+    private TypeSpec create(@Nonnull String className, @Nonnull JsonObject object, @Nonnull Modifier... modifiers) {
         final BuilderType builderType = context.builderType();
         final ClassBuilder builder = builderType.create(className, context);
+        builder.addModifiers(modifiers);
 
         final NamingCase nameCase = context.nameCase();
         final NamingStrategy classNameStrategy = context.classNameStrategy();
@@ -46,15 +48,11 @@ public class ClassFactory {
             final JsonValue value = child.getValue();
             if (value.isObject()) {
                 final String innerClassName = classNameStrategy.transform(TypeName.OBJECT, name, nameCase);
-                final TypeSpec innerClass = create(innerClassName, value.asObject());
+                final TypeSpec innerClass = create(innerClassName, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
                 builder.addInnerClass(innerClass);
 
                 final TypeName innerClassType = ClassName.bestGuess(innerClassName);
-                builder.addProperty(ClassBuilder.Property.builder()
-                        .type(innerClassType)
-                        .name(name)
-                        .nameCase(nameCase)
-                        .build());
+                builder.addProperty(name, innerClassType);
                 return;
             }
 
@@ -62,19 +60,11 @@ public class ClassFactory {
                 final String innerClassName = classNameStrategy.transform(TypeName.OBJECT, name, nameCase);
                 final JsonValue firstValue = value.asArray().stream().findFirst().orElse(new JsonNull());
                 final TypeName listType = createListType(innerClassName, firstValue, builder);
-                builder.addProperty(ClassBuilder.Property.builder()
-                        .type(listType)
-                        .name(name)
-                        .nameCase(nameCase)
-                        .build());
+                builder.addProperty(name, listType);
                 return;
             }
 
-            builder.addProperty(ClassBuilder.Property.builder()
-                    .type(value.getType())
-                    .name(name)
-                    .nameCase(nameCase)
-                    .build());
+            builder.addProperty(name, value.getType());
         });
         return builder.build();
     }
@@ -103,7 +93,7 @@ public class ClassFactory {
         }
 
         if (value.isObject()) {
-            final TypeSpec innerClass = create(className, value.asObject());
+            final TypeSpec innerClass = create(className, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
             builder.addInnerClass(innerClass);
 
             final TypeName innerClassType = ClassName.bestGuess(innerClass.name);
