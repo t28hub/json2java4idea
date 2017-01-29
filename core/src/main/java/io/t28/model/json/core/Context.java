@@ -10,16 +10,15 @@ import io.t28.model.json.core.naming.defaults.PropertyNameStrategy;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 
 @Value.Immutable
 @SuppressWarnings("NullableProblems")
 public interface Context {
-    String DEFAULT_INDENT = "    ";
-
     @Nonnull
     @Value.Default
-    default String indent() {
-        return DEFAULT_INDENT;
+    default File sourceDirectory() {
+        return new File("build/classes/main/generated");
     }
 
     @Nonnull
