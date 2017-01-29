@@ -4,20 +4,22 @@ import com.google.common.base.Strings;
 import com.squareup.javapoet.TypeName;
 import io.t28.model.json.core.naming.NamingCase;
 import io.t28.model.json.core.naming.NamingStrategy;
+import io.t28.model.json.core.utils.Keywords;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FieldNamingStrategy implements NamingStrategy {
+public class FieldNameStrategy implements NamingStrategy {
+    private static final String RESERVED_KEYWORD_PREFIX = "_";
+
     private final String prefix;
     private final String suffix;
 
-    public FieldNamingStrategy() {
-        this.prefix = null;
-        this.suffix = null;
+    public FieldNameStrategy() {
+        this(null, null);
     }
 
-    public FieldNamingStrategy(@Nullable String prefix, @Nullable String suffix) {
+    public FieldNameStrategy(@Nullable String prefix, @Nullable String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
     }
@@ -35,6 +37,11 @@ public class FieldNamingStrategy implements NamingStrategy {
         if (!Strings.isNullOrEmpty(suffix)) {
             builder.append(NamingCase.KEBAB_CASE_DELIMITER).append(suffix);
         }
-        return NamingCase.UPPER_KEBAB_CASE.to(NamingCase.LOWER_CAMEL_CASE, builder.toString());
+
+        final String fieldName = NamingCase.UPPER_KEBAB_CASE.to(NamingCase.LOWER_CAMEL_CASE, builder.toString());
+        if (Keywords.isReserved(fieldName)) {
+            return RESERVED_KEYWORD_PREFIX + fieldName;
+        }
+        return fieldName;
     }
 }
