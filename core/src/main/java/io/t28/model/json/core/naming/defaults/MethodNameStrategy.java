@@ -10,9 +10,15 @@ public class MethodNameStrategy implements NamingStrategy {
     private static final String BOOLEAN_PREFIX = "is";
     private static final String GENERAL_PREFIX = "get";
 
+    private final NamingCase nameCase;
+
+    public MethodNameStrategy(@Nonnull NamingCase nameCase) {
+        this.nameCase = nameCase;
+    }
+
     @Nonnull
     @Override
-    public String transform(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase) {
+    public String transform(@Nonnull String name, @Nonnull TypeName type) {
         final StringBuilder builder = new StringBuilder();
         if (type.equals(TypeName.BOOLEAN)) {
             return builder.append(BOOLEAN_PREFIX)

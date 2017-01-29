@@ -10,7 +10,6 @@ import io.t28.model.json.core.json.JsonArray;
 import io.t28.model.json.core.json.JsonNull;
 import io.t28.model.json.core.json.JsonObject;
 import io.t28.model.json.core.json.JsonValue;
-import io.t28.model.json.core.naming.NamingCase;
 import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
@@ -41,13 +40,12 @@ public class ClassFactory {
         final ClassBuilder builder = builderType.create(className, context);
         builder.addModifiers(modifiers);
 
-        final NamingCase nameCase = context.nameCase();
         final NamingStrategy classNameStrategy = context.classNameStrategy();
         object.stream().forEach(child -> {
             final String name = child.getKey();
             final JsonValue value = child.getValue();
             if (value.isObject()) {
-                final String innerClassName = classNameStrategy.transform(TypeName.OBJECT, name, nameCase);
+                final String innerClassName = classNameStrategy.transform(name, TypeName.OBJECT);
                 final TypeSpec innerClass = create(innerClassName, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
                 builder.addInnerClass(innerClass);
 
@@ -57,7 +55,7 @@ public class ClassFactory {
             }
 
             if (value.isArray()) {
-                final String innerClassName = classNameStrategy.transform(TypeName.OBJECT, name, nameCase);
+                final String innerClassName = classNameStrategy.transform(name, TypeName.OBJECT);
                 final JsonValue firstValue = value.asArray().stream().findFirst().orElse(new JsonNull());
                 final TypeName listType = createListType(innerClassName, firstValue, builder);
                 builder.addProperty(name, listType);

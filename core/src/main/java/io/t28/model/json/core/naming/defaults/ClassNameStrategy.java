@@ -7,9 +7,15 @@ import io.t28.model.json.core.naming.NamingStrategy;
 import javax.annotation.Nonnull;
 
 public class ClassNameStrategy implements NamingStrategy {
+    private final NamingCase nameCase;
+
+    public ClassNameStrategy(@Nonnull NamingCase nameCase) {
+        this.nameCase = nameCase;
+    }
+
     @Nonnull
     @Override
-    public String transform(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase) {
+    public String transform(@Nonnull String name, @Nonnull TypeName type) {
         return nameCase.to(NamingCase.UPPER_CAMEL_CASE, name);
     }
 }

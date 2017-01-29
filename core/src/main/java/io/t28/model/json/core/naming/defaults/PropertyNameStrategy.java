@@ -10,9 +10,15 @@ import javax.annotation.Nonnull;
 public class PropertyNameStrategy implements NamingStrategy {
     private static final String RESERVED_KEYWORD_PREFIX = "_";
 
+    private final NamingCase nameCase;
+
+    public PropertyNameStrategy(@Nonnull NamingCase nameCase) {
+        this.nameCase = nameCase;
+    }
+
     @Nonnull
     @Override
-    public String transform(@Nonnull TypeName type, @Nonnull String name, @Nonnull NamingCase nameCase) {
+    public String transform(@Nonnull String name, @Nonnull TypeName type) {
         final String propertyName = nameCase.to(NamingCase.LOWER_CAMEL_CASE, name);
         if (Keywords.isReserved(propertyName)) {
             return RESERVED_KEYWORD_PREFIX + propertyName;

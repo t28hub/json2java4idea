@@ -1,39 +1,44 @@
 package io.t28.model.json.core;
 
 import com.google.common.io.Files;
+import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import io.t28.model.json.core.builder.BuilderType;
 import io.t28.model.json.core.json.JsonValue;
-import io.t28.model.json.core.naming.defaults.ClassNameStrategy;
-import io.t28.model.json.core.naming.defaults.FieldNameStrategy;
-import io.t28.model.json.core.naming.defaults.MethodNameStrategy;
-import io.t28.model.json.core.naming.NamingCase;
-import io.t28.model.json.core.naming.defaults.PropertyNameStrategy;
 import io.t28.model.json.core.parser.JacksonParser;
 import io.t28.model.json.core.parser.JsonParser;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 public class ModelJson {
     public static void main(String[] args) throws Exception {
-        final JsonParser parser = new JacksonParser();
-
         final File file = new File("core/src/main/resources/repositories.json");
         final String json = Files.toString(file, StandardCharsets.UTF_8);
+        final Context context = Context.builder().build();
+        final ModelJson modelJson = new ModelJson(context);
+        final String java = modelJson.generate("io.t28.mode.json.example", "Repository", json);
+        System.out.println(java);
+    }
+
+    private final Context context;
+
+    public ModelJson(@Nonnull Context context) {
+        this.context = Context.copyOf(context);
+    }
+
+    @Nonnull
+    public String generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) {
+        final JsonParser parser = new JacksonParser();
         final JsonValue value = parser.parse(json);
 
-        final Context context = Context.builder()
-                .builderType(BuilderType.MODEL)
-                .nameCase(NamingCase.LOWER_SNAKE_CASE)
-                .classNameStrategy(new ClassNameStrategy())
-                .fieldNameStrategy(new FieldNameStrategy())
-                .methodNameStrategy(new MethodNameStrategy())
-                .propertyNameStrategy(new PropertyNameStrategy())
-                .build();
-
         final ClassFactory factory = new ClassFactory(context);
-        final TypeSpec created = factory.create("User", value);
-        System.out.println(created.toString());
+        final TypeSpec created = factory.create(className, value);
+
+        final JavaFile javaFile = JavaFile.builder(packageName, created)
+                .indent(context.indent())
+                .skipJavaLangImports(true)
+                .build();
+        return javaFile.toString();
     }
 }

@@ -6,7 +6,6 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.t28.model.json.core.Context;
-import io.t28.model.json.core.naming.NamingCase;
 import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
@@ -27,26 +26,25 @@ class ModelClassBuilder extends ClassBuilder {
         constructorBuilder.addModifiers(Modifier.PUBLIC);
 
         final Context context = getContext();
-        final NamingCase nameCase = context.nameCase();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         final NamingStrategy methodNameStrategy = context.methodNameStrategy();
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();
             final TypeName type = property.getValue();
 
-            final String fieldName = fieldNameStrategy.transform(type, name, nameCase);
+            final String fieldName = fieldNameStrategy.transform(name, type);
             classBuilder.addField(FieldSpec.builder(type, fieldName)
                     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                     .build());
 
-            final String methodName = methodNameStrategy.transform(type, name, nameCase);
+            final String methodName = methodNameStrategy.transform(name, type);
             classBuilder.addMethod(MethodSpec.methodBuilder(methodName)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(type)
                     .addStatement("return $L", fieldName)
                     .build());
 
-            final String propertyName = context.propertyNameStrategy().transform(type, name, nameCase);
+            final String propertyName = context.propertyNameStrategy().transform(name, type);
             constructorBuilder.addParameter(ParameterSpec.builder(type, propertyName)
                     .build())
                     .addStatement("this.$L = $L", fieldName, propertyName);
