@@ -13,12 +13,14 @@ import io.t28.model.json.core.json.JsonValue;
 import io.t28.model.json.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 
 public class ClassFactory {
     private final Context context;
 
+    @Inject
     public ClassFactory(@Nonnull Context context) {
         this.context = context;
     }
