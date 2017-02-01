@@ -70,6 +70,7 @@ class GsonClassBuilder extends ClassBuilder {
                     .build())
                     .addStatement("this.$L = $L", fieldName, propertyName);
         });
+        builder.add(constructorBuilder.build());
         return builder.build();
     }
 }
