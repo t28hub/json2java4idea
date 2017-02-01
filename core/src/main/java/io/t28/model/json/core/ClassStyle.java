@@ -1,10 +1,13 @@
-package io.t28.model.json.core.builder;
+package io.t28.model.json.core;
 
-import io.t28.model.json.core.Context;
+import io.t28.model.json.core.builder.ClassBuilder;
+import io.t28.model.json.core.builder.GsonClassBuilder;
+import io.t28.model.json.core.builder.JacksonClassBuilder;
+import io.t28.model.json.core.builder.ModelClassBuilder;
 
 import javax.annotation.Nonnull;
 
-public enum BuilderType {
+public enum ClassStyle {
     MODEL {
         @Nonnull
         @Override

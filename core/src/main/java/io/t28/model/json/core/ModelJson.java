@@ -4,7 +4,6 @@ import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.squareup.javapoet.TypeSpec;
-import io.t28.model.json.core.builder.BuilderType;
 import io.t28.model.json.core.io.JavaWriter;
 import io.t28.model.json.core.io.JsonReader;
 import io.t28.model.json.core.json.JsonValue;
@@ -26,7 +25,7 @@ public class ModelJson {
 
     @Inject
     @SuppressWarnings("unused")
-    private ClassFactory classFactory;
+    private ClassGenerator generator;
 
     public ModelJson(@Nonnull Context context) {
         final Injector injector = Guice.createInjector(new ModelJsonModule(context));
@@ -36,7 +35,7 @@ public class ModelJson {
     @Nonnull
     public void generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
         final JsonValue value = jsonReader.read(json);
-        final TypeSpec typeSpec = classFactory.create(className, value);
+        final TypeSpec typeSpec = generator.generate(className, value);
         javaWriter.write(packageName, typeSpec);
     }
 
@@ -45,7 +44,7 @@ public class ModelJson {
         final String json = Files.toString(file, StandardCharsets.UTF_8);
         final Context context = Context.builder()
                 .sourceDirectory(new File("core/build/classes/main/generated"))
-                .builderType(BuilderType.GSON)
+                .builderType(ClassStyle.GSON)
                 .build();
         final ModelJson modelJson = new ModelJson(context);
         modelJson.generate("io.t28.mode.json.example", "Repository", json);

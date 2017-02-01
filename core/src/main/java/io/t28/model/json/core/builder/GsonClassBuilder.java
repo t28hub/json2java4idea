@@ -15,14 +15,14 @@ import javax.lang.model.element.Modifier;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class GsonClassBuilder extends ClassBuilder {
-    GsonClassBuilder(@Nonnull String name, @Nonnull Context context) {
+public class GsonClassBuilder extends ClassBuilder {
+    public GsonClassBuilder(@Nonnull String name, @Nonnull Context context) {
         super(name, context);
     }
 
     @Nonnull
     @Override
-    protected List<FieldSpec> getFields() {
+    protected List<FieldSpec> buildFields() {
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         return getProperties().entrySet()
@@ -44,14 +44,14 @@ class GsonClassBuilder extends ClassBuilder {
 
     @Nonnull
     @Override
-    protected List<MethodSpec> getMethods() {
+    protected List<MethodSpec> buildMethods() {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         final NamingStrategy methodNameStrategy = context.methodNameStrategy();
-        final NamingStrategy propertyNameStrategy = context.propertyNameStrategy();
+        final NamingStrategy parameterNameStrategy = context.parameterNameStrategy();
         final ImmutableList.Builder<MethodSpec> builder = ImmutableList.builder();
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();
@@ -65,10 +65,10 @@ class GsonClassBuilder extends ClassBuilder {
                     .addStatement("return $L", fieldName)
                     .build());
 
-            final String propertyName = propertyNameStrategy.transform(name, type);
-            constructorBuilder.addParameter(ParameterSpec.builder(type, propertyName)
+            final String parameterName = parameterNameStrategy.transform(name, type);
+            constructorBuilder.addParameter(ParameterSpec.builder(type, parameterName)
                     .build())
-                    .addStatement("this.$L = $L", fieldName, propertyName);
+                    .addStatement("this.$L = $L", fieldName, parameterName);
         });
         builder.add(constructorBuilder.build());
         return builder.build();

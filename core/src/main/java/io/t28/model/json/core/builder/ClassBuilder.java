@@ -59,13 +59,13 @@ public abstract class ClassBuilder {
     @Nonnull
     public TypeSpec build() {
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(name);
-        getAnnotations().forEach(classBuilder::addAnnotation);
-        getModifiers().forEach(classBuilder::addModifiers);
-        getSuperClass().ifPresent(classBuilder::superclass);
-        getInterfaces().forEach(classBuilder::addSuperinterface);
-        getFields().forEach(classBuilder::addField);
-        getMethods().forEach(classBuilder::addMethod);
-        getInnerTypes().forEach(classBuilder::addType);
+        buildAnnotations().forEach(classBuilder::addAnnotation);
+        buildModifiers().forEach(classBuilder::addModifiers);
+        buildSuperClass().ifPresent(classBuilder::superclass);
+        buildInterfaces().forEach(classBuilder::addSuperinterface);
+        buildFields().forEach(classBuilder::addField);
+        buildMethods().forEach(classBuilder::addMethod);
+        buildInnerTypes().forEach(classBuilder::addType);
         return classBuilder.build();
     }
 
@@ -80,37 +80,37 @@ public abstract class ClassBuilder {
     }
 
     @Nonnull
-    protected List<AnnotationSpec> getAnnotations() {
+    protected List<AnnotationSpec> buildAnnotations() {
         return Collections.emptyList();
     }
 
     @Nonnull
-    protected Set<Modifier> getModifiers() {
+    protected Set<Modifier> buildModifiers() {
         return ImmutableSet.copyOf(modifiers);
     }
 
     @Nonnull
-    protected Optional<ClassName> getSuperClass() {
+    protected Optional<ClassName> buildSuperClass() {
         return Optional.empty();
     }
 
     @Nonnull
-    protected List<TypeName> getInterfaces() {
+    protected List<TypeName> buildInterfaces() {
         return Collections.emptyList();
     }
 
     @Nonnull
-    protected List<FieldSpec> getFields() {
+    protected List<FieldSpec> buildFields() {
         return Collections.emptyList();
     }
 
     @Nonnull
-    protected List<MethodSpec> getMethods() {
+    protected List<MethodSpec> buildMethods() {
         return Collections.emptyList();
     }
 
     @Nonnull
-    protected List<TypeSpec> getInnerTypes() {
+    protected List<TypeSpec> buildInnerTypes() {
         return ImmutableList.copyOf(innerTypes);
     }
 }

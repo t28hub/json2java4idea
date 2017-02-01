@@ -32,7 +32,7 @@ class ModelJsonModule implements Module {
 
     @Nonnull
     @Provides
-    public ClassFactory provideClassFactory() {
-        return new ClassFactory(context);
+    public ClassGenerator provideClassFactory() {
+        return new ClassGenerator(context);
     }
 }

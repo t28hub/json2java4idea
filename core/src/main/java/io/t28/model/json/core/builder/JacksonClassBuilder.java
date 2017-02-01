@@ -16,14 +16,14 @@ import javax.lang.model.element.Modifier;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class JacksonClassBuilder extends ClassBuilder {
-    JacksonClassBuilder(@Nonnull String name, @Nonnull Context context) {
+public class JacksonClassBuilder extends ClassBuilder {
+    public JacksonClassBuilder(@Nonnull String name, @Nonnull Context context) {
         super(name, context);
     }
 
     @Nonnull
     @Override
-    protected List<FieldSpec> getFields() {
+    protected List<FieldSpec> buildFields() {
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         return getProperties().entrySet()
@@ -42,7 +42,7 @@ class JacksonClassBuilder extends ClassBuilder {
 
     @Nonnull
     @Override
-    protected List<MethodSpec> getMethods() {
+    protected List<MethodSpec> buildMethods() {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(AnnotationSpec.builder(JsonCreator.class)
@@ -51,7 +51,7 @@ class JacksonClassBuilder extends ClassBuilder {
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         final NamingStrategy methodNameStrategy = context.methodNameStrategy();
-        final NamingStrategy propertyNameStrategy = context.propertyNameStrategy();
+        final NamingStrategy propertyNameStrategy = context.parameterNameStrategy();
         final ImmutableList.Builder<MethodSpec> builder = ImmutableList.builder();
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();
