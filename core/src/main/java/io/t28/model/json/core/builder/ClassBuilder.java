@@ -3,6 +3,10 @@ package io.t28.model.json.core.builder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.t28.model.json.core.Context;
@@ -15,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
@@ -23,14 +28,14 @@ public abstract class ClassBuilder {
     private final Context context;
     private final Set<Modifier> modifiers;
     private final Map<String, TypeName> properties;
-    private final List<TypeSpec> innerClasses;
+    private final List<TypeSpec> innerTypes;
 
     protected ClassBuilder(@Nonnull String name, @Nonnull Context context) {
         this.name = name;
         this.context = context;
         this.modifiers = new HashSet<>();
         this.properties = new HashMap<>();
-        this.innerClasses = new ArrayList<>();
+        this.innerTypes = new ArrayList<>();
     }
 
     @Nonnull
@@ -46,17 +51,22 @@ public abstract class ClassBuilder {
     }
 
     @Nonnull
-    public ClassBuilder addInnerClass(@Nonnull TypeSpec innerClass) {
-        innerClasses.add(innerClass);
+    public ClassBuilder addInnerType(@Nonnull TypeSpec innerType) {
+        innerTypes.add(innerType);
         return this;
     }
 
     @Nonnull
-    public abstract TypeSpec build();
-
-    @Nonnull
-    protected String getName() {
-        return name;
+    public TypeSpec build() {
+        final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(name);
+        getAnnotations().forEach(classBuilder::addAnnotation);
+        getModifiers().forEach(classBuilder::addModifiers);
+        getSuperClass().ifPresent(classBuilder::superclass);
+        getInterfaces().forEach(classBuilder::addSuperinterface);
+        getFields().forEach(classBuilder::addField);
+        getMethods().forEach(classBuilder::addMethod);
+        getInnerTypes().forEach(classBuilder::addType);
+        return classBuilder.build();
     }
 
     @Nonnull
@@ -65,17 +75,42 @@ public abstract class ClassBuilder {
     }
 
     @Nonnull
-    protected Set<Modifier> getModifiers() {
-        return ImmutableSet.copyOf(modifiers);
-    }
-
-    @Nonnull
     protected Map<String, TypeName> getProperties() {
         return ImmutableMap.copyOf(properties);
     }
 
     @Nonnull
-    protected List<TypeSpec> getInnerClasses() {
-        return ImmutableList.copyOf(innerClasses);
+    protected List<AnnotationSpec> getAnnotations() {
+        return Collections.emptyList();
+    }
+
+    @Nonnull
+    protected Set<Modifier> getModifiers() {
+        return ImmutableSet.copyOf(modifiers);
+    }
+
+    @Nonnull
+    protected Optional<ClassName> getSuperClass() {
+        return Optional.empty();
+    }
+
+    @Nonnull
+    protected List<TypeName> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    @Nonnull
+    protected List<FieldSpec> getFields() {
+        return Collections.emptyList();
+    }
+
+    @Nonnull
+    protected List<MethodSpec> getMethods() {
+        return Collections.emptyList();
+    }
+
+    @Nonnull
+    protected List<TypeSpec> getInnerTypes() {
+        return ImmutableList.copyOf(innerTypes);
     }
 }

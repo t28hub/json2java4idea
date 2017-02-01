@@ -49,7 +49,7 @@ public class ClassFactory {
             if (value.isObject()) {
                 final String innerClassName = classNameStrategy.transform(name, TypeName.OBJECT);
                 final TypeSpec innerClass = create(innerClassName, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
-                builder.addInnerClass(innerClass);
+                builder.addInnerType(innerClass);
 
                 final TypeName innerClassType = ClassName.bestGuess(innerClassName);
                 builder.addProperty(name, innerClassType);
@@ -94,7 +94,7 @@ public class ClassFactory {
 
         if (value.isObject()) {
             final TypeSpec innerClass = create(className, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
-            builder.addInnerClass(innerClass);
+            builder.addInnerType(innerClass);
 
             final TypeName innerClassType = ClassName.bestGuess(innerClass.name);
             return ParameterizedTypeName.get(ClassName.get(List.class), innerClassType);

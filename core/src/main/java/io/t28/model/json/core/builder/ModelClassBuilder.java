@@ -5,7 +5,6 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
 import io.t28.model.json.core.Context;
 import io.t28.model.json.core.naming.NamingStrategy;
 
@@ -21,17 +20,7 @@ class ModelClassBuilder extends ClassBuilder {
 
     @Nonnull
     @Override
-    public TypeSpec build() {
-        final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(getName());
-        getModifiers().forEach(classBuilder::addModifiers);
-        classBuilder.addFields(buildFields());
-        classBuilder.addMethods(buildMethods());
-        classBuilder.addTypes(getInnerClasses());
-        return classBuilder.build();
-    }
-
-    @Nonnull
-    private List<FieldSpec> buildFields() {
+    protected List<FieldSpec> getFields() {
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         return getProperties()
@@ -49,7 +38,8 @@ class ModelClassBuilder extends ClassBuilder {
     }
 
     @Nonnull
-    private List<MethodSpec> buildMethods() {
+    @Override
+    protected List<MethodSpec> getMethods() {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
