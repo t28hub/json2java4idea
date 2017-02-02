@@ -13,14 +13,14 @@ import javax.lang.model.element.Modifier;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class ModelClassBuilder extends ClassBuilder {
-    ModelClassBuilder(@Nonnull String name, @Nonnull Context context) {
+public class ModelClassBuilder extends ClassBuilder {
+    public ModelClassBuilder(@Nonnull String name, @Nonnull Context context) {
         super(name, context);
     }
 
     @Nonnull
     @Override
-    protected List<FieldSpec> getFields() {
+    protected List<FieldSpec> buildFields() {
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         return getProperties()
@@ -39,14 +39,14 @@ class ModelClassBuilder extends ClassBuilder {
 
     @Nonnull
     @Override
-    protected List<MethodSpec> getMethods() {
+    protected List<MethodSpec> buildMethods() {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
         final Context context = getContext();
         final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         final NamingStrategy methodNameStrategy = context.methodNameStrategy();
-        final NamingStrategy propertyNameStrategy = context.propertyNameStrategy();
+        final NamingStrategy parameterNameStrategy = context.parameterNameStrategy();
         final ImmutableList.Builder<MethodSpec> builder = ImmutableList.builder();
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();
@@ -59,7 +59,7 @@ class ModelClassBuilder extends ClassBuilder {
                     .addStatement("return $L", fieldName)
                     .build());
 
-            final String propertyName = propertyNameStrategy.transform(name, type);
+            final String propertyName = parameterNameStrategy.transform(name, type);
             constructorBuilder.addParameter(ParameterSpec.builder(type, propertyName)
                     .build())
                     .addStatement("this.$L = $L", fieldName, propertyName);

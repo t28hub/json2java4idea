@@ -1,12 +1,11 @@
 package io.t28.model.json.core;
 
-import io.t28.model.json.core.builder.BuilderType;
 import io.t28.model.json.core.naming.NamingCase;
 import io.t28.model.json.core.naming.NamingStrategy;
 import io.t28.model.json.core.naming.defaults.ClassNameStrategy;
 import io.t28.model.json.core.naming.defaults.FieldNameStrategy;
 import io.t28.model.json.core.naming.defaults.MethodNameStrategy;
-import io.t28.model.json.core.naming.defaults.PropertyNameStrategy;
+import io.t28.model.json.core.naming.defaults.ParameterNameStrategy;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;
@@ -23,8 +22,8 @@ public interface Context {
 
     @Nonnull
     @Value.Default
-    default BuilderType builderType() {
-        return BuilderType.MODEL;
+    default ClassStyle style() {
+        return ClassStyle.MODEL;
     }
 
     @Nonnull
@@ -53,8 +52,8 @@ public interface Context {
 
     @Nonnull
     @Value.Default
-    default NamingStrategy propertyNameStrategy() {
-        return new PropertyNameStrategy(nameCase());
+    default NamingStrategy parameterNameStrategy() {
+        return new ParameterNameStrategy(nameCase());
     }
 
     @Nonnull

@@ -7,12 +7,12 @@ import io.t28.model.json.core.utils.Keywords;
 
 import javax.annotation.Nonnull;
 
-public class PropertyNameStrategy implements NamingStrategy {
+public class ParameterNameStrategy implements NamingStrategy {
     private static final String RESERVED_KEYWORD_PREFIX = "_";
 
     private final NamingCase nameCase;
 
-    public PropertyNameStrategy(@Nonnull NamingCase nameCase) {
+    public ParameterNameStrategy(@Nonnull NamingCase nameCase) {
         this.nameCase = nameCase;
     }
 
