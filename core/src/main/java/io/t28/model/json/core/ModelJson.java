@@ -44,7 +44,7 @@ public class ModelJson {
         final String json = Files.toString(file, StandardCharsets.UTF_8);
         final Context context = Context.builder()
                 .sourceDirectory(new File("core/build/classes/main/generated"))
-                .builderType(ClassStyle.GSON)
+                .style(ClassStyle.GSON)
                 .build();
         final ModelJson modelJson = new ModelJson(context);
         modelJson.generate("io.t28.mode.json.example", "Repository", json);
