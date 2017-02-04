@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_main.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_test.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea.iml" filepath="$PROJECT_DIR$/idea/idea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea-plugin/idea-plugin.iml" filepath="$PROJECT_DIR$/.idea/modules/idea-plugin/idea-plugin.iml" group="idea-plugin" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/pojo-json.iml" filepath="$PROJECT_DIR$/.idea/modules/pojo-json.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/pojo-json_main.iml" filepath="$PROJECT_DIR$/.idea/modules/pojo-json_main.iml" group="pojo-json" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/pojo-json_test.iml" filepath="$PROJECT_DIR$/.idea/modules/pojo-json_test.iml" group="pojo-json" />
