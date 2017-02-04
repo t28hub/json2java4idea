@@ -1,5 +1,6 @@
 package io.t28.pojojson.idea;
 
+import com.google.common.base.Strings;
 import com.intellij.json.JsonFileType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -16,6 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class NewClassDialog extends DialogWrapper {
+    private static final String EMPTY_TEXT = "";
+
     private final Project project;
     private final EditorFactory editorFactory;
 
@@ -34,6 +37,23 @@ public class NewClassDialog extends DialogWrapper {
         setTitle("Create New Class from JSON");
         setResizable(true);
         init();
+    }
+
+    @NotNull
+    public String getName() {
+        final String name = nameTextField.getText();
+        return Strings.nullToEmpty(name);
+    }
+
+    @NotNull
+    public String getType() {
+        final Object selected = typeComboBox.getSelectedItem();
+        return Strings.nullToEmpty((String) selected);
+    }
+
+    @NotNull
+    public String getJson() {
+        return jsonDocument.getText();
     }
 
     @Nullable
