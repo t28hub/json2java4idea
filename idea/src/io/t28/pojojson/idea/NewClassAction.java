@@ -1,3 +1,5 @@
+package io.t28.pojojson.idea;
+
 import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,10 +11,17 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
-public class GenerateAction extends AnAction {
+public class NewClassAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent event) {
+        final Project project = event.getProject();
+        if (project == null) {
+            return;
+        }
+
+        final NewClassDialog dialog = new NewClassDialog(project);
+        dialog.show();
         System.out.println(event);
     }
 
