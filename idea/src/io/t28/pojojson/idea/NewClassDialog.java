@@ -24,6 +24,9 @@ public class NewClassDialog extends DialogWrapper {
     private JComboBox typeComboBox;
     private JPanel jsonEditorPanel;
 
+    private Editor jsonEditor;
+    private Document jsonDocument;
+
     public NewClassDialog(@NotNull Project project) {
         super(project, true);
         this.project = project;
@@ -35,10 +38,22 @@ public class NewClassDialog extends DialogWrapper {
 
     @Nullable
     @Override
+    public JComponent getPreferredFocusedComponent() {
+        return nameTextField;
+    }
+
+    @Override
+    protected void dispose() {
+        editorFactory.releaseEditor(jsonEditor);
+        super.dispose();
+    }
+
+    @Nullable
+    @Override
     protected JComponent createCenterPanel() {
-        final Document document = editorFactory.createDocument("");
-        final Editor editor = editorFactory.createEditor(document, project, JsonFileType.INSTANCE, false);
-        final EditorSettings settings = editor.getSettings();
+        jsonDocument = editorFactory.createDocument("");
+        jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
+        final EditorSettings settings = jsonEditor.getSettings();
         settings.setLineNumbersShown(true);
         settings.setAdditionalColumnsCount(0);
         settings.setAdditionalLinesCount(0);
@@ -49,19 +64,12 @@ public class NewClassDialog extends DialogWrapper {
         settings.setVirtualSpace(false);
         settings.setWheelFontChangeEnabled(false);
 
-        final EditorColorsScheme colorsScheme = editor.getColorsScheme();
+        final EditorColorsScheme colorsScheme = jsonEditor.getColorsScheme();
         colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
 
-        final JComponent editorComponent = editor.getComponent();
+        final JComponent editorComponent = jsonEditor.getComponent();
         editorComponent.setMinimumSize(new Dimension(480, 300));
         jsonEditorPanel.add(editorComponent, BorderLayout.CENTER);
         return centerPanel;
-    }
-
-
-    @Nullable
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return nameTextField;
     }
 }
