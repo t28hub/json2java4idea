@@ -10,6 +10,11 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.InputValidatorEx;
+import com.intellij.openapi.ui.ValidationInfo;
+import io.t28.pojojson.idea.ui.JsonValidator;
+import io.t28.pojojson.idea.ui.NameValidator;
+import io.t28.pojojson.idea.ui.TypeValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +29,7 @@ public class NewClassDialog extends DialogWrapper {
 
     private JPanel centerPanel;
     private JTextField nameTextField;
-    private JComboBox typeComboBox;
+    private JComboBox<Type> typeComboBox;
     private JPanel jsonEditorPanel;
 
     private Editor jsonEditor;
@@ -42,18 +47,18 @@ public class NewClassDialog extends DialogWrapper {
     @NotNull
     public String getName() {
         final String name = nameTextField.getText();
-        return Strings.nullToEmpty(name);
+        return Strings.nullToEmpty(name).trim();
     }
 
     @NotNull
     public String getType() {
         final Object selected = typeComboBox.getSelectedItem();
-        return Strings.nullToEmpty((String) selected);
+        return Strings.nullToEmpty((String) selected).trim();
     }
 
     @NotNull
     public String getJson() {
-        return jsonDocument.getText();
+        return jsonDocument.getText().trim();
     }
 
     @Nullable
@@ -70,8 +75,31 @@ public class NewClassDialog extends DialogWrapper {
 
     @Nullable
     @Override
+    protected ValidationInfo doValidate() {
+        final String name = getName();
+        final InputValidatorEx nameValidator = new NameValidator(project);
+        if (!nameValidator.canClose(name)) {
+            return new ValidationInfo(nameValidator.getErrorText(name), nameTextField);
+        }
+
+        final String type = getType();
+        final InputValidatorEx typeValidator = new TypeValidator();
+        if (!typeValidator.canClose(type)) {
+            return new ValidationInfo(typeValidator.getErrorText(type), typeComboBox);
+        }
+
+        final String json = getJson();
+        final InputValidatorEx jsonValidator = new JsonValidator();
+        if (!jsonValidator.canClose(json)) {
+            return new ValidationInfo(jsonValidator.getErrorText(json), jsonEditorPanel);
+        }
+        return super.doValidate();
+    }
+
+    @Nullable
+    @Override
     protected JComponent createCenterPanel() {
-        jsonDocument = editorFactory.createDocument("");
+        jsonDocument = editorFactory.createDocument(EMPTY_TEXT);
         jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
         final EditorSettings settings = jsonEditor.getSettings();
         settings.setLineNumbersShown(true);
