@@ -4,11 +4,16 @@ import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
+import io.t28.pojojson.idea.ui.JsonValidator;
+import io.t28.pojojson.idea.ui.NameValidator;
+import io.t28.pojojson.idea.ui.NewClassDialog;
+import io.t28.pojojson.idea.ui.TypeValidator;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 public class NewClassAction extends AnAction {
@@ -20,7 +25,12 @@ public class NewClassAction extends AnAction {
             return;
         }
 
-        final NewClassDialog dialog = new NewClassDialog(project);
+        final NewClassDialog dialog = NewClassDialog.builder(project)
+                .editorFactory(EditorFactory.getInstance())
+                .nameValidator(new NameValidator(project))
+                .typeValidator(new TypeValidator())
+                .jsonValidator(new JsonValidator())
+                .build();
         dialog.show();
         System.out.println(event);
     }
