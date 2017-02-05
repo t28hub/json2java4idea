@@ -13,5 +13,7 @@ repositories {
 
 dependencies {
     compile 'com.google.guava:guava:21.0'
+    compile 'com.google.code.gson:gson:2.8.0'
+
     testCompile 'junit:junit:4.12'
 }
