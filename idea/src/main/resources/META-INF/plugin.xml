@@ -27,7 +27,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="PojoJson.NewClass" class="io.t28.pojojson.idea.NewClassAction" text="POJO Class from JSON">
-            <add-to-group group-id="NewGroup" anchor="last"/>
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewClass"/>
         </action>
     </actions>
 

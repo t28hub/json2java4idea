@@ -3,6 +3,7 @@ package io.t28.pojojson.idea.ui;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.intellij.json.JsonFileType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -16,20 +17,26 @@ import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
 import io.t28.pojojson.idea.Type;
 import io.t28.pojojson.idea.utils.Tuple;
+import io.t28.pojojson.idea.validator.NullValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class NewClassDialog extends DialogWrapper {
     private static final String EMPTY_TEXT = "";
 
     private final Project project;
     private final EditorFactory editorFactory;
+
     private final InputValidator nameValidator;
     private final InputValidator typeValidator;
     private final InputValidator jsonValidator;
+    private final ActionListener actionListener;
+
+    private final Action formatAction;
 
     private JPanel centerPanel;
     private JTextField nameTextField;
@@ -46,6 +53,9 @@ public class NewClassDialog extends DialogWrapper {
         this.nameValidator = builder.nameValidator;
         this.typeValidator = builder.typeValidator;
         this.jsonValidator = builder.jsonValidator;
+        this.actionListener = builder.actionListener;
+
+        this.formatAction = new FormatAction();
 
         setTitle("Create New Class from JSON");
         setResizable(true);
@@ -74,16 +84,40 @@ public class NewClassDialog extends DialogWrapper {
         return jsonDocument.getText().trim();
     }
 
+    @NotNull
+    public void setJson(@NotNull String json) {
+        ApplicationManager.getApplication().runWriteAction(() -> jsonDocument.setText(json));
+    }
+
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
         return nameTextField;
     }
 
+    @Nullable
     @Override
-    protected void dispose() {
-        editorFactory.releaseEditor(jsonEditor);
-        super.dispose();
+    protected JComponent createCenterPanel() {
+        jsonDocument = editorFactory.createDocument(EMPTY_TEXT);
+        jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
+        final EditorSettings settings = jsonEditor.getSettings();
+        settings.setLineNumbersShown(true);
+        settings.setAdditionalColumnsCount(0);
+        settings.setAdditionalLinesCount(0);
+        settings.setRightMarginShown(false);
+        settings.setFoldingOutlineShown(false);
+        settings.setLineMarkerAreaShown(false);
+        settings.setIndentGuidesShown(false);
+        settings.setVirtualSpace(false);
+        settings.setWheelFontChangeEnabled(false);
+
+        final EditorColorsScheme colorsScheme = jsonEditor.getColorsScheme();
+        colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
+
+        final JComponent editorComponent = jsonEditor.getComponent();
+        editorComponent.setMinimumSize(new Dimension(480, 300));
+        jsonEditorPanel.add(editorComponent, BorderLayout.CENTER);
+        return centerPanel;
     }
 
     @Nullable
@@ -120,29 +154,34 @@ public class NewClassDialog extends DialogWrapper {
                 .orElseGet(() -> super.doValidate());
     }
 
-    @Nullable
+    @NotNull
     @Override
-    protected JComponent createCenterPanel() {
-        jsonDocument = editorFactory.createDocument(EMPTY_TEXT);
-        jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
-        final EditorSettings settings = jsonEditor.getSettings();
-        settings.setLineNumbersShown(true);
-        settings.setAdditionalColumnsCount(0);
-        settings.setAdditionalLinesCount(0);
-        settings.setRightMarginShown(false);
-        settings.setFoldingOutlineShown(false);
-        settings.setLineMarkerAreaShown(false);
-        settings.setIndentGuidesShown(false);
-        settings.setVirtualSpace(false);
-        settings.setWheelFontChangeEnabled(false);
+    protected Action[] createLeftSideActions() {
+        return new Action[]{formatAction};
+    }
 
-        final EditorColorsScheme colorsScheme = jsonEditor.getColorsScheme();
-        colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
+    class FormatAction extends DialogWrapperAction {
+        protected FormatAction() {
+            super("Format");
+        }
 
-        final JComponent editorComponent = jsonEditor.getComponent();
-        editorComponent.setMinimumSize(new Dimension(480, 300));
-        jsonEditorPanel.add(editorComponent, BorderLayout.CENTER);
-        return centerPanel;
+        @Override
+        protected void doAction(@NotNull ActionEvent event) {
+            if (isEnabled()) {
+            }
+            actionListener.onFormat(NewClassDialog.this);
+        }
+    }
+
+    public interface ActionListener {
+        default void onOk(@NotNull NewClassDialog dialog) {
+        }
+
+        default void onCancel(@NotNull NewClassDialog dialog) {
+        }
+
+        default void onFormat(@NotNull NewClassDialog dialog) {
+        }
     }
 
     public static class Builder {
@@ -151,6 +190,7 @@ public class NewClassDialog extends DialogWrapper {
         private InputValidator nameValidator;
         private InputValidator typeValidator;
         private InputValidator jsonValidator;
+        private ActionListener actionListener;
 
         private Builder(@NotNull Project project) {
             this.project = project;
@@ -158,6 +198,8 @@ public class NewClassDialog extends DialogWrapper {
             this.nameValidator = new NullValidator();
             this.typeValidator = new NullValidator();
             this.jsonValidator = new NullValidator();
+            this.actionListener = new ActionListener() {
+            };
         }
 
         @NotNull
@@ -181,6 +223,12 @@ public class NewClassDialog extends DialogWrapper {
         @NotNull
         public Builder jsonValidator(@NotNull InputValidator jsonValidator) {
             this.jsonValidator = jsonValidator;
+            return this;
+        }
+
+        @NotNull
+        public Builder actionListener(@NotNull ActionListener actionListener) {
+            this.actionListener = actionListener;
             return this;
         }
 
