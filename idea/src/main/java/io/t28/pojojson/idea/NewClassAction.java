@@ -1,6 +1,9 @@
 package io.t28.pojojson.idea;
 
 import com.intellij.ide.IdeView;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -10,19 +13,27 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
-import io.t28.pojojson.idea.ui.JsonValidator;
-import io.t28.pojojson.idea.ui.NameValidator;
 import io.t28.pojojson.idea.ui.NewClassDialog;
-import io.t28.pojojson.idea.ui.TypeValidator;
+import io.t28.pojojson.idea.utils.GsonFormatter;
+import io.t28.pojojson.idea.utils.JsonFormatter;
+import io.t28.pojojson.idea.validator.JsonValidator;
+import io.t28.pojojson.idea.validator.NameValidator;
+import io.t28.pojojson.idea.validator.TypeValidator;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
-public class NewClassAction extends AnAction {
+import java.io.IOException;
+
+public class NewClassAction extends AnAction implements NewClassDialog.ActionListener {
+    private Project project;
+    private JsonFormatter formatter;
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
-        final Project project = event.getProject();
+    public void actionPerformed(@NotNull AnActionEvent event) {
+        this.project = event.getProject();
+        this.formatter = new GsonFormatter();
         if (project == null) {
-            return;
+            throw new IllegalStateException("AnActionEvent.getProject() retrieved null");
         }
 
         final NewClassDialog dialog = NewClassDialog.builder(project)
@@ -30,9 +41,9 @@ public class NewClassAction extends AnAction {
                 .nameValidator(new NameValidator(project))
                 .typeValidator(new TypeValidator())
                 .jsonValidator(new JsonValidator())
+                .actionListener(this)
                 .build();
         dialog.show();
-        System.out.println(event);
     }
 
     @Override
@@ -60,5 +71,40 @@ public class NewClassAction extends AnAction {
             }
         }
         event.getPresentation().setEnabledAndVisible(false);
+    }
+
+    @Override
+    public void onOk(@NotNull NewClassDialog dialog) {
+
+    }
+
+    @Override
+    public void onCancel(@NotNull NewClassDialog dialog) {
+
+    }
+
+    @Override
+    public void onFormat(@NotNull NewClassDialog dialog) {
+        try {
+            final String json = dialog.getJson();
+            final String formatted = formatter.format(json);
+            dialog.setJson(formatted);
+        } catch (IOException e) {
+            final Notification notification = new Notification(
+                    "POJO.json",
+                    "I/O error",
+                    "An I/O error occurred",
+                    NotificationType.WARNING
+            );
+            Notifications.Bus.notify(notification, project);
+        } catch (IllegalArgumentException e) {
+            final Notification notification = new Notification(
+                    "POJO.json",
+                    "Syntax error",
+                    "Specified JSON has syntax error",
+                    NotificationType.WARNING
+            );
+            Notifications.Bus.notify(notification, project);
+        }
     }
 }

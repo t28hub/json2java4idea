@@ -1,4 +1,4 @@
-package io.t28.pojojson.idea.ui;
+package io.t28.pojojson.idea.validator;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
