@@ -100,10 +100,11 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             final JavaDirectoryService directoryService = JavaDirectoryService.getInstance();
             final String packageName = directoryService.getPackage(directory).getQualifiedName();
 
+            final ClassStyle style = ClassStyle.fromName(dialog.getType()).orElse(ClassStyle.MODEL);
             final String name = dialog.getName();
             final String json = dialog.getJson();
             final Context context = Context.builder()
-                    .style(ClassStyle.MODEL)
+                    .style(style)
                     .build();
             final PojoJson pojoJson = new PojoJson(context);
             try {
