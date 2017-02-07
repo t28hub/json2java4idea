@@ -3,10 +3,10 @@ package io.t28.pojojson.core;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import io.t28.pojojson.core.io.JacksonReader;
-import io.t28.pojojson.core.io.JavaFileWriter;
-import io.t28.pojojson.core.io.JavaWriter;
-import io.t28.pojojson.core.io.JsonReader;
+import io.t28.pojojson.core.io.JacksonParser;
+import io.t28.pojojson.core.io.JavaFileBuilder;
+import io.t28.pojojson.core.io.JavaBuilder;
+import io.t28.pojojson.core.io.JsonParser;
 
 import javax.annotation.Nonnull;
 
@@ -20,14 +20,10 @@ class PojoJsonModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-        binder.bind(JsonReader.class)
-                .to(JacksonReader.class);
-    }
-
-    @Nonnull
-    @Provides
-    public JavaWriter provideJavaWriter() {
-        return new JavaFileWriter(context.sourceDirectory());
+        binder.bind(JsonParser.class)
+                .to(JacksonParser.class);
+        binder.bind(JavaBuilder.class)
+                .to(JavaFileBuilder.class);
     }
 
     @Nonnull

@@ -1,31 +1,31 @@
 package io.t28.pojojson.core.io;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.t28.pojojson.core.io.exception.JsonReadException;
+import io.t28.pojojson.core.io.exception.JsonParseException;
 import io.t28.pojojson.core.json.JsonValue;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public class JacksonReader implements JsonReader {
+public class JacksonParser implements JsonParser {
     private final ObjectMapper mapper;
 
-    public JacksonReader() {
+    public JacksonParser() {
         this(new ObjectMapper());
     }
 
-    JacksonReader(@Nonnull ObjectMapper mapper) {
+    JacksonParser(@Nonnull ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     @Nonnull
     @Override
-    public JsonValue read(@Nonnull String json) throws JsonReadException {
+    public JsonValue read(@Nonnull String json) throws JsonParseException {
         try {
             final Object parsed = mapper.readValue(json, Object.class);
             return JsonValue.wrap(parsed);
         } catch (IOException e) {
-            throw new JsonReadException("Unable to read a JSON string(" + json + ")", e);
+            throw new JsonParseException("Unable to read a JSON string(" + json + ")", e);
         }
     }
 }
