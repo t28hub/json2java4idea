@@ -154,6 +154,12 @@ public class NewClassDialog extends DialogWrapper {
                 .orElseGet(() -> super.doValidate());
     }
 
+    @Override
+    protected void doOKAction() {
+        super.doOKAction();
+        actionListener.onOk(this);
+    }
+
     @NotNull
     @Override
     protected Action[] createLeftSideActions() {

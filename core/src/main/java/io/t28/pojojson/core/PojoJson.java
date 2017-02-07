@@ -4,8 +4,8 @@ import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.squareup.javapoet.TypeSpec;
-import io.t28.pojojson.core.io.JavaWriter;
-import io.t28.pojojson.core.io.JsonReader;
+import io.t28.pojojson.core.io.JavaBuilder;
+import io.t28.pojojson.core.io.JsonParser;
 import io.t28.pojojson.core.json.JsonValue;
 
 import javax.annotation.Nonnull;
@@ -17,11 +17,11 @@ import java.nio.charset.StandardCharsets;
 public class PojoJson {
     @Inject
     @SuppressWarnings("unused")
-    private JsonReader jsonReader;
+    private JsonParser jsonParser;
 
     @Inject
     @SuppressWarnings("unused")
-    private JavaWriter javaWriter;
+    private JavaBuilder javaBuilder;
 
     @Inject
     @SuppressWarnings("unused")
@@ -33,20 +33,20 @@ public class PojoJson {
     }
 
     @Nonnull
-    public void generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
-        final JsonValue value = jsonReader.read(json);
+    public String generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
+        final JsonValue value = jsonParser.read(json);
         final TypeSpec typeSpec = generator.generate(className, value);
-        javaWriter.write(packageName, typeSpec);
+        return javaBuilder.build(packageName, typeSpec);
     }
 
     public static void main(String[] args) throws Exception {
         final File file = new File("core/src/main/resources/repositories.json");
         final String json = Files.toString(file, StandardCharsets.UTF_8);
         final Context context = Context.builder()
-                .sourceDirectory(new File("core/build/classes/main/generated"))
                 .style(ClassStyle.GSON)
                 .build();
         final PojoJson pojoJson = new PojoJson(context);
-        pojoJson.generate("io.t28.mode.json.example", "Repository", json);
+        final String generated = pojoJson.generate("io.t28.mode.json.example", "Repository", json);
+        System.out.println(generated);
     }
 }

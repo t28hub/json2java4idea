@@ -9,17 +9,10 @@ import io.t28.pojojson.core.naming.defaults.ParameterNameStrategy;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 
 @Value.Immutable
 @SuppressWarnings("NullableProblems")
 public interface Context {
-    @Nonnull
-    @Value.Default
-    default File sourceDirectory() {
-        return new File("build/classes/main/generated");
-    }
-
     @Nonnull
     @Value.Default
     default ClassStyle style() {
