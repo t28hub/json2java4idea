@@ -11,6 +11,7 @@ import io.t28.pojojson.core.io.JacksonParser;
 import io.t28.pojojson.core.io.JavaBuilder;
 import io.t28.pojojson.core.io.JavaFileBuilder;
 import io.t28.pojojson.core.io.JsonParser;
+import io.t28.pojojson.core.json.JsonArray;
 import io.t28.pojojson.core.json.JsonNull;
 import io.t28.pojojson.core.json.JsonObject;
 import io.t28.pojojson.core.json.JsonValue;
@@ -113,6 +114,18 @@ public class PojoJson {
             builder.addProperty(key, value.getType());
         });
         return builder.build();
+    }
+
+    @Nonnull
+    private TypeSpec generate(@Nonnull String className, @Nonnull JsonArray array, @Nonnull ClassStyle style) {
+        final JsonValue firstValue = array.stream().findFirst().orElse(new JsonNull());
+        if (firstValue.isObject()) {
+            return generate(className, firstValue.asObject(), style);
+        }
+        if (firstValue.isArray()) {
+            return generate(className, firstValue.asArray(), style);
+        }
+        throw new IllegalArgumentException();
     }
 
     @Nonnull

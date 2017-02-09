@@ -6,6 +6,7 @@ import com.squareup.javapoet.TypeName;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -14,7 +15,7 @@ public class JsonObject extends JsonValue {
     private final Map<String, Object> value;
 
     public JsonObject(@Nonnull Map<String, Object> value) {
-        this.value = ImmutableMap.copyOf(value);
+        this.value = Collections.unmodifiableMap(new HashMap<>(value));
     }
 
     @Nonnull
@@ -37,7 +38,7 @@ public class JsonObject extends JsonValue {
                 .map(entry -> {
                     final String name = entry.getKey();
                     final Object value = entry.getValue();
-                    return new HashMap.SimpleImmutableEntry<String, JsonValue>(name, wrap(value));
+                    return new HashMap.SimpleImmutableEntry<>(name, wrap(value));
                 });
     }
 }

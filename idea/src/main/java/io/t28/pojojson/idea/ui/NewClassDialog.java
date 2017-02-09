@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.intellij.json.JsonFileType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -86,7 +88,9 @@ public class NewClassDialog extends DialogWrapper {
 
     @NotNull
     public void setJson(@NotNull String json) {
-        ApplicationManager.getApplication().runWriteAction(() -> jsonDocument.setText(json));
+        ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, () -> {
+            jsonDocument.replaceString(0, jsonDocument.getText().length(), json);
+        }, null, null, UndoConfirmationPolicy.DEFAULT, jsonDocument));
     }
 
     @Nullable
