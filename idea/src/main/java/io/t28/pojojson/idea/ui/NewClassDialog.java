@@ -6,6 +6,7 @@ import com.intellij.json.JsonFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
+import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -90,6 +91,12 @@ public class NewClassDialog extends DialogWrapper {
     public void setJson(@NotNull String json) {
         ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, () -> {
             jsonDocument.replaceString(0, jsonDocument.getText().length(), json);
+
+            final int jsonLength = jsonDocument.getTextLength();
+            final CaretModel caret = jsonEditor.getCaretModel();
+            if (caret.getOffset() >= jsonLength) {
+                caret.moveToOffset(jsonLength);
+            }
         }, null, null, UndoConfirmationPolicy.DEFAULT, jsonDocument));
     }
 
