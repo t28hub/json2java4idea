@@ -9,7 +9,7 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import io.t28.pojojson.core.Context;
+import io.t28.pojojson.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
@@ -24,15 +24,22 @@ import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassBuilder {
-    private final String name;
-    private final Context context;
+    protected final String name;
+    protected final NamingStrategy fieldNameStrategy;
+    protected final NamingStrategy methodNameStrategy;
+    protected final NamingStrategy parameterNameStrategy;
     private final Set<Modifier> modifiers;
     private final Map<String, TypeName> properties;
     private final List<TypeSpec> innerTypes;
 
-    protected ClassBuilder(@Nonnull String name, @Nonnull Context context) {
+    protected ClassBuilder(@Nonnull String name,
+                           @Nonnull NamingStrategy fieldNameStrategy,
+                           @Nonnull NamingStrategy methodNameStrategy,
+                           @Nonnull NamingStrategy parameterNameStrategy) {
         this.name = name;
-        this.context = context;
+        this.fieldNameStrategy = fieldNameStrategy;
+        this.methodNameStrategy = methodNameStrategy;
+        this.parameterNameStrategy = parameterNameStrategy;
         this.modifiers = new HashSet<>();
         this.properties = new HashMap<>();
         this.innerTypes = new ArrayList<>();
@@ -67,11 +74,6 @@ public abstract class ClassBuilder {
         buildMethods().forEach(classBuilder::addMethod);
         buildInnerTypes().forEach(classBuilder::addType);
         return classBuilder.build();
-    }
-
-    @Nonnull
-    protected Context getContext() {
-        return context;
     }
 
     @Nonnull

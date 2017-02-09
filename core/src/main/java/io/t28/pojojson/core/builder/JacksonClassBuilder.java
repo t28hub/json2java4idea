@@ -8,7 +8,6 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
-import io.t28.pojojson.core.Context;
 import io.t28.pojojson.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
@@ -17,15 +16,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JacksonClassBuilder extends ClassBuilder {
-    public JacksonClassBuilder(@Nonnull String name, @Nonnull Context context) {
-        super(name, context);
+    public JacksonClassBuilder(@Nonnull String name,
+                               @Nonnull NamingStrategy fieldNameStrategy,
+                               @Nonnull NamingStrategy methodNameStrategy,
+                               @Nonnull NamingStrategy parameterNameStrategy) {
+        super(name, fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
     }
 
     @Nonnull
     @Override
     protected List<FieldSpec> buildFields() {
-        final Context context = getContext();
-        final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         return getProperties().entrySet()
                 .stream()
                 .map(property -> {
@@ -48,10 +48,6 @@ public class JacksonClassBuilder extends ClassBuilder {
                 .addAnnotation(AnnotationSpec.builder(JsonCreator.class)
                         .build());
 
-        final Context context = getContext();
-        final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
-        final NamingStrategy methodNameStrategy = context.methodNameStrategy();
-        final NamingStrategy propertyNameStrategy = context.parameterNameStrategy();
         final ImmutableList.Builder<MethodSpec> builder = ImmutableList.builder();
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();
@@ -68,7 +64,7 @@ public class JacksonClassBuilder extends ClassBuilder {
                     .addStatement("return $L", fieldName)
                     .build());
 
-            final String propertyName = propertyNameStrategy.transform(name, type);
+            final String propertyName = parameterNameStrategy.transform(name, type);
             constructorBuilder.addParameter(ParameterSpec.builder(type, propertyName)
                     .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
                             .addMember("value", "$S", name)
