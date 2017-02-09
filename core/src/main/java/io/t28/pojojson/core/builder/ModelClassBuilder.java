@@ -5,7 +5,6 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
-import io.t28.pojojson.core.Context;
 import io.t28.pojojson.core.naming.NamingStrategy;
 
 import javax.annotation.Nonnull;
@@ -14,15 +13,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ModelClassBuilder extends ClassBuilder {
-    public ModelClassBuilder(@Nonnull String name, @Nonnull Context context) {
-        super(name, context);
+    public ModelClassBuilder(@Nonnull String name,
+                             @Nonnull NamingStrategy fieldNameStrategy,
+                             @Nonnull NamingStrategy methodNameStrategy,
+                             @Nonnull NamingStrategy parameterNameStrategy) {
+        super(name, fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
     }
 
     @Nonnull
     @Override
     protected List<FieldSpec> buildFields() {
-        final Context context = getContext();
-        final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
         return getProperties()
                 .entrySet()
                 .stream()
@@ -43,10 +43,6 @@ public class ModelClassBuilder extends ClassBuilder {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
-        final Context context = getContext();
-        final NamingStrategy fieldNameStrategy = context.fieldNameStrategy();
-        final NamingStrategy methodNameStrategy = context.methodNameStrategy();
-        final NamingStrategy parameterNameStrategy = context.parameterNameStrategy();
         final ImmutableList.Builder<MethodSpec> builder = ImmutableList.builder();
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();

@@ -19,7 +19,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.PlatformIcons;
 import io.t28.pojojson.core.ClassStyle;
-import io.t28.pojojson.core.Context;
 import io.t28.pojojson.core.PojoJson;
 import io.t28.pojojson.idea.ui.NewClassDialog;
 import io.t28.pojojson.idea.utils.GsonFormatter;
