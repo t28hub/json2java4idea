@@ -102,12 +102,10 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             final ClassStyle style = ClassStyle.fromName(dialog.getType()).orElse(ClassStyle.MODEL);
             final String name = dialog.getName();
             final String json = dialog.getJson();
-            final Context context = Context.builder()
-                    .style(style)
+            final PojoJson pojoJson = PojoJson.builder()
                     .build();
-            final PojoJson pojoJson = new PojoJson(context);
             try {
-                final String generated = pojoJson.generate(packageName, name, json);
+                final String generated = pojoJson.generate(packageName, name, json, style);
                 final PsiFile file = factory.createFileFromText(name + ".java", JavaFileType.INSTANCE, generated);
                 directory.add(file);
             } catch (IOException e) {

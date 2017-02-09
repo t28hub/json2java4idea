@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.uiDesigner.core.GridConstraints;
 import io.t28.pojojson.idea.Type;
 import io.t28.pojojson.idea.utils.Tuple;
 import io.t28.pojojson.idea.validator.NullValidator;
@@ -41,8 +42,7 @@ public class NewClassDialog extends DialogWrapper {
     private JPanel centerPanel;
     private JTextField nameTextField;
     private JComboBox<Type> typeComboBox;
-    private JPanel jsonEditorPanel;
-
+    private JComponent jsonEditorComponent;
     private Editor jsonEditor;
     private Document jsonDocument;
 
@@ -114,9 +114,19 @@ public class NewClassDialog extends DialogWrapper {
         final EditorColorsScheme colorsScheme = jsonEditor.getColorsScheme();
         colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
 
-        final JComponent editorComponent = jsonEditor.getComponent();
-        editorComponent.setMinimumSize(new Dimension(480, 300));
-        jsonEditorPanel.add(editorComponent, BorderLayout.CENTER);
+        final GridConstraints constraints = new GridConstraints(
+                2, 1, 1, 1,
+                GridConstraints.ANCHOR_CENTER,
+                GridConstraints.FILL_BOTH,
+                3,
+                3,
+                new Dimension(480, 300),
+                null,
+                null
+        );
+        jsonEditorComponent = jsonEditor.getComponent();
+        jsonEditor.getContentComponent().setFocusable(true);
+        ((JPanel) centerPanel.getComponent(0)).add(jsonEditorComponent, constraints);
         return centerPanel;
     }
 
@@ -127,7 +137,7 @@ public class NewClassDialog extends DialogWrapper {
                 .of(
                         Tuple.tuple(getName(), nameValidator, nameTextField),
                         Tuple.tuple(getType(), typeValidator, typeComboBox),
-                        Tuple.tuple(getJson(), jsonValidator, jsonEditorPanel)
+                        Tuple.tuple(getJson(), jsonValidator, jsonEditorComponent)
                 )
                 .stream()
                 .filter(tuple -> {
