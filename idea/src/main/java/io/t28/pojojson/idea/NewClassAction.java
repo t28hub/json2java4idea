@@ -9,6 +9,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -93,7 +95,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onOk(@NotNull NewClassDialog dialog) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
+        ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, () -> {
             final PsiDirectory directory = ideView.getOrChooseDirectory();
             final PsiFileFactory factory = PsiFileFactory.getInstance(project);
             final JavaDirectoryService directoryService = JavaDirectoryService.getInstance();
@@ -111,7 +113,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }, null, null, UndoConfirmationPolicy.DEFAULT));
         dialog.close(0);
     }
 
