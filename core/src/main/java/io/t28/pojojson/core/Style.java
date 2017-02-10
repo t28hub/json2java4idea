@@ -4,7 +4,7 @@ import io.t28.pojojson.core.builder.ClassBuilder;
 import io.t28.pojojson.core.builder.GsonClassBuilder;
 import io.t28.pojojson.core.builder.JacksonClassBuilder;
 import io.t28.pojojson.core.builder.ModelClassBuilder;
-import io.t28.pojojson.core.naming.NamingStrategy;
+import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -16,9 +16,9 @@ public enum Style {
         @Nonnull
         @Override
         public ClassBuilder newBuilder(@Nonnull String className,
-                                       @Nonnull NamingStrategy fieldNameStrategy,
-                                       @Nonnull NamingStrategy methodNameStrategy,
-                                       @Nonnull NamingStrategy parameterNameStrategy) {
+                                       @Nonnull NamePolicy fieldNameStrategy,
+                                       @Nonnull NamePolicy methodNameStrategy,
+                                       @Nonnull NamePolicy parameterNameStrategy) {
             return new ModelClassBuilder(
                     className,
                     fieldNameStrategy,
@@ -31,9 +31,9 @@ public enum Style {
         @Nonnull
         @Override
         public ClassBuilder newBuilder(@Nonnull String className,
-                                       @Nonnull NamingStrategy fieldNameStrategy,
-                                       @Nonnull NamingStrategy methodNameStrategy,
-                                       @Nonnull NamingStrategy parameterNameStrategy) {
+                                       @Nonnull NamePolicy fieldNameStrategy,
+                                       @Nonnull NamePolicy methodNameStrategy,
+                                       @Nonnull NamePolicy parameterNameStrategy) {
             return new GsonClassBuilder(
                     className,
                     fieldNameStrategy,
@@ -46,9 +46,9 @@ public enum Style {
         @Nonnull
         @Override
         public ClassBuilder newBuilder(@Nonnull String className,
-                                       @Nonnull NamingStrategy fieldNameStrategy,
-                                       @Nonnull NamingStrategy methodNameStrategy,
-                                       @Nonnull NamingStrategy parameterNameStrategy) {
+                                       @Nonnull NamePolicy fieldNameStrategy,
+                                       @Nonnull NamePolicy methodNameStrategy,
+                                       @Nonnull NamePolicy parameterNameStrategy) {
             return new JacksonClassBuilder(
                     className,
                     fieldNameStrategy,
@@ -61,9 +61,9 @@ public enum Style {
     @Nonnull
     @CheckReturnValue
     public abstract ClassBuilder newBuilder(@Nonnull String className,
-                                            @Nonnull NamingStrategy fieldNameStrategy,
-                                            @Nonnull NamingStrategy methodNameStrategy,
-                                            @Nonnull NamingStrategy parameterNameStrategy);
+                                            @Nonnull NamePolicy fieldNameStrategy,
+                                            @Nonnull NamePolicy methodNameStrategy,
+                                            @Nonnull NamePolicy parameterNameStrategy);
 
     @Nonnull
     @CheckReturnValue

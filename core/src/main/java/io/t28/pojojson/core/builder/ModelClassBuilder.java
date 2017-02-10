@@ -5,7 +5,7 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
-import io.t28.pojojson.core.naming.NamingStrategy;
+import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class ModelClassBuilder extends ClassBuilder {
     public ModelClassBuilder(@Nonnull String name,
-                             @Nonnull NamingStrategy fieldNameStrategy,
-                             @Nonnull NamingStrategy methodNameStrategy,
-                             @Nonnull NamingStrategy parameterNameStrategy) {
+                             @Nonnull NamePolicy fieldNameStrategy,
+                             @Nonnull NamePolicy methodNameStrategy,
+                             @Nonnull NamePolicy parameterNameStrategy) {
         super(name, fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
     }
 
@@ -29,7 +29,7 @@ public class ModelClassBuilder extends ClassBuilder {
                 .map(property -> {
                     final String name = property.getKey();
                     final TypeName type = property.getValue();
-                    final String fieldName = fieldNameStrategy.transform(name, type);
+                    final String fieldName = fieldNamePolicy.convert(name, type);
                     return FieldSpec.builder(type, fieldName)
                             .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                             .build();
@@ -47,15 +47,15 @@ public class ModelClassBuilder extends ClassBuilder {
         getProperties().entrySet().forEach(property -> {
             final String name = property.getKey();
             final TypeName type = property.getValue();
-            final String fieldName = fieldNameStrategy.transform(name, type);
-            final String methodName = methodNameStrategy.transform(name, type);
+            final String fieldName = fieldNamePolicy.convert(name, type);
+            final String methodName = methodNamePolicy.convert(name, type);
             builder.add(MethodSpec.methodBuilder(methodName)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(type)
                     .addStatement("return $L", fieldName)
                     .build());
 
-            final String propertyName = parameterNameStrategy.transform(name, type);
+            final String propertyName = parameterNamePolicy.convert(name, type);
             constructorBuilder.addParameter(ParameterSpec.builder(type, propertyName)
                     .build())
                     .addStatement("this.$L = $L", fieldName, propertyName);

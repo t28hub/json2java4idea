@@ -4,7 +4,7 @@ import com.squareup.javapoet.TypeName;
 
 import javax.annotation.Nonnull;
 
-public interface NamingStrategy {
+public interface NamePolicy {
     @Nonnull
-    String transform(@Nonnull String name, @Nonnull TypeName type);
+    String convert(@Nonnull String name, @Nonnull TypeName type);
 }
