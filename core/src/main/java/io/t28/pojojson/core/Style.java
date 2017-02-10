@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public enum ClassStyle {
-    MODEL {
+public enum Style {
+    NONE {
         @Nonnull
         @Override
         public ClassBuilder newBuilder(@Nonnull String className,
@@ -67,7 +67,7 @@ public enum ClassStyle {
 
     @Nonnull
     @CheckReturnValue
-    public static Optional<ClassStyle> fromName(@Nonnull String name) {
+    public static Optional<Style> fromName(@Nonnull String name) {
         return Stream.of(values())
                 .filter(style -> style.name().equalsIgnoreCase(name))
                 .findFirst();

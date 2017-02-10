@@ -20,7 +20,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.PlatformIcons;
-import io.t28.pojojson.core.ClassStyle;
+import io.t28.pojojson.core.Style;
 import io.t28.pojojson.core.PojoJson;
 import io.t28.pojojson.idea.ui.NewClassDialog;
 import io.t28.pojojson.idea.utils.GsonFormatter;
@@ -101,7 +101,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             final JavaDirectoryService directoryService = JavaDirectoryService.getInstance();
             final String packageName = directoryService.getPackage(directory).getQualifiedName();
 
-            final ClassStyle style = ClassStyle.fromName(dialog.getType()).orElse(ClassStyle.MODEL);
+            final Style style = Style.fromName(dialog.getType()).orElse(Style.NONE);
             final String name = dialog.getName();
             final String json = dialog.getJson();
             final PojoJson pojoJson = PojoJson.builder()
