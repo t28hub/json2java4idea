@@ -15,12 +15,12 @@ import io.t28.pojojson.core.json.JsonArray;
 import io.t28.pojojson.core.json.JsonNull;
 import io.t28.pojojson.core.json.JsonObject;
 import io.t28.pojojson.core.json.JsonValue;
-import io.t28.pojojson.core.naming.NamingCase;
-import io.t28.pojojson.core.naming.NamingStrategy;
-import io.t28.pojojson.core.naming.defaults.ClassNameStrategy;
-import io.t28.pojojson.core.naming.defaults.FieldNameStrategy;
+import io.t28.pojojson.core.naming.CasePolicy;
+import io.t28.pojojson.core.naming.NamePolicy;
+import io.t28.pojojson.core.naming.defaults.ClassNamePolicy;
+import io.t28.pojojson.core.naming.defaults.FieldNamePolicy;
 import io.t28.pojojson.core.naming.defaults.MethodNameStrategy;
-import io.t28.pojojson.core.naming.defaults.ParameterNameStrategy;
+import io.t28.pojojson.core.naming.defaults.ParameterNamePolicy;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -32,19 +32,19 @@ import java.util.List;
 
 public class PojoJson {
     private final Style style;
-    private final NamingStrategy classNameStrategy;
-    private final NamingStrategy fieldNameStrategy;
-    private final NamingStrategy methodNameStrategy;
-    private final NamingStrategy parameterNameStrategy;
+    private final NamePolicy classNamePolicy;
+    private final NamePolicy fieldNamePolicy;
+    private final NamePolicy methodNamePolicy;
+    private final NamePolicy parameterNamePolicy;
     private final JsonParser jsonParser;
     private final JavaBuilder javaBuilder;
 
     private PojoJson(@Nonnull Builder builder) {
         style = builder.style;
-        classNameStrategy = builder.classNameStrategy;
-        fieldNameStrategy = builder.fieldNameStrategy;
-        methodNameStrategy = builder.methodNameStrategy;
-        parameterNameStrategy = builder.parameterNameStrategy;
+        classNamePolicy = builder.classNamePolicy;
+        fieldNamePolicy = builder.fieldNamePolicy;
+        methodNamePolicy = builder.methodNamePolicy;
+        parameterNamePolicy = builder.parameterNamePolicy;
         jsonParser = builder.jsonParser;
         javaBuilder = builder.javaBuilder;
     }
@@ -80,9 +80,9 @@ public class PojoJson {
     private TypeSpec generate(@Nonnull String name, @Nonnull JsonObject object, @Nonnull Modifier... modifiers) {
         final ClassBuilder builder = style.newBuilder(
                 name,
-                fieldNameStrategy,
-                methodNameStrategy,
-                parameterNameStrategy
+                fieldNamePolicy,
+                methodNamePolicy,
+                parameterNamePolicy
         );
         builder.addModifiers(modifiers);
 
@@ -90,7 +90,7 @@ public class PojoJson {
             final String key = child.getKey();
             final JsonValue value = child.getValue();
             if (value.isObject()) {
-                final String innerClassName = classNameStrategy.transform(key, TypeName.OBJECT);
+                final String innerClassName = classNamePolicy.convert(key, TypeName.OBJECT);
                 final TypeSpec innerClass = generate(innerClassName, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
                 builder.addInnerType(innerClass);
 
@@ -100,7 +100,7 @@ public class PojoJson {
             }
 
             if (value.isArray()) {
-                final String innerClassName = classNameStrategy.transform(key, TypeName.OBJECT);
+                final String innerClassName = classNamePolicy.convert(key, TypeName.OBJECT);
                 final JsonValue firstValue = value.asArray().stream().findFirst().orElse(new JsonNull());
                 final TypeName listType = generateListType(innerClassName, firstValue, builder);
                 builder.addProperty(key, listType);
@@ -149,19 +149,19 @@ public class PojoJson {
     @SuppressWarnings("unused")
     public static class Builder {
         private Style style;
-        private NamingStrategy classNameStrategy;
-        private NamingStrategy fieldNameStrategy;
-        private NamingStrategy methodNameStrategy;
-        private NamingStrategy parameterNameStrategy;
+        private NamePolicy classNamePolicy;
+        private NamePolicy fieldNamePolicy;
+        private NamePolicy methodNamePolicy;
+        private NamePolicy parameterNamePolicy;
         private JsonParser jsonParser;
         private JavaBuilder javaBuilder;
 
         private Builder() {
             style = Style.NONE;
-            classNameStrategy = new ClassNameStrategy(NamingCase.LOWER_SNAKE_CASE);
-            fieldNameStrategy = new FieldNameStrategy(NamingCase.LOWER_SNAKE_CASE);
-            methodNameStrategy = new MethodNameStrategy(NamingCase.LOWER_SNAKE_CASE);
-            parameterNameStrategy = new ParameterNameStrategy(NamingCase.LOWER_SNAKE_CASE);
+            classNamePolicy = new ClassNamePolicy(CasePolicy.LOWER_SNAKE_CASE);
+            fieldNamePolicy = new FieldNamePolicy(CasePolicy.LOWER_SNAKE_CASE);
+            methodNamePolicy = new MethodNameStrategy(CasePolicy.LOWER_SNAKE_CASE);
+            parameterNamePolicy = new ParameterNamePolicy(CasePolicy.LOWER_SNAKE_CASE);
             jsonParser = new JacksonParser();
             javaBuilder = new JavaFileBuilder();
         }
@@ -175,29 +175,29 @@ public class PojoJson {
 
         @Nonnull
         @CheckReturnValue
-        public Builder classNameStrategy(@Nonnull NamingStrategy classNameStrategy) {
-            this.classNameStrategy = classNameStrategy;
+        public Builder classNamePolicy(@Nonnull NamePolicy classNamePolicy) {
+            this.classNamePolicy = classNamePolicy;
             return this;
         }
 
         @Nonnull
         @CheckReturnValue
-        public Builder fieldNameStrategy(@Nonnull NamingStrategy fieldNameStrategy) {
-            this.fieldNameStrategy = fieldNameStrategy;
+        public Builder fieldNamePolicy(@Nonnull NamePolicy fieldNamePolicy) {
+            this.fieldNamePolicy = fieldNamePolicy;
             return this;
         }
 
         @Nonnull
         @CheckReturnValue
-        public Builder methodNameStrategy(@Nonnull NamingStrategy methodNameStrategy) {
-            this.methodNameStrategy = methodNameStrategy;
+        public Builder methodNamePolicy(@Nonnull NamePolicy methodNamePolicy) {
+            this.methodNamePolicy = methodNamePolicy;
             return this;
         }
 
         @Nonnull
         @CheckReturnValue
-        public Builder parameterNameStrategy(@Nonnull NamingStrategy parameterNameStrategy) {
-            this.parameterNameStrategy = parameterNameStrategy;
+        public Builder parameterNamePolicy(@Nonnull NamePolicy parameterNamePolicy) {
+            this.parameterNamePolicy = parameterNamePolicy;
             return this;
         }
 

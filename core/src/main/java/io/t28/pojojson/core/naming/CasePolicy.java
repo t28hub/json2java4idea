@@ -2,9 +2,10 @@ package io.t28.pojojson.core.naming;
 
 import com.google.common.base.CaseFormat;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
-public enum NamingCase {
+public enum CasePolicy {
     LOWER_CAMEL_CASE(CaseFormat.LOWER_CAMEL),
     UPPER_CAMEL_CASE(CaseFormat.UPPER_CAMEL),
     LOWER_SNAKE_CASE(CaseFormat.LOWER_UNDERSCORE),
@@ -13,8 +14,8 @@ public enum NamingCase {
     UPPER_KEBAB_CASE(CaseFormat.LOWER_HYPHEN) {
         @Nonnull
         @Override
-        public String to(@Nonnull NamingCase rule, @Nonnull String text) {
-            return super.to(rule, text.toLowerCase());
+        public String convert(@Nonnull CasePolicy sourcePolicy, @Nonnull String sourceText) {
+            return super.convert(sourcePolicy, sourceText.toLowerCase());
         }
     };
 
@@ -26,18 +27,19 @@ public enum NamingCase {
 
     private final CaseFormat format;
 
-    NamingCase(@Nonnull CaseFormat format) {
+    CasePolicy(@Nonnull CaseFormat format) {
         this.format = format;
     }
 
     @Nonnull
-    public String to(@Nonnull NamingCase rule, @Nonnull String text) {
-        if (this == rule) {
-            return text;
+    @CheckReturnValue
+    public String convert(@Nonnull CasePolicy sourcePolicy, @Nonnull String sourceText) {
+        if (this == sourcePolicy) {
+            return sourceText;
         }
-        if (rule == NamingCase.UPPER_KEBAB_CASE) {
-            return this.format.to(rule.format, text).toUpperCase();
+        if (sourcePolicy == CasePolicy.UPPER_KEBAB_CASE) {
+            return this.format.to(sourcePolicy.format, sourceText).toUpperCase();
         }
-        return this.format.to(rule.format, text);
+        return this.format.to(sourcePolicy.format, sourceText);
     }
 }

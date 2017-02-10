@@ -9,7 +9,7 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import io.t28.pojojson.core.naming.NamingStrategy;
+import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
@@ -25,21 +25,21 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassBuilder {
     protected final String name;
-    protected final NamingStrategy fieldNameStrategy;
-    protected final NamingStrategy methodNameStrategy;
-    protected final NamingStrategy parameterNameStrategy;
+    protected final NamePolicy fieldNamePolicy;
+    protected final NamePolicy methodNamePolicy;
+    protected final NamePolicy parameterNamePolicy;
     private final Set<Modifier> modifiers;
     private final Map<String, TypeName> properties;
     private final List<TypeSpec> innerTypes;
 
     protected ClassBuilder(@Nonnull String name,
-                           @Nonnull NamingStrategy fieldNameStrategy,
-                           @Nonnull NamingStrategy methodNameStrategy,
-                           @Nonnull NamingStrategy parameterNameStrategy) {
+                           @Nonnull NamePolicy fieldNamePolicy,
+                           @Nonnull NamePolicy methodNamePolicy,
+                           @Nonnull NamePolicy parameterNamePolicy) {
         this.name = name;
-        this.fieldNameStrategy = fieldNameStrategy;
-        this.methodNameStrategy = methodNameStrategy;
-        this.parameterNameStrategy = parameterNameStrategy;
+        this.fieldNamePolicy = fieldNamePolicy;
+        this.methodNamePolicy = methodNamePolicy;
+        this.parameterNamePolicy = parameterNamePolicy;
         this.modifiers = new HashSet<>();
         this.properties = new HashMap<>();
         this.innerTypes = new ArrayList<>();
