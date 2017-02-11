@@ -15,12 +15,8 @@ import io.t28.pojojson.core.json.JsonArray;
 import io.t28.pojojson.core.json.JsonNull;
 import io.t28.pojojson.core.json.JsonObject;
 import io.t28.pojojson.core.json.JsonValue;
-import io.t28.pojojson.core.naming.CasePolicy;
+import io.t28.pojojson.core.naming.DefaultNamePolicy;
 import io.t28.pojojson.core.naming.NamePolicy;
-import io.t28.pojojson.core.naming.defaults.ClassNamePolicy;
-import io.t28.pojojson.core.naming.defaults.FieldNamePolicy;
-import io.t28.pojojson.core.naming.defaults.MethodNameStrategy;
-import io.t28.pojojson.core.naming.defaults.ParameterNamePolicy;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -158,10 +154,10 @@ public class PojoJson {
 
         private Builder() {
             style = Style.NONE;
-            classNamePolicy = new ClassNamePolicy(CasePolicy.LOWER_SNAKE_CASE);
-            fieldNamePolicy = new FieldNamePolicy(CasePolicy.LOWER_SNAKE_CASE);
-            methodNamePolicy = new MethodNameStrategy(CasePolicy.LOWER_SNAKE_CASE);
-            parameterNamePolicy = new ParameterNamePolicy(CasePolicy.LOWER_SNAKE_CASE);
+            classNamePolicy = DefaultNamePolicy.CLASS;
+            fieldNamePolicy = DefaultNamePolicy.FIELD;
+            methodNamePolicy = DefaultNamePolicy.METHOD;
+            parameterNamePolicy = DefaultNamePolicy.PARAMETER;
             jsonParser = new JacksonParser();
             javaBuilder = new JavaFileBuilder();
         }

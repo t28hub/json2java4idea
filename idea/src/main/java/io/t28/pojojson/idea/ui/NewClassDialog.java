@@ -49,7 +49,6 @@ public class NewClassDialog extends DialogWrapper {
     private JPanel centerPanel;
     private JTextField nameTextField;
     private JComboBox<Type> styleComboBox;
-    private JComboBox caseComboBox;
     private JComponent jsonEditorComponent;
     private Editor jsonEditor;
     private Document jsonDocument;
@@ -77,28 +76,25 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     @NotNull
+    @CheckReturnValue
     public String getClassName() {
         final String text = nameTextField.getText();
         return Strings.nullToEmpty(text).trim();
     }
 
     @NotNull
+    @CheckReturnValue
     public String getClassStyle() {
         final Object selected = styleComboBox.getSelectedItem();
         return Strings.nullToEmpty((String) selected).trim();
     }
 
-    @Nonnull
-    public String getDelimiter() {
-        return "";
-    }
-
     @NotNull
+    @CheckReturnValue
     public String getJson() {
         return jsonDocument.getText().trim();
     }
 
-    @NotNull
     public void setJson(@NotNull String json) {
         final Runnable command = SetTextCommand.builder()
                 .text(json)
@@ -134,7 +130,7 @@ public class NewClassDialog extends DialogWrapper {
         colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
 
         final GridConstraints constraints = new GridConstraints(
-                3, 1, 1, 1,
+                2, 1, 1, 1,
                 GridConstraints.ANCHOR_CENTER,
                 GridConstraints.FILL_BOTH,
                 3,

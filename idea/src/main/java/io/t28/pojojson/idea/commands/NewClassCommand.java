@@ -9,6 +9,10 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiPackage;
 import io.t28.pojojson.core.PojoJson;
 import io.t28.pojojson.core.Style;
+import io.t28.pojojson.idea.naming.PsiClassNamePolicy;
+import io.t28.pojojson.idea.naming.PsiFieldNamePolicy;
+import io.t28.pojojson.idea.naming.PsiMethodNamePolicy;
+import io.t28.pojojson.idea.naming.PsiParameterNamePolicy;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -20,7 +24,6 @@ public class NewClassCommand implements Runnable {
     private final PsiFileFactory fileFactory;
     private final String className;
     private final String classStyle;
-    private final String caseFormat;
     private final String json;
 
     private NewClassCommand(@Nonnull Builder builder) {
@@ -29,7 +32,6 @@ public class NewClassCommand implements Runnable {
         fileFactory = Preconditions.checkNotNull(builder.fileFactory);
         className = Preconditions.checkNotNull(builder.className);
         classStyle = Preconditions.checkNotNull(builder.classStyle);
-        caseFormat = Preconditions.checkNotNull(builder.caseFormat);
         json = Preconditions.checkNotNull(builder.json);
     }
 
@@ -51,6 +53,10 @@ public class NewClassCommand implements Runnable {
         try {
             final String pojoClass = PojoJson.builder()
                     .style(style)
+                    .classNamePolicy(new PsiClassNamePolicy())
+                    .methodNamePolicy(new PsiMethodNamePolicy())
+                    .fieldNamePolicy(new PsiFieldNamePolicy())
+                    .parameterNamePolicy(new PsiParameterNamePolicy())
                     .build()
                     .generate(packageName, className, json);
             final PsiFile classFile = fileFactory.createFileFromText(className + ".java", JavaFileType.INSTANCE, pojoClass);
@@ -66,7 +72,6 @@ public class NewClassCommand implements Runnable {
         private PsiFileFactory fileFactory;
         private String className;
         private String classStyle;
-        private String caseFormat;
         private String json;
 
         private Builder() {
@@ -104,13 +109,6 @@ public class NewClassCommand implements Runnable {
         @CheckReturnValue
         public Builder classStyle(String classStyle) {
             this.classStyle = classStyle;
-            return this;
-        }
-
-        @Nonnull
-        @CheckReturnValue
-        public Builder caseFormat(String caseFormat) {
-            this.caseFormat = caseFormat;
             return this;
         }
 
