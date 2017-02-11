@@ -1,13 +1,13 @@
 package io.t28.pojojson.idea;
 
 import com.intellij.ide.IdeView;
-import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
@@ -17,11 +17,9 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.PlatformIcons;
-import io.t28.pojojson.core.Style;
-import io.t28.pojojson.core.PojoJson;
+import io.t28.pojojson.idea.commands.NewClassCommand;
 import io.t28.pojojson.idea.ui.NewClassDialog;
 import io.t28.pojojson.idea.utils.GsonFormatter;
 import io.t28.pojojson.idea.utils.JsonFormatter;
@@ -36,12 +34,16 @@ import java.io.IOException;
 public class NewClassAction extends AnAction implements NewClassDialog.ActionListener {
     private Project project;
     private IdeView ideView;
+    private Application application;
+    private CommandProcessor commandProcessor;
     private JsonFormatter formatter;
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         this.project = event.getProject();
         this.formatter = new GsonFormatter();
+        this.application = ApplicationManager.getApplication();
+        this.commandProcessor = CommandProcessor.getInstance();
         if (project == null) {
             throw new IllegalStateException("AnActionEvent.getProject() returns null");
         }
@@ -95,25 +97,17 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onOk(@NotNull NewClassDialog dialog) {
-        ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, () -> {
-            final PsiDirectory directory = ideView.getOrChooseDirectory();
-            final PsiFileFactory factory = PsiFileFactory.getInstance(project);
-            final JavaDirectoryService directoryService = JavaDirectoryService.getInstance();
-            final String packageName = directoryService.getPackage(directory).getQualifiedName();
+        final Runnable command = NewClassCommand.builder()
+                .directory(ideView.getOrChooseDirectory())
+                .directoryService(JavaDirectoryService.getInstance())
+                .fileFactory(PsiFileFactory.getInstance(project))
+                .className(dialog.getClassName())
+                .classStyle(dialog.getClassStyle())
+                .caseFormat("")
+                .json(dialog.getJson())
+                .build();
 
-            final Style style = Style.fromName(dialog.getType()).orElse(Style.NONE);
-            final String name = dialog.getName();
-            final String json = dialog.getJson();
-            final PojoJson pojoJson = PojoJson.builder()
-                    .build();
-            try {
-                final String generated = pojoJson.generate(packageName, name, json, style);
-                final PsiFile file = factory.createFileFromText(name + ".java", JavaFileType.INSTANCE, generated);
-                directory.add(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }, null, null, UndoConfirmationPolicy.DEFAULT));
+        application.runWriteAction(() -> commandProcessor.executeCommand(project, command, null, null, UndoConfirmationPolicy.DEFAULT));
         dialog.close(0);
     }
 

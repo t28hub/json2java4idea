@@ -3,10 +3,10 @@ package io.t28.pojojson.idea.ui;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.intellij.json.JsonFileType;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -20,11 +20,14 @@ import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import io.t28.pojojson.idea.Type;
+import io.t28.pojojson.idea.commands.SetTextCommand;
 import io.t28.pojojson.idea.utils.Tuple;
 import io.t28.pojojson.idea.validator.NullValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,6 +36,7 @@ public class NewClassDialog extends DialogWrapper {
     private static final String EMPTY_TEXT = "";
 
     private final Project project;
+    private final Application application;
     private final EditorFactory editorFactory;
 
     private final InputValidator nameValidator;
@@ -44,7 +48,8 @@ public class NewClassDialog extends DialogWrapper {
 
     private JPanel centerPanel;
     private JTextField nameTextField;
-    private JComboBox<Type> typeComboBox;
+    private JComboBox<Type> styleComboBox;
+    private JComboBox caseComboBox;
     private JComponent jsonEditorComponent;
     private Editor jsonEditor;
     private Document jsonDocument;
@@ -52,6 +57,7 @@ public class NewClassDialog extends DialogWrapper {
     private NewClassDialog(@NotNull Builder builder) {
         super(builder.project, true);
         this.project = builder.project;
+        this.application = builder.application;
         this.editorFactory = builder.editorFactory;
         this.nameValidator = builder.nameValidator;
         this.typeValidator = builder.typeValidator;
@@ -71,15 +77,20 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     @NotNull
-    public String getName() {
-        final String name = nameTextField.getText();
-        return Strings.nullToEmpty(name).trim();
+    public String getClassName() {
+        final String text = nameTextField.getText();
+        return Strings.nullToEmpty(text).trim();
     }
 
     @NotNull
-    public String getType() {
-        final Object selected = typeComboBox.getSelectedItem();
+    public String getClassStyle() {
+        final Object selected = styleComboBox.getSelectedItem();
         return Strings.nullToEmpty((String) selected).trim();
+    }
+
+    @Nonnull
+    public String getDelimiter() {
+        return "";
     }
 
     @NotNull
@@ -89,15 +100,12 @@ public class NewClassDialog extends DialogWrapper {
 
     @NotNull
     public void setJson(@NotNull String json) {
-        ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, () -> {
-            jsonDocument.replaceString(0, jsonDocument.getText().length(), json);
-
-            final int jsonLength = jsonDocument.getTextLength();
-            final CaretModel caret = jsonEditor.getCaretModel();
-            if (caret.getOffset() >= jsonLength) {
-                caret.moveToOffset(jsonLength);
-            }
-        }, null, null, UndoConfirmationPolicy.DEFAULT, jsonDocument));
+        final Runnable command = SetTextCommand.builder()
+                .text(json)
+                .editor(jsonEditor)
+                .document(jsonDocument)
+                .build();
+        ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, command, null, null, UndoConfirmationPolicy.DEFAULT, jsonDocument));
     }
 
     @Nullable
@@ -126,7 +134,7 @@ public class NewClassDialog extends DialogWrapper {
         colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
 
         final GridConstraints constraints = new GridConstraints(
-                2, 1, 1, 1,
+                3, 1, 1, 1,
                 GridConstraints.ANCHOR_CENTER,
                 GridConstraints.FILL_BOTH,
                 3,
@@ -146,8 +154,8 @@ public class NewClassDialog extends DialogWrapper {
     protected ValidationInfo doValidate() {
         return ImmutableList
                 .of(
-                        Tuple.tuple(getName(), nameValidator, nameTextField),
-                        Tuple.tuple(getType(), typeValidator, typeComboBox),
+                        Tuple.tuple(getClassName(), nameValidator, nameTextField),
+                        Tuple.tuple(getClassStyle(), typeValidator, styleComboBox),
                         Tuple.tuple(getJson(), jsonValidator, jsonEditorComponent)
                 )
                 .stream()
@@ -213,6 +221,7 @@ public class NewClassDialog extends DialogWrapper {
 
     public static class Builder {
         private final Project project;
+        private Application application;
         private EditorFactory editorFactory;
         private InputValidator nameValidator;
         private InputValidator typeValidator;
@@ -221,6 +230,7 @@ public class NewClassDialog extends DialogWrapper {
 
         private Builder(@NotNull Project project) {
             this.project = project;
+            this.application = ApplicationManager.getApplication();
             this.editorFactory = EditorFactory.getInstance();
             this.nameValidator = new NullValidator();
             this.typeValidator = new NullValidator();
@@ -230,36 +240,49 @@ public class NewClassDialog extends DialogWrapper {
         }
 
         @NotNull
+        @CheckReturnValue
+        public Builder application(@Nonnull Application application) {
+            this.application = application;
+            return this;
+        }
+
+        @NotNull
+        @CheckReturnValue
         public Builder editorFactory(@NotNull EditorFactory editorFactory) {
             this.editorFactory = editorFactory;
             return this;
         }
 
         @NotNull
+        @CheckReturnValue
         public Builder nameValidator(@NotNull InputValidator nameValidator) {
             this.nameValidator = nameValidator;
             return this;
         }
 
         @NotNull
+        @CheckReturnValue
         public Builder typeValidator(@NotNull InputValidator typeValidator) {
             this.typeValidator = typeValidator;
             return this;
         }
 
         @NotNull
+        @CheckReturnValue
         public Builder jsonValidator(@NotNull InputValidator jsonValidator) {
             this.jsonValidator = jsonValidator;
             return this;
         }
 
         @NotNull
+        @CheckReturnValue
         public Builder actionListener(@NotNull ActionListener actionListener) {
             this.actionListener = actionListener;
             return this;
         }
 
         @NotNull
+        @CheckReturnValue
         public NewClassDialog build() {
             return new NewClassDialog(this);
         }
