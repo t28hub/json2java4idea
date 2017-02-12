@@ -103,7 +103,6 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
                 .fileFactory(PsiFileFactory.getInstance(project))
                 .className(dialog.getClassName())
                 .classStyle(dialog.getClassStyle())
-                .caseFormat("")
                 .json(dialog.getJson())
                 .build();
 
