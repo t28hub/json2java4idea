@@ -21,10 +21,10 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import io.t28.pojojson.idea.Type;
 import io.t28.pojojson.idea.commands.SetTextCommand;
-import io.t28.pojojson.idea.utils.Tuple;
 import io.t28.pojojson.idea.validator.NullValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.lambda.tuple.Tuple;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -156,24 +156,24 @@ public class NewClassDialog extends DialogWrapper {
                 )
                 .stream()
                 .filter(tuple -> {
-                    final String text = tuple.value1();
-                    final InputValidator validator = tuple.value2();
+                    final String text = tuple.v1();
+                    final InputValidator validator = tuple.v2();
                     return validator.checkInput(text);
                 })
                 .filter(tuple -> {
-                    final String text = tuple.value1();
-                    final InputValidator validator = tuple.value2();
+                    final String text = tuple.v1();
+                    final InputValidator validator = tuple.v2();
                     return !validator.canClose(text);
                 })
                 .map(tuple -> {
-                    final String text = tuple.value1();
-                    final InputValidator validator = tuple.value2();
+                    final String text = tuple.v1();
+                    final InputValidator validator = tuple.v2();
 
                     String message = null;
                     if (validator instanceof InputValidatorEx) {
                         message = ((InputValidatorEx) validator).getErrorText(text);
                     }
-                    return new ValidationInfo(message, tuple.value3());
+                    return new ValidationInfo(message, tuple.v3());
                 })
                 .findFirst()
                 .orElseGet(() -> super.doValidate());
