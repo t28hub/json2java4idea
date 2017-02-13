@@ -18,16 +18,14 @@ public enum DefaultNamePolicy implements NamePolicy {
         @Nonnull
         @Override
         public String convert(@Nonnull String name, @Nonnull TypeName type) {
-            final String snakeCase = normalize(name, DELIMITER);
-            return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, snakeCase);
+            return format(name, CaseFormat.UPPER_CAMEL);
         }
     },
     FIELD {
         @Nonnull
         @Override
         public String convert(@Nonnull String name, @Nonnull TypeName type) {
-            final String snakeCase = normalize(name, DELIMITER);
-            return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, snakeCase);
+            return format(name, CaseFormat.LOWER_CAMEL);
         }
     },
     METHOD {
@@ -43,19 +41,15 @@ public enum DefaultNamePolicy implements NamePolicy {
             } else {
                 builder.append(GENERAL_PREFIX);
             }
-
-            final String snakeCase = normalize(name, DELIMITER);
-            final String upperCase = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, snakeCase);
-            builder.append(upperCase);
-            return builder.toString();
+            return builder.append(format(name, CaseFormat.UPPER_CAMEL))
+                    .toString();
         }
     },
     PARAMETER {
         @Nonnull
         @Override
         public String convert(@Nonnull String name, @Nonnull TypeName type) {
-            final String snakeCase = normalize(name, DELIMITER);
-            return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, snakeCase);
+            return format(name, CaseFormat.LOWER_CAMEL);
         }
     };
 
@@ -67,18 +61,19 @@ public enum DefaultNamePolicy implements NamePolicy {
 
     @Nonnull
     @CheckReturnValue
-    public static String normalize(@Nonnull String name, @Nonnull String delimiter) {
+    public static String format(@Nonnull String name, @Nonnull CaseFormat format) {
         final Matcher matcher = Pattern.compile(DELIMITER_REGEX).matcher(name);
         final String pattern;
-        if (matcher.matches()) {
+        if (matcher.find()) {
             pattern = DELIMITER_REGEX;
         } else {
             pattern = CAMEL_CASE_REGEX;
         }
-        return Stream.of(name.split(pattern))
+        final String snakeCase = Stream.of(name.split(pattern))
                 .map(Ascii::toLowerCase)
                 .map(part -> part.replaceAll(INVALID_IDENTIFIER_REGEX, NO_TEXT))
                 .filter(part -> !Strings.isNullOrEmpty(part))
-                .collect(Collectors.joining(delimiter));
+                .collect(Collectors.joining(DELIMITER));
+        return CaseFormat.LOWER_UNDERSCORE.to(format, snakeCase);
     }
 }
