@@ -10,8 +10,6 @@ import io.t28.pojojson.core.naming.NamePolicy;
 import javax.annotation.Nonnull;
 
 public class PsiClassNamePolicy implements NamePolicy {
-    private static final String DELIMITER = "_";
-
     private final PsiNameHelper nameHelper;
 
     public PsiClassNamePolicy() {
