@@ -1,225 +1,171 @@
 package io.t28.pojojson.core.naming;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Preconditions;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class DefaultNamePolicyTest {
+    @RunWith(Parameterized.class)
+    public static class EnumTest {
+        @Parameters(name = "{0}")
+        public static Collection<Tuple4<DefaultNamePolicy, String, TypeName, String>> fixtures() {
+            return Arrays.asList(
+                    Tuple.tuple(
+                            DefaultNamePolicy.CLASS,
+                            "class_name",
+                            TypeName.OBJECT,
+                            "ClassName"
+                    ),
+                    Tuple.tuple(
+                            DefaultNamePolicy.METHOD,
+                            "method_name",
+                            TypeName.OBJECT,
+                            "getMethodName"
+                    ),
+                    Tuple.tuple(
+                            DefaultNamePolicy.METHOD,
+                            "method_name",
+                            TypeName.BOOLEAN,
+                            "isMethodName"
+                    ),
+                    Tuple.tuple(
+                            DefaultNamePolicy.METHOD,
+                            "method_name",
+                            ClassName.get(Boolean.class),
+                            "isMethodName"
+                    ),
+                    Tuple.tuple(
+                            DefaultNamePolicy.FIELD,
+                            "field_name",
+                            TypeName.OBJECT,
+                            "fieldName"
+                    ),
+                    Tuple.tuple(
+                            DefaultNamePolicy.PARAMETER,
+                            "parameter_name",
+                            TypeName.OBJECT,
+                            "parameterName"
+                    )
+            );
+        }
 
-    @RunWith(Theories.class)
-    public static class CLASS {
-        @DataPoints
-        @SuppressWarnings({"unused", "unchecked"})
-        public static Fixture<String, TypeName, String>[] FIXTURES = new Fixture[]{
-                Fixture.builder()
-                        .arg1("this is a lower space case")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsALowerSpaceCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("THIS IS A UPPER SPACE CASE")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsAUpperSpaceCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("this_is_a_lower_snake_case")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsALowerSnakeCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("THIS_IS_A_UPPER_SNAKE_CASE")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsAUpperSnakeCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("this-is-a-lower-kebab-case")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsALowerKebabCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("THIS-IS-A-UPPER-KEBAB-CASE")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsAUpperKebabCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("thisIsALowerCamelCase")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsALowerCamelCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("ThisIsAUpperCamelCase")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsAUpperCamelCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("THIS is-A mix-leTTer_CASe")
-                        .arg2(TypeName.OBJECT)
-                        .expected("ThisIsAMixLetterCase")
-                        .build(),
-                Fixture.builder()
-                        .arg1("RaND0m Letter$ -case_!")
-                        .arg2(TypeName.OBJECT)
-                        .expected("Rand0mLetter$Case")
-                        .build(),
-                Fixture.builder()
-                        .arg1("これはラテン文字ではありません。")
-                        .arg2(TypeName.OBJECT)
-                        .expected("")
-                        .build()
-    };
+        private final DefaultNamePolicy underTest;
+        private final String name;
+        private final TypeName type;
+        private final String expected;
 
+        public EnumTest(@Nonnull Tuple4<DefaultNamePolicy, String, TypeName, String> fixture) {
+            underTest = fixture.v1();
+            name = fixture.v2();
+            type = fixture.v3();
+            expected = fixture.v4();
+        }
 
-        @Theory
-        public void convert(@Nonnull Fixture<String, TypeName, String> fixture) throws Exception {
+        @Test
+        public void convert() throws Exception {
             // exercise
-            final String actual = DefaultNamePolicy.CLASS.convert(fixture.arg1, fixture.arg2);
+            final String actual = underTest.convert(name, type);
 
             // verify
-            assertThat(actual)
-                    .isEqualTo(fixture.expected);
+            assertThat(actual).isEqualTo(expected);
         }
     }
 
-    @RunWith(Theories.class)
-    public static class format {
-        @DataPoints
-        @SuppressWarnings({"unused", "unchecked"})
-        public static Fixture<String, CaseFormat, String>[] FIXTURES = new Fixture[]{
-                Fixture.of(
-                        "this is a lower space case",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-lower-space-case"
-                ),
-                Fixture.of(
-                        "THIS IS A UPPER SPACE CASE",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-upper-space-case"
-                ),
-                Fixture.of(
-                        "this_is_a_lower_snake_case",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-lower-snake-case"
-                ),
-                Fixture.of(
-                        "THIS_IS_A_UPPER_SNAKE_CASE",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-upper-snake-case"
-                ),
-                Fixture.of(
-                        "this-is-a-lower-kebab-case",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-lower-kebab-case"
-                ),
-                Fixture.of(
-                        "THIS-IS-A-UPPER-KEBAB-CASE",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-upper-kebab-case"
-                ),
-                Fixture.of(
-                        "thisIsALowerCamelCase",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-lower-camel-case"
-                ),
-                Fixture.of(
-                        "ThisIsAUpperCamelCase",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-upper-camel-case"
-                ),
-                Fixture.of(
-                        "THIS is-A mix-leTTer_CASe",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-mix-letter-case"
-                ),
-                Fixture.of(
-                        "THIS.iS_A RaND0m Letter$ -case_!",
-                        CaseFormat.LOWER_HYPHEN,
-                        "this-is-a-rand0m-letter$-case"
-                ),
-                Fixture.of(
-                        "これはラテン文字ではありません。",
-                        CaseFormat.LOWER_HYPHEN,
-                        ""
-                )
-        };
+    @RunWith(Parameterized.class)
+    public static class FormatTest {
+        @Parameters(name = "{0}")
+        public static Collection<Tuple3<String, CaseFormat, String>> fixtures() {
+            return Arrays.asList(
+                    Tuple.tuple(
+                            "this is a lower space case",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-lower-space-case"
+                    ),
+                    Tuple.tuple(
+                            "THIS IS A UPPER SPACE CASE",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-upper-space-case"
+                    ),
+                    Tuple.tuple(
+                            "this_is_a_lower_snake_case",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-lower-snake-case"
+                    ),
+                    Tuple.tuple(
+                            "THIS_IS_A_UPPER_SNAKE_CASE",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-upper-snake-case"
+                    ),
+                    Tuple.tuple(
+                            "this-is-a-lower-kebab-case",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-lower-kebab-case"
+                    ),
+                    Tuple.tuple(
+                            "THIS-IS-A-UPPER-KEBAB-CASE",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-upper-kebab-case"
+                    ),
+                    Tuple.tuple(
+                            "thisIsALowerCamelCase",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-lower-camel-case"
+                    ),
+                    Tuple.tuple(
+                            "ThisIsAUpperCamelCase",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-upper-camel-case"
+                    ),
+                    Tuple.tuple(
+                            "THIS is-A mix-leTTer_CASe",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-mix-letter-case"
+                    ),
+                    Tuple.tuple(
+                            "THIS.iS_A RaND0m Letter$ -case_!",
+                            CaseFormat.LOWER_HYPHEN,
+                            "this-is-a-rand0m-letter$-case"
+                    ),
+                    Tuple.tuple(
+                            "これはラテン文字ではありません。",
+                            CaseFormat.LOWER_HYPHEN,
+                            ""
+                    )
+            );
+        }
 
-        @Theory
-        public void format(@Nonnull Fixture<String, CaseFormat, String> fixture) throws Exception {
+        private final String name;
+        private final CaseFormat format;
+        private final String expected;
+
+        public FormatTest(@Nonnull Tuple3<String, CaseFormat, String> fixture) {
+            name = fixture.v1();
+            format = fixture.v2();
+            expected = fixture.v3();
+        }
+
+        @Test
+        public void format() throws Exception {
             // exercise
-            final String actual = DefaultNamePolicy.format(fixture.arg1, fixture.arg2);
+            final String actual = DefaultNamePolicy.format(name, format);
 
             // verify
-            assertThat(actual)
-                    .isEqualTo(fixture.expected);
-        }
-    }
-
-    static class Fixture<T1, T2, T3> {
-        private final T1 arg1;
-        private final T2 arg2;
-        private final T3 expected;
-
-        private Fixture(@Nonnull Builder<T1, T2, T3> builder) {
-            this.arg1 = Preconditions.checkNotNull(builder.arg1);
-            this.arg2 = Preconditions.checkNotNull(builder.arg2);
-            this.expected = Preconditions.checkNotNull(builder.expected);
-        }
-
-        private Fixture(T1 arg1, T2 arg2, T3 expected) {
-            this.arg1 = Preconditions.checkNotNull(arg1);
-            this.arg2 = Preconditions.checkNotNull(arg2);
-            this.expected = Preconditions.checkNotNull(expected);
-        }
-
-        @Nonnull
-        static <T1, T2, T3> Fixture<T1, T2, T3> of(@Nonnull T1 arg1, @Nonnull T2 arg2, @Nonnull T3 expected) {
-            return new Fixture<>(arg1, arg2, expected);
-        }
-
-        @Nonnull
-        static <T1, T2, T3> Builder<T1, T2, T3> builder() {
-            return new Builder<>();
-        }
-
-        static class Builder<T1, T2, T3> {
-            private T1 arg1;
-            private T2 arg2;
-            private T3 expected;
-
-            private Builder() {
-            }
-
-            @Nonnull
-            Builder arg1(@Nonnull T1 arg1) {
-                this.arg1 = arg1;
-                return this;
-            }
-
-            @Nonnull
-            Builder arg2(@Nonnull T2 arg2) {
-                this.arg2 = arg2;
-                return this;
-            }
-
-            @Nonnull
-            Builder expected(@Nonnull T3 expected) {
-                this.expected = expected;
-                return this;
-            }
-
-            @Nonnull
-            Fixture<T1, T2, T3> build() {
-                return new Fixture<>(this);
-            }
+            assertThat(actual).isEqualTo(expected);
         }
     }
 }

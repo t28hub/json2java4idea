@@ -21,13 +21,6 @@ public enum DefaultNamePolicy implements NamePolicy {
             return format(name, CaseFormat.UPPER_CAMEL);
         }
     },
-    FIELD {
-        @Nonnull
-        @Override
-        public String convert(@Nonnull String name, @Nonnull TypeName type) {
-            return format(name, CaseFormat.LOWER_CAMEL);
-        }
-    },
     METHOD {
         private static final String BOOLEAN_PREFIX = "is";
         private static final String GENERAL_PREFIX = "get";
@@ -36,13 +29,20 @@ public enum DefaultNamePolicy implements NamePolicy {
         @Override
         public String convert(@Nonnull String name, @Nonnull TypeName type) {
             final StringBuilder builder = new StringBuilder();
-            if (type.equals(TypeName.BOOLEAN) || type.equals(ClassName.get(Boolean.TYPE))) {
+            if (type.equals(TypeName.BOOLEAN) || type.equals(ClassName.get(Boolean.class))) {
                 builder.append(BOOLEAN_PREFIX);
             } else {
                 builder.append(GENERAL_PREFIX);
             }
             return builder.append(format(name, CaseFormat.UPPER_CAMEL))
                     .toString();
+        }
+    },
+    FIELD {
+        @Nonnull
+        @Override
+        public String convert(@Nonnull String name, @Nonnull TypeName type) {
+            return format(name, CaseFormat.LOWER_CAMEL);
         }
     },
     PARAMETER {
