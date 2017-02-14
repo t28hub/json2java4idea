@@ -1,0 +1,53 @@
+[
+  {
+    "name": "foo",
+    "array": [
+      1,
+      2
+    ],
+    "objects": [
+      {
+        "key": "qux"
+      }
+    ],
+    "nested": [
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "name": "bar",
+    "array": [
+      3,
+      4
+    ],
+    "objects": [
+      {
+        "key": "quux"
+      }
+    ],
+    "nested": [
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "name": "baz",
+    "array": [
+      5,
+      6
+    ],
+    "objects": [
+      {
+        "key": "corge"
+      }
+    ],
+    "nested": [
+      [
+        null
+      ]
+    ]
+  }
+]
