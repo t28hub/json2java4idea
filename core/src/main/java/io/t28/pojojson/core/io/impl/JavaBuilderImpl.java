@@ -1,12 +1,13 @@
-package io.t28.pojojson.core.io;
+package io.t28.pojojson.core.io.impl;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.pojojson.core.io.JavaBuilder;
 import io.t28.pojojson.core.io.exception.JavaBuildException;
 
 import javax.annotation.Nonnull;
 
-public class JavaFileBuilder implements JavaBuilder {
+public class JavaBuilderImpl implements JavaBuilder {
     private static final String INDENT = "    ";
 
     @Nonnull

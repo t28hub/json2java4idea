@@ -7,9 +7,9 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.t28.pojojson.core.builder.ClassBuilder;
-import io.t28.pojojson.core.io.JacksonParser;
+import io.t28.pojojson.core.io.impl.JsonParserImpl;
 import io.t28.pojojson.core.io.JavaBuilder;
-import io.t28.pojojson.core.io.JavaFileBuilder;
+import io.t28.pojojson.core.io.impl.JavaBuilderImpl;
 import io.t28.pojojson.core.io.JsonParser;
 import io.t28.pojojson.core.json.JsonArray;
 import io.t28.pojojson.core.json.JsonNull;
@@ -54,7 +54,7 @@ public class PojoJson {
     @Nonnull
     @CheckReturnValue
     public String generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
-        final JsonValue value = jsonParser.read(json);
+        final JsonValue value = jsonParser.parse(json);
         final TypeSpec typeSpec = generate(className, value);
         return javaBuilder.build(packageName, typeSpec);
     }
@@ -158,8 +158,8 @@ public class PojoJson {
             fieldNamePolicy = DefaultNamePolicy.FIELD;
             methodNamePolicy = DefaultNamePolicy.METHOD;
             parameterNamePolicy = DefaultNamePolicy.PARAMETER;
-            jsonParser = new JacksonParser();
-            javaBuilder = new JavaFileBuilder();
+            jsonParser = new JsonParserImpl();
+            javaBuilder = new JavaBuilderImpl();
         }
 
         @Nonnull

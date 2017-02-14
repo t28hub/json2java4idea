@@ -9,5 +9,5 @@ import javax.annotation.Nonnull;
 public interface JsonParser {
     @Nonnull
     @CheckReturnValue
-    JsonValue read(@Nonnull String json) throws JsonParseException;
+    JsonValue parse(@Nonnull String json) throws JsonParseException;
 }
