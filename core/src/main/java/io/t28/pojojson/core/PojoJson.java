@@ -1,6 +1,7 @@
 package io.t28.pojojson.core;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -18,6 +19,7 @@ import io.t28.pojojson.core.naming.DefaultNamePolicy;
 import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -52,7 +54,16 @@ public class PojoJson {
     @CheckReturnValue
     public String generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
         final JsonValue value = jsonParser.parse(json);
-        final TypeSpec typeSpec = generate(className, value);
+        // Add annotations for a root class only to generated type spec
+        final TypeSpec typeSpec = generate(className, value)
+                .toBuilder()
+                .addAnnotation(AnnotationSpec.builder(Generated.class)
+                        .addMember("value", "$S", getClass().getCanonicalName())
+                        .build())
+                .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
+                        .addMember("value", "$S", "all")
+                        .build())
+                .build();
         return javaBuilder.build(packageName, typeSpec);
     }
 

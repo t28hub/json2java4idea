@@ -1,7 +1,10 @@
 package io.t28.test;
 
 import java.util.List;
+import javax.annotation.Generated;
 
+@Generated("io.t28.pojojson.core.PojoJson")
+@SuppressWarnings("all")
 public class ComplexArrayTest {
     private final List<Integer> array;
 
