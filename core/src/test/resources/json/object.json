@@ -1,0 +1,13 @@
+{
+  "null_value": null,
+  "number_value": 1024,
+  "string_value": "string",
+  "array_value": [
+    "foo",
+    "bar",
+    "baz"
+  ],
+  "object_value": {
+    "name": "value"
+  }
+}

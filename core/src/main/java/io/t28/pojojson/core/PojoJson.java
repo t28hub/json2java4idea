@@ -1,16 +1,15 @@
 package io.t28.pojojson.core;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.Files;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.t28.pojojson.core.builder.ClassBuilder;
-import io.t28.pojojson.core.io.impl.JsonParserImpl;
 import io.t28.pojojson.core.io.JavaBuilder;
-import io.t28.pojojson.core.io.impl.JavaBuilderImpl;
 import io.t28.pojojson.core.io.JsonParser;
+import io.t28.pojojson.core.io.impl.JavaBuilderImpl;
+import io.t28.pojojson.core.io.impl.JsonParserImpl;
 import io.t28.pojojson.core.json.JsonArray;
 import io.t28.pojojson.core.json.JsonNull;
 import io.t28.pojojson.core.json.JsonObject;
@@ -21,9 +20,7 @@ import io.t28.pojojson.core.naming.NamePolicy;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PojoJson {
@@ -139,7 +136,7 @@ public class PojoJson {
             return ParameterizedTypeName.get(ClassName.get(List.class), innerClassType);
         }
 
-        return ParameterizedTypeName.get(ClassName.get(List.class), value.getType());
+        return ParameterizedTypeName.get(ClassName.get(List.class), value.getType().box());
     }
 
     @SuppressWarnings("unused")
@@ -216,14 +213,5 @@ public class PojoJson {
         public PojoJson build() {
             return new PojoJson(this);
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        final File file = new File("core/src/main/resources/repositories.json");
-        final String json = Files.toString(file, StandardCharsets.UTF_8);
-        final PojoJson pojoJson = PojoJson.builder()
-                .build();
-        final String generated = pojoJson.generate("io.t28.mode.json.example", "Repository", json);
-        System.out.println(generated);
     }
 }

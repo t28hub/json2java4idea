@@ -6,6 +6,7 @@ import com.squareup.javapoet.TypeName;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -13,7 +14,7 @@ public class JsonArray extends JsonValue {
     private final List<Object> value;
 
     public JsonArray(@Nonnull List<Object> value) {
-        this.value = ImmutableList.copyOf(value);
+        this.value = new ArrayList<>(value);
     }
 
     @Nonnull
