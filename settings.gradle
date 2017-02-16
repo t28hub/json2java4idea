@@ -1,4 +1,4 @@
 rootProject.name = 'pojo-json'
 include 'core'
-include 'idea-plugin'
+include 'idea'
 

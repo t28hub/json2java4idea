@@ -1,22 +1,29 @@
-group 'io.t28'
-version '0.1.0'
+allprojects {
+    group 'io.t28'
+    version '0.1.0'
 
-apply plugin: 'java'
-
-def javaVersion = JavaVersion.VERSION_1_8
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
-
-repositories {
-    mavenCentral()
+    apply plugin: 'idea'
+    apply plugin: 'java'
 }
 
-dependencies {
-    compile 'com.google.guava:guava:21.0'
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.google.code.findbugs:jsr305:3.0.1'
+subprojects {
+    def javaVersion = JavaVersion.VERSION_1_8
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.5'
-    testCompile 'org.assertj:assertj-core:3.6.2'
+    repositories {
+        mavenCentral()
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'build/classes/main/generated']
+        }
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.mockito:mockito-core:2.7.5'
+        testCompile 'org.assertj:assertj-core:3.6.2'
+    }
 }
