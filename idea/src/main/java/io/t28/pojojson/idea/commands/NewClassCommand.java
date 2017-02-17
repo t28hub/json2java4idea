@@ -2,17 +2,20 @@ package io.t28.pojojson.idea.commands;
 
 import com.google.common.base.Preconditions;
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.pojojson.core.PojoJson;
 import io.t28.pojojson.core.Style;
-import io.t28.pojojson.idea.naming.PsiClassNamePolicy;
-import io.t28.pojojson.idea.naming.PsiFieldNamePolicy;
-import io.t28.pojojson.idea.naming.PsiMethodNamePolicy;
-import io.t28.pojojson.idea.naming.PsiParameterNamePolicy;
+import io.t28.pojojson.idea.naming.IdeaFieldNamePolicy;
+import io.t28.pojojson.idea.naming.IdeaMethodNamePolicy;
+import io.t28.pojojson.idea.naming.IdeaParameterNamePolicy;
+import io.t28.pojojson.idea.naming.IdeaClassNamePolicy;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -51,15 +54,18 @@ public class NewClassCommand implements Runnable {
         final String packageName = packageElement.getQualifiedName();
         final Style style = Style.fromName(classStyle).orElse(Style.NONE);
         try {
+            final Project project = directory.getProject();
             final String pojoClass = PojoJson.builder()
                     .style(style)
-                    .classNamePolicy(new PsiClassNamePolicy())
-                    .methodNamePolicy(new PsiMethodNamePolicy())
-                    .fieldNamePolicy(new PsiFieldNamePolicy())
-                    .parameterNamePolicy(new PsiParameterNamePolicy())
+                    .classNamePolicy(new IdeaClassNamePolicy())
+                    .methodNamePolicy(new IdeaMethodNamePolicy(project))
+                    .fieldNamePolicy(new IdeaFieldNamePolicy(project))
+                    .parameterNamePolicy(new IdeaParameterNamePolicy(project))
                     .build()
                     .generate(packageName, className, json);
             final PsiFile classFile = fileFactory.createFileFromText(className + ".java", JavaFileType.INSTANCE, pojoClass);
+            CodeStyleManager.getInstance(classFile.getProject()).reformat(classFile);
+            JavaCodeStyleManager.getInstance(classFile.getProject()).optimizeImports(classFile);
             directory.add(classFile);
         } catch (IOException e) {
             throw new RuntimeException("Failed to generate a POJO class from JSON", e);

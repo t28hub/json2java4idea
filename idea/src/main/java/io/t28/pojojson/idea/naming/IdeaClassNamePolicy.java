@@ -9,25 +9,25 @@ import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.Nonnull;
 
-public class PsiMethodNamePolicy implements NamePolicy {
+public class IdeaClassNamePolicy implements NamePolicy {
     private final PsiNameHelper nameHelper;
 
-    public PsiMethodNamePolicy() {
+    public IdeaClassNamePolicy() {
         this(PsiNameHelperImpl.getInstance());
     }
 
     @VisibleForTesting
-    PsiMethodNamePolicy(@Nonnull PsiNameHelper nameHelper) {
+    IdeaClassNamePolicy(@Nonnull PsiNameHelper nameHelper) {
         this.nameHelper = nameHelper;
     }
 
     @Nonnull
     @Override
     public String convert(@Nonnull String name, @Nonnull TypeName type) {
-        final String methodName = DefaultNamePolicy.METHOD.convert(name, type);
-        if (nameHelper.isKeyword(methodName)) {
-            throw new IllegalArgumentException("Generated method name is reserved by Java");
+        final String className = DefaultNamePolicy.CLASS.convert(name, type);
+        if (!nameHelper.isQualifiedName(className)) {
+            throw new IllegalArgumentException();
         }
-        return methodName;
+        return className;
     }
 }
