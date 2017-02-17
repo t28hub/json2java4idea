@@ -1,0 +1,29 @@
+machine:
+  java:
+    version: oraclejdk8
+  post:
+    - sudo service memcached stop
+    - sudo service mysql stop
+    - sudo service postgresql stop
+    - sudo service rabbitmq-server stop
+  timezone:
+    Asia/Tokyo
+
+checkout:
+  post:
+    - chmod +x ./gradlew
+
+dependencies:
+  pre:
+    - ./gradlew --version
+
+compile:
+  override:
+    - ./gradlew assemble
+
+test:
+  override:
+    - ./gradlew test --full-stacktrace
+  post:
+    - mkdir -p ${CIRCLE_TEST_REPORTS}/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ${CIRCLE_TEST_REPORTS}/junit/ \;
