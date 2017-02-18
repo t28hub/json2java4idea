@@ -71,7 +71,7 @@ public class PojoJsonTest {
         // exercise & verify
         assertThatThrownBy(() -> underTest.generate(PACKAGE_NAME, "EmptyArray", "[]"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(null);
+                .hasMessage("Cannot create class from empty array or primitive array");
     }
 
 
@@ -80,7 +80,7 @@ public class PojoJsonTest {
         // verify
         assertThatThrownBy(() -> underTest.generate(PACKAGE_NAME, "NestedEmptyArray", "[[]]"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(null);
+                .hasMessage("Cannot create class from empty array or primitive array");
     }
 
     @Test

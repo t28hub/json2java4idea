@@ -15,11 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GsonClassBuilder extends ClassBuilder {
-    public GsonClassBuilder(@Nonnull String name,
-                            @Nonnull NamePolicy fieldNamePolicy,
+    public GsonClassBuilder(@Nonnull NamePolicy fieldNamePolicy,
                             @Nonnull NamePolicy methodNamePolicy,
                             @Nonnull NamePolicy parameterNamePolicy) {
-        super(name, fieldNamePolicy, methodNamePolicy, parameterNamePolicy);
+        super(fieldNamePolicy, methodNamePolicy, parameterNamePolicy);
     }
 
     @Nonnull

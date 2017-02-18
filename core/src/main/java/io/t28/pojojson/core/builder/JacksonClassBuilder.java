@@ -16,11 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JacksonClassBuilder extends ClassBuilder {
-    public JacksonClassBuilder(@Nonnull String name,
-                               @Nonnull NamePolicy fieldNamePolicy,
+    public JacksonClassBuilder(@Nonnull NamePolicy fieldNamePolicy,
                                @Nonnull NamePolicy methodNamePolicy,
                                @Nonnull NamePolicy parameterNamePolicy) {
-        super(name, fieldNamePolicy, methodNamePolicy, parameterNamePolicy);
+        super(fieldNamePolicy, methodNamePolicy, parameterNamePolicy);
     }
 
     @Nonnull
