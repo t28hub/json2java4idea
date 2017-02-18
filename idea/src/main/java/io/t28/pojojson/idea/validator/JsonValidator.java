@@ -1,23 +1,20 @@
 package io.t28.pojojson.idea.validator;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.google.inject.Inject;
 import com.intellij.openapi.ui.InputValidatorEx;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class JsonValidator implements InputValidatorEx {
     private final JsonParser parser;
 
-    public JsonValidator() {
-        this(new JsonParser());
-    }
-
-    @VisibleForTesting
-    JsonValidator(@NotNull JsonParser parser) {
+    @Inject
+    public JsonValidator(@Nonnull JsonParser parser) {
         this.parser = parser;
     }
 

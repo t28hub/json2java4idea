@@ -8,6 +8,7 @@ buildscript {
         }
 
     }
+
     dependencies {
         classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
     }
@@ -21,4 +22,5 @@ apply plugin: 'org.jetbrains.intellij'
 
 dependencies {
     compile project(':core')
+    compile 'com.google.inject:guice:4.1.0'
 }

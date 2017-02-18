@@ -3,7 +3,6 @@ package io.t28.pojojson.idea.ui;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.intellij.json.JsonFileType;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.lambda.tuple.Tuple;
 
 import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -221,7 +219,6 @@ public class NewClassDialog extends DialogWrapper {
 
     public static class Builder {
         private final Project project;
-        private Application application;
         private EditorFactory editorFactory;
         private InputValidator nameValidator;
         private InputValidator typeValidator;
@@ -230,20 +227,12 @@ public class NewClassDialog extends DialogWrapper {
 
         private Builder(@NotNull Project project) {
             this.project = project;
-            this.application = ApplicationManager.getApplication();
             this.editorFactory = EditorFactory.getInstance();
             this.nameValidator = new NullValidator();
             this.typeValidator = new NullValidator();
             this.jsonValidator = new NullValidator();
             this.actionListener = new ActionListener() {
             };
-        }
-
-        @NotNull
-        @CheckReturnValue
-        public Builder application(@Nonnull Application application) {
-            this.application = application;
-            return this;
         }
 
         @NotNull

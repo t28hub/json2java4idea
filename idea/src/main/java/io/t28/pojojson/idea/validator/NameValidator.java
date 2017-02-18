@@ -1,22 +1,18 @@
 package io.t28.pojojson.idea.validator;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.psi.PsiNameHelper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 public class NameValidator implements InputValidatorEx {
     private final PsiNameHelper nameHelper;
 
-    public NameValidator(@NotNull Project project) {
-        this(PsiNameHelper.getInstance(project));
-    }
-
-    @VisibleForTesting
-    NameValidator(@NotNull PsiNameHelper nameHelper) {
+    @Inject
+    public NameValidator(@Nonnull PsiNameHelper nameHelper) {
         this.nameHelper = nameHelper;
     }
 
@@ -37,9 +33,6 @@ public class NameValidator implements InputValidatorEx {
         if (Strings.isNullOrEmpty(name)) {
             return false;
         }
-        if (!nameHelper.isQualifiedName(name)) {
-            return false;
-        }
-        return true;
+        return nameHelper.isQualifiedName(name);
     }
 }
