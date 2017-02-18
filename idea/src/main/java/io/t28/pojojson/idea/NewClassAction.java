@@ -163,7 +163,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             return false;
         }
 
-        final JavaDirectoryService directoryService = injector.getInstance(JavaDirectoryService.class);
+        final JavaDirectoryService directoryService = JavaDirectoryService.getInstance();
         final PsiPackage targetPackage = directoryService.getPackage(targetDirectory);
         return targetPackage != null;
     }

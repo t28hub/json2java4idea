@@ -145,6 +145,7 @@
     </orderEntry>
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.8.6" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okio:okio:1.11.0" level="project" />
     <orderEntry type="library" name="Gradle: org.objenesis:objenesis:2.5" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.6.5" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.6.5" level="project" />
@@ -152,11 +153,12 @@
     <orderEntry type="library" name="Gradle: aopalliance:aopalliance:1.0" level="project" />
     <orderEntry type="library" name="Gradle: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.8.6" level="project" />
-    <orderEntry type="library" name="Gradle: org.jooq:jool:0.9.12" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.moshi:moshi:1.4.0" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup:javapoet:1.8.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jooq:jool:0.9.12" level="project" />
     <orderEntry type="library" name="Gradle: org.assertj:assertj-core:3.6.2" level="project" />
     <orderEntry type="library" name="Gradle: org.mockito:mockito-core:2.7.5" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />

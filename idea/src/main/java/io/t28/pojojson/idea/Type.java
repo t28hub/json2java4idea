@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.stream.Stream;
 
 public enum Type {
-    NONE, GSON, JACKSON;
+    NONE, GSON, JACKSON, MOSHI;
 
     @NotNull
     public static Type fromName(@Nullable String name) {

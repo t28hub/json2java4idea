@@ -54,8 +54,8 @@ public class PojoJson {
     @CheckReturnValue
     public String generate(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
         final JsonValue value = jsonParser.parse(json);
-        // Add annotations for a root class only to generated type spec
-        final TypeSpec typeSpec = generate(className, value)
+        // Adding root class specific annotations
+        final TypeSpec typeSpec = fromValue(className, value)
                 .toBuilder()
                 .addAnnotation(AnnotationSpec.builder(Generated.class)
                         .addMember("value", "$S", getClass().getCanonicalName())
@@ -70,32 +70,28 @@ public class PojoJson {
     @Nonnull
     @CheckReturnValue
     @VisibleForTesting
-    TypeSpec generate(@Nonnull String className, @Nonnull JsonValue value) {
+    TypeSpec fromValue(@Nonnull String className, @Nonnull JsonValue value) {
         if (value.isObject()) {
-            return generate(className, value.asObject(), Modifier.PUBLIC);
+            return fromObject(className, value.asObject(), Modifier.PUBLIC);
         }
+
         if (value.isArray()) {
-            return generate(className, value.asArray());
+            return fromArray(className, value.asArray());
         }
+
         throw new IllegalArgumentException("value must be an Object or Array");
     }
 
     @Nonnull
-    private TypeSpec generate(@Nonnull String name, @Nonnull JsonObject object, @Nonnull Modifier... modifiers) {
-        final ClassBuilder builder = style.newBuilder(
-                name,
-                fieldNamePolicy,
-                methodNamePolicy,
-                parameterNamePolicy
-        );
+    private TypeSpec fromObject(@Nonnull String className, @Nonnull JsonObject object, @Nonnull Modifier... modifiers) {
+        final ClassBuilder builder = style.toBuilder(fieldNamePolicy, methodNamePolicy, parameterNamePolicy);
         builder.addModifiers(modifiers);
-
         object.stream().forEach(child -> {
             final String key = child.getKey();
             final JsonValue value = child.getValue();
             if (value.isObject()) {
                 final String innerClassName = classNamePolicy.convert(key, TypeName.OBJECT);
-                final TypeSpec innerClass = generate(innerClassName, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
+                final TypeSpec innerClass = fromObject(innerClassName, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
                 builder.addInnerType(innerClass);
 
                 final TypeName innerClassType = ClassName.bestGuess(innerClassName);
@@ -113,34 +109,36 @@ public class PojoJson {
 
             builder.addProperty(key, value.getType());
         });
-        return builder.build();
+        return builder.build(className);
     }
 
     @Nonnull
-    private TypeSpec generate(@Nonnull String className, @Nonnull JsonArray array) {
+    private TypeSpec fromArray(@Nonnull String className, @Nonnull JsonArray array) {
         final JsonValue firstValue = array.stream().findFirst().orElse(new JsonNull());
         if (firstValue.isObject()) {
-            return generate(className, firstValue.asObject());
+            return fromValue(className, firstValue.asObject());
         }
+
         if (firstValue.isArray()) {
-            return generate(className, firstValue.asArray());
+            return fromArray(className, firstValue.asArray());
         }
-        throw new IllegalArgumentException();
+
+        throw new IllegalArgumentException("Cannot create class from empty array or primitive array");
     }
 
     @Nonnull
-    private TypeName generateListType(@Nonnull String name, @Nonnull JsonValue value, @Nonnull ClassBuilder builder) {
+    private TypeName generateListType(@Nonnull String className, @Nonnull JsonValue value, @Nonnull ClassBuilder builder) {
         if (value.isArray()) {
             final JsonValue firstValue = value.asArray()
                     .stream()
                     .findFirst()
                     .orElse(new JsonNull());
-            final TypeName type = generateListType(name, firstValue, builder);
+            final TypeName type = generateListType(className, firstValue, builder);
             return ParameterizedTypeName.get(ClassName.get(List.class), type);
         }
 
         if (value.isObject()) {
-            final TypeSpec innerClass = generate(name, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
+            final TypeSpec innerClass = fromObject(className, value.asObject(), Modifier.PUBLIC, Modifier.STATIC);
             builder.addInnerType(innerClass);
 
             final TypeName innerClassType = ClassName.bestGuess(innerClass.name);
@@ -150,7 +148,6 @@ public class PojoJson {
         return ParameterizedTypeName.get(ClassName.get(List.class), value.getType().box());
     }
 
-    @SuppressWarnings("unused")
     public static class Builder {
         private Style style;
         private NamePolicy classNamePolicy;
@@ -207,6 +204,7 @@ public class PojoJson {
 
         @Nonnull
         @CheckReturnValue
+        @VisibleForTesting
         Builder jsonParser(@Nonnull JsonParser jsonParser) {
             this.jsonParser = jsonParser;
             return this;
@@ -214,6 +212,7 @@ public class PojoJson {
 
         @Nonnull
         @CheckReturnValue
+        @VisibleForTesting
         Builder javaBuilder(@Nonnull JavaBuilder javaBuilder) {
             this.javaBuilder = javaBuilder;
             return this;

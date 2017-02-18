@@ -1,9 +1,6 @@
 package io.t28.pojojson.core;
 
-import io.t28.pojojson.core.builder.ClassBuilder;
-import io.t28.pojojson.core.builder.GsonClassBuilder;
-import io.t28.pojojson.core.builder.JacksonClassBuilder;
-import io.t28.pojojson.core.builder.ModelClassBuilder;
+import io.t28.pojojson.core.builder.*;
 import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.CheckReturnValue;
@@ -15,55 +12,45 @@ public enum Style {
     NONE {
         @Nonnull
         @Override
-        public ClassBuilder newBuilder(@Nonnull String className,
-                                       @Nonnull NamePolicy fieldNameStrategy,
-                                       @Nonnull NamePolicy methodNameStrategy,
-                                       @Nonnull NamePolicy parameterNameStrategy) {
-            return new ModelClassBuilder(
-                    className,
-                    fieldNameStrategy,
-                    methodNameStrategy,
-                    parameterNameStrategy
-            );
+        public ClassBuilder toBuilder(@Nonnull NamePolicy fieldNameStrategy,
+                                      @Nonnull NamePolicy methodNameStrategy,
+                                      @Nonnull NamePolicy parameterNameStrategy) {
+            return new ModelClassBuilder(fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
         }
     },
     GSON {
         @Nonnull
         @Override
-        public ClassBuilder newBuilder(@Nonnull String className,
-                                       @Nonnull NamePolicy fieldNameStrategy,
-                                       @Nonnull NamePolicy methodNameStrategy,
-                                       @Nonnull NamePolicy parameterNameStrategy) {
-            return new GsonClassBuilder(
-                    className,
-                    fieldNameStrategy,
-                    methodNameStrategy,
-                    parameterNameStrategy
-            );
+        public ClassBuilder toBuilder(@Nonnull NamePolicy fieldNameStrategy,
+                                      @Nonnull NamePolicy methodNameStrategy,
+                                      @Nonnull NamePolicy parameterNameStrategy) {
+            return new GsonClassBuilder(fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
         }
     },
     JACKSON {
         @Nonnull
         @Override
-        public ClassBuilder newBuilder(@Nonnull String className,
-                                       @Nonnull NamePolicy fieldNameStrategy,
-                                       @Nonnull NamePolicy methodNameStrategy,
-                                       @Nonnull NamePolicy parameterNameStrategy) {
-            return new JacksonClassBuilder(
-                    className,
-                    fieldNameStrategy,
-                    methodNameStrategy,
-                    parameterNameStrategy
-            );
+        public ClassBuilder toBuilder(@Nonnull NamePolicy fieldNameStrategy,
+                                      @Nonnull NamePolicy methodNameStrategy,
+                                      @Nonnull NamePolicy parameterNameStrategy) {
+            return new JacksonClassBuilder(fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
+        }
+    },
+    MOSHI {
+        @Nonnull
+        @Override
+        public ClassBuilder toBuilder(@Nonnull NamePolicy fieldNameStrategy,
+                                      @Nonnull NamePolicy methodNameStrategy,
+                                      @Nonnull NamePolicy parameterNameStrategy) {
+            return new MoshiClassBuilder(fieldNameStrategy, methodNameStrategy, parameterNameStrategy);
         }
     };
 
     @Nonnull
     @CheckReturnValue
-    public abstract ClassBuilder newBuilder(@Nonnull String className,
-                                            @Nonnull NamePolicy fieldNameStrategy,
-                                            @Nonnull NamePolicy methodNameStrategy,
-                                            @Nonnull NamePolicy parameterNameStrategy);
+    public abstract ClassBuilder toBuilder(@Nonnull NamePolicy fieldNameStrategy,
+                                           @Nonnull NamePolicy methodNameStrategy,
+                                           @Nonnull NamePolicy parameterNameStrategy);
 
     @Nonnull
     @CheckReturnValue
