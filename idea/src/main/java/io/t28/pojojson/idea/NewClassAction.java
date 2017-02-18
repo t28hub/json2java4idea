@@ -10,16 +10,17 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.PlatformIcons;
 import io.t28.pojojson.idea.commands.NewClassCommand;
+import io.t28.pojojson.idea.exceptions.ClassCreationException;
 import io.t28.pojojson.idea.ui.NewClassDialog;
 import io.t28.pojojson.idea.utils.GsonFormatter;
 import io.t28.pojojson.idea.utils.JsonFormatter;
@@ -97,17 +98,27 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onOk(@NotNull NewClassDialog dialog) {
-        final Runnable command = NewClassCommand.builder()
-                .directory(ideView.getOrChooseDirectory())
-                .directoryService(JavaDirectoryService.getInstance())
-                .fileFactory(PsiFileFactory.getInstance(project))
-                .className(dialog.getClassName())
-                .classStyle(dialog.getClassStyle())
-                .json(dialog.getJson())
-                .build();
-
-        application.runWriteAction(() -> commandProcessor.executeCommand(project, command, null, null, UndoConfirmationPolicy.DEFAULT));
-        dialog.close(0);
+        commandProcessor.executeCommand(project, () -> {
+            try {
+                final PsiFile created = application.runWriteAction(NewClassCommand.builder()
+                        .directory(ideView.getOrChooseDirectory())
+                        .directoryService(JavaDirectoryService.getInstance())
+                        .fileFactory(PsiFileFactory.getInstance(project))
+                        .className(dialog.getClassName())
+                        .classStyle(dialog.getClassStyle())
+                        .json(dialog.getJson())
+                        .build());
+            } catch (ClassCreationException e) {
+                e.printStackTrace();
+                final Notification notification = new Notification(
+                        "POJO.json",
+                        "Cannot create class",
+                        "Failed to create class " + dialog.getClassName(),
+                        NotificationType.WARNING
+                );
+                Notifications.Bus.notify(notification, project);
+            }
+        }, null, null);
     }
 
     @Override
