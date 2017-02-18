@@ -36,7 +36,6 @@ public class NewClassDialog extends DialogWrapper {
     private static final String EMPTY_TEXT = "";
 
     private final Project project;
-    private final Application application;
     private final EditorFactory editorFactory;
 
     private final InputValidator nameValidator;
@@ -56,7 +55,6 @@ public class NewClassDialog extends DialogWrapper {
     private NewClassDialog(@NotNull Builder builder) {
         super(builder.project, true);
         this.project = builder.project;
-        this.application = builder.application;
         this.editorFactory = builder.editorFactory;
         this.nameValidator = builder.nameValidator;
         this.typeValidator = builder.typeValidator;
@@ -183,6 +181,12 @@ public class NewClassDialog extends DialogWrapper {
     protected void doOKAction() {
         super.doOKAction();
         actionListener.onOk(this);
+    }
+
+    @NotNull
+    @Override
+    protected Action[] createActions() {
+        return new Action[]{getOKAction(), getCancelAction()};
     }
 
     @NotNull
