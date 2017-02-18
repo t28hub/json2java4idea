@@ -2,7 +2,8 @@ package io.t28.pojojson.idea.validator;
 
 import com.intellij.openapi.ui.InputValidatorEx;
 import io.t28.pojojson.idea.Type;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class TypeValidator implements InputValidatorEx {
     @Nullable
