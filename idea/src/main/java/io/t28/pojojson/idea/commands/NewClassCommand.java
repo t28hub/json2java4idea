@@ -2,23 +2,20 @@ package io.t28.pojojson.idea.commands;
 
 import com.google.common.base.Preconditions;
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ThrowableComputable;
-import com.intellij.psi.JavaDirectoryService;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.pojojson.core.PojoJson;
 import io.t28.pojojson.core.Style;
-import io.t28.pojojson.idea.exceptions.ClassAlreadyExistsException;
 import io.t28.pojojson.idea.exceptions.ClassCreationException;
 import io.t28.pojojson.idea.naming.IdeaClassNamePolicy;
 import io.t28.pojojson.idea.naming.IdeaFieldNamePolicy;
 import io.t28.pojojson.idea.naming.IdeaMethodNamePolicy;
 import io.t28.pojojson.idea.naming.IdeaParameterNamePolicy;
+import io.t28.pojojson.idea.utils.Extensions;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -55,13 +52,8 @@ public class NewClassCommand implements ThrowableComputable<PsiFile, ClassCreati
         }
 
         final String packageName = packageElement.getQualifiedName();
-        final String className = removeExtension(this.className, ".java");
-        final String fileName = appendExtension(this.className, ".java");
-        final PsiFile found = directory.findFile(fileName);
-        if (found != null) {
-            throw new ClassAlreadyExistsException("Class with the name(" + className + ") already exists in the package");
-        }
-
+        final String fileName = Extensions.append(this.className, StdFileTypes.JAVA);
+        final String className = Extensions.remove(this.className, StdFileTypes.JAVA);
         final Style style = Style.fromName(classStyle).orElse(Style.NONE);
         try {
             final Project project = directory.getProject();
@@ -80,24 +72,6 @@ public class NewClassCommand implements ThrowableComputable<PsiFile, ClassCreati
         } catch (IOException e) {
             throw new ClassCreationException("Failed to create new class from JSON", e);
         }
-    }
-
-    @Nonnull
-    @CheckReturnValue
-    private static String removeExtension(@Nonnull String className, @Nonnull String extension) {
-        if (className.endsWith(extension)) {
-            return className.substring(0, className.length() - extension.length());
-        }
-        return className;
-    }
-
-    @Nonnull
-    @CheckReturnValue
-    private static String appendExtension(@Nonnull String className, @Nonnull String extension) {
-        if (className.endsWith(extension)) {
-            return className;
-        }
-        return className + extension;
     }
 
     public static class Builder {

@@ -71,6 +71,14 @@ public class NewClassDialog extends DialogWrapper {
         return new Builder(project);
     }
 
+    public void close() {
+        close(OK_EXIT_CODE);
+    }
+
+    public void cancel() {
+        close(CANCEL_EXIT_CODE);
+    }
+
     @NotNull
     @CheckReturnValue
     public String getClassName() {
@@ -169,6 +177,9 @@ public class NewClassDialog extends DialogWrapper {
                     if (validator instanceof InputValidatorEx) {
                         message = ((InputValidatorEx) validator).getErrorText(text);
                     }
+                    if (Strings.isNullOrEmpty(message)) {
+                        message = "Unknown error occurs";
+                    }
                     return new ValidationInfo(message, tuple.v3());
                 })
                 .findFirst()
@@ -176,8 +187,12 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     @Override
+    public void doCancelAction() {
+        actionListener.onCancel(this);
+    }
+
+    @Override
     protected void doOKAction() {
-        super.doOKAction();
         actionListener.onOk(this);
     }
 
@@ -194,15 +209,15 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     class FormatAction extends DialogWrapperAction {
-        protected FormatAction() {
+        FormatAction() {
             super("Format");
         }
 
         @Override
         protected void doAction(@NotNull ActionEvent event) {
             if (isEnabled()) {
+                actionListener.onFormat(NewClassDialog.this);
             }
-            actionListener.onFormat(NewClassDialog.this);
         }
     }
 
