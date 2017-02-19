@@ -142,6 +142,7 @@
         <JAVADOC />
         <SOURCES>
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/LATEST-EAP-SNAPSHOT/def59750b4e57f2f8563591330901b18db0caf23/ideaIC-LATEST-EAP-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/guava-19.0-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

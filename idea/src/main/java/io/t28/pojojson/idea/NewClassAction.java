@@ -15,10 +15,12 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.InputValidator;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.PlatformIcons;
@@ -26,6 +28,7 @@ import io.t28.pojojson.idea.commands.NewClassCommand;
 import io.t28.pojojson.idea.exceptions.ClassCreationException;
 import io.t28.pojojson.idea.inject.ActionModule;
 import io.t28.pojojson.idea.ui.NewClassDialog;
+import io.t28.pojojson.idea.utils.Extensions;
 import io.t28.pojojson.idea.utils.JsonFormatter;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
@@ -101,6 +104,30 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onOk(@Nonnull NewClassDialog dialog) {
+        final PsiDirectory directory = ideView.getOrChooseDirectory();
+        if (directory == null) {
+            Messages.showMessageDialog(
+                    project,
+                    "Selected directory is invalid.",
+                    "Invalid Directory",
+                    Messages.getErrorIcon()
+            );
+            dialog.cancel();
+            return;
+        }
+
+        final String fileName = Extensions.append(dialog.getClassName(), StdFileTypes.JAVA);
+        final PsiFile found = directory.findFile(fileName);
+        if (found != null) {
+            Messages.showMessageDialog(
+                    project,
+                    "Cannot create a file '" + found.getVirtualFile().getPath() + "'. File already exists.",
+                    "Cannot Create Class",
+                    Messages.getErrorIcon()
+            );
+            return;
+        }
+
         final CommandProcessor processor = injector.getInstance(CommandProcessor.class);
         final Application application = injector.getInstance(Application.class);
         processor.executeCommand(project, () -> {
@@ -114,20 +141,21 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
                         .json(dialog.getJson())
                         .build());
             } catch (ClassCreationException e) {
-                e.printStackTrace();
                 final Notification notification = new Notification(
                         "POJO.json",
-                        "Cannot create class",
+                        "Cannot Create Class",
                         "Failed to create class " + dialog.getClassName(),
                         NotificationType.WARNING
                 );
                 Notifications.Bus.notify(notification, project);
             }
+            dialog.close();
         }, null, null);
     }
 
     @Override
     public void onCancel(@Nonnull NewClassDialog dialog) {
+        dialog.cancel();
     }
 
     @Override
