@@ -14,7 +14,6 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -40,6 +39,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class NewClassAction extends AnAction implements NewClassDialog.ActionListener {
+    private static final String NOTIFICATION_DISPLAY_ID = "Json2Java4Idea";
+
     private static final Key<InputValidator> NAME_VALIDATOR_KEY = Key.get(
             InputValidator.class, ActionModule.NAME_VALIDATOR_ANNOTATION
     );
@@ -62,6 +63,10 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     @SuppressWarnings("unused")
     private IdeView ideView;
 
+    @Inject
+    @SuppressWarnings("unused")
+    private PluginBundle bundle;
+
     public NewClassAction() {
         super(PlatformIcons.CLASS_ICON);
     }
@@ -76,17 +81,16 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
         injector.injectMembers(this);
         if (!isValidDirectory()) {
             final Notification notification = new Notification(
-                    "POJO.json",
-                    "Invalid target directory",
-                    "Cannot create a class in the selected directory",
+                    NOTIFICATION_DISPLAY_ID,
+                    bundle.message("error.title.invalid.directory"),
+                    bundle.message("error.message.invalid.directory"),
                     NotificationType.WARNING
             );
             Notifications.Bus.notify(notification, project);
             return;
         }
 
-        final NewClassDialog dialog = NewClassDialog.builder(project)
-                .editorFactory(injector.getInstance(EditorFactory.class))
+        final NewClassDialog dialog = NewClassDialog.builder(project, bundle)
                 .nameValidator(injector.getInstance(NAME_VALIDATOR_KEY))
                 .typeValidator(injector.getInstance(TYPE_VALIDATOR_KEY))
                 .jsonValidator(injector.getInstance(JSON_VALIDATOR_KEY))
@@ -108,8 +112,8 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
         if (directory == null) {
             Messages.showMessageDialog(
                     project,
-                    "Selected directory is invalid.",
-                    "Invalid Directory",
+                    bundle.message("error.message.invalid.directory"),
+                    bundle.message("error.title.cannot.create.class"),
                     Messages.getErrorIcon()
             );
             dialog.cancel();
@@ -121,8 +125,8 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
         if (found != null) {
             Messages.showMessageDialog(
                     project,
-                    "Cannot create a file '" + found.getVirtualFile().getPath() + "'. File already exists.",
-                    "Cannot Create Class",
+                    bundle.message("error.message.class.exists", dialog.getClassName(), found.getVirtualFile().getPath()),
+                    bundle.message("error.title.cannot.create.class"),
                     Messages.getErrorIcon()
             );
             return;
@@ -142,9 +146,9 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
                         .build());
             } catch (ClassCreationException e) {
                 final Notification notification = new Notification(
-                        "POJO.json",
-                        "Cannot Create Class",
-                        "Failed to create class " + dialog.getClassName(),
+                        NOTIFICATION_DISPLAY_ID,
+                        bundle.message("error.title.cannot.create.class"),
+                        bundle.message("error.message.cannot.create", dialog.getClassName()),
                         NotificationType.WARNING
                 );
                 Notifications.Bus.notify(notification, project);
@@ -167,17 +171,17 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             dialog.setJson(formatted);
         } catch (IOException e) {
             final Notification notification = new Notification(
-                    "POJO.json",
-                    "I/O error",
-                    "An I/O error occurred",
+                    NOTIFICATION_DISPLAY_ID,
+                    bundle.message("error.title.cannot.format.json"),
+                    bundle.message("error.message.io"),
                     NotificationType.WARNING
             );
             Notifications.Bus.notify(notification, project);
         } catch (IllegalArgumentException e) {
             final Notification notification = new Notification(
-                    "POJO.json",
-                    "Syntax error",
-                    "Specified JSON has syntax error",
+                    NOTIFICATION_DISPLAY_ID,
+                    bundle.message("error.title.cannot.format.json"),
+                    bundle.message("error.message.json.syntax"),
                     NotificationType.WARNING
             );
             Notifications.Bus.notify(notification, project);

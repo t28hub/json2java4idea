@@ -1,15 +1,24 @@
 package io.t28.pojojson.idea.validator;
 
+import com.google.inject.Inject;
 import com.intellij.openapi.ui.InputValidatorEx;
+import io.t28.pojojson.idea.PluginBundle;
 import io.t28.pojojson.idea.Type;
 
 import javax.annotation.Nullable;
 
 public class TypeValidator implements InputValidatorEx {
+    private final PluginBundle bundle;
+
+    @Inject
+    public TypeValidator(PluginBundle bundle) {
+        this.bundle = bundle;
+    }
+
     @Nullable
     @Override
     public String getErrorText(@Nullable String type) {
-        return "This(" + type + ") is not a supported type";
+        return bundle.message("error.message.validator.type.unsupported");
     }
 
     @Override

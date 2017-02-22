@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.PsiNameHelper;
+import io.t28.pojojson.idea.PluginBundle;
 import io.t28.pojojson.idea.utils.GsonFormatter;
 import io.t28.pojojson.idea.utils.JsonFormatter;
 import io.t28.pojojson.idea.validator.JsonValidator;
@@ -28,7 +29,7 @@ import java.lang.annotation.Annotation;
 public class ActionModule implements Module {
     public static final Annotation NAME_VALIDATOR_ANNOTATION = Names.named("Name");
     public static final Annotation TYPE_VALIDATOR_ANNOTATION = Names.named("Type");
-    public static final Annotation JSON_VALIDATOR_ANNOTATION = Names.named("Json");
+    public static final Annotation JSON_VALIDATOR_ANNOTATION = Names.named("PluginBundle");
 
     private final AnActionEvent event;
 
@@ -58,6 +59,13 @@ public class ActionModule implements Module {
         // Binding other classes
         binder.bind(JsonFormatter.class)
                 .to(GsonFormatter.class);
+    }
+
+    @Nonnull
+    @Provides
+    @Singleton
+    public PluginBundle provideBundle() {
+        return new PluginBundle();
     }
 
     @Nonnull
