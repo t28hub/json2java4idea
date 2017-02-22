@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
+import io.t28.pojojson.idea.PluginBundle;
 import io.t28.pojojson.idea.Type;
 import io.t28.pojojson.idea.commands.SetTextCommand;
 import io.t28.pojojson.idea.validator.NullValidator;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.lambda.tuple.Tuple;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,7 +36,6 @@ public class NewClassDialog extends DialogWrapper {
     private static final String EMPTY_TEXT = "";
 
     private final Project project;
-    private final EditorFactory editorFactory;
 
     private final InputValidator nameValidator;
     private final InputValidator typeValidator;
@@ -53,22 +54,22 @@ public class NewClassDialog extends DialogWrapper {
     private NewClassDialog(@NotNull Builder builder) {
         super(builder.project, true);
         this.project = builder.project;
-        this.editorFactory = builder.editorFactory;
         this.nameValidator = builder.nameValidator;
         this.typeValidator = builder.typeValidator;
         this.jsonValidator = builder.jsonValidator;
         this.actionListener = builder.actionListener;
 
-        this.formatAction = new FormatAction();
+        final PluginBundle bundle = builder.bundle;
+        this.formatAction = new FormatAction(bundle.message("dialog.action.format"));
 
-        setTitle("Create New Class from JSON");
+        setTitle(bundle.message("dialog.title"));
         setResizable(true);
         init();
     }
 
     @NotNull
-    public static Builder builder(@NotNull Project project) {
-        return new Builder(project);
+    public static Builder builder(@NotNull Project project, @Nonnull PluginBundle bundle) {
+        return new Builder(project, bundle);
     }
 
     public void close() {
@@ -117,6 +118,7 @@ public class NewClassDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
+        final EditorFactory editorFactory = EditorFactory.getInstance();
         jsonDocument = editorFactory.createDocument(EMPTY_TEXT);
         jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
         final EditorSettings settings = jsonEditor.getSettings();
@@ -187,13 +189,17 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     @Override
-    public void doCancelAction() {
-        actionListener.onCancel(this);
+    protected void doOKAction() {
+        if (myOKAction.isEnabled()) {
+            actionListener.onOk(this);
+        }
     }
 
     @Override
-    protected void doOKAction() {
-        actionListener.onOk(this);
+    public void doCancelAction() {
+        if (myCancelAction.isEnabled()) {
+            actionListener.onCancel(this);
+        }
     }
 
     @NotNull
@@ -209,8 +215,8 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     class FormatAction extends DialogWrapperAction {
-        FormatAction() {
-            super("Format");
+        FormatAction(@Nonnull String name) {
+            super(name);
         }
 
         @Override
@@ -222,39 +228,32 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     public interface ActionListener {
-        default void onOk(@NotNull NewClassDialog dialog) {
+        default void onOk(@Nonnull NewClassDialog dialog) {
         }
 
-        default void onCancel(@NotNull NewClassDialog dialog) {
+        default void onCancel(@Nonnull NewClassDialog dialog) {
         }
 
-        default void onFormat(@NotNull NewClassDialog dialog) {
+        default void onFormat(@Nonnull NewClassDialog dialog) {
         }
     }
 
     public static class Builder {
         private final Project project;
-        private EditorFactory editorFactory;
+        private final PluginBundle bundle;
         private InputValidator nameValidator;
         private InputValidator typeValidator;
         private InputValidator jsonValidator;
         private ActionListener actionListener;
 
-        private Builder(@NotNull Project project) {
+        private Builder(@NotNull Project project, @Nonnull PluginBundle bundle) {
             this.project = project;
-            this.editorFactory = EditorFactory.getInstance();
+            this.bundle = bundle;
             this.nameValidator = new NullValidator();
             this.typeValidator = new NullValidator();
             this.jsonValidator = new NullValidator();
             this.actionListener = new ActionListener() {
             };
-        }
-
-        @NotNull
-        @CheckReturnValue
-        public Builder editorFactory(@NotNull EditorFactory editorFactory) {
-            this.editorFactory = editorFactory;
-            return this;
         }
 
         @NotNull

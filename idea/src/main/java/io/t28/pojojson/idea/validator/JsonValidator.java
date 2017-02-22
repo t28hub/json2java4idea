@@ -6,15 +6,18 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
 import com.intellij.openapi.ui.InputValidatorEx;
+import io.t28.pojojson.idea.PluginBundle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class JsonValidator implements InputValidatorEx {
+    private final PluginBundle bundle;
     private final JsonParser parser;
 
     @Inject
-    public JsonValidator(@Nonnull JsonParser parser) {
+    public JsonValidator(@Nonnull PluginBundle bundle, @Nonnull JsonParser parser) {
+        this.bundle = bundle;
         this.parser = parser;
     }
 
@@ -22,16 +25,16 @@ public class JsonValidator implements InputValidatorEx {
     @Override
     public String getErrorText(@Nullable String json) {
         if (Strings.isNullOrEmpty(json)) {
-            return "JSON must not be empty";
+            return bundle.message("error.message.validator.json.empty");
         }
 
         try {
             final JsonElement root = parser.parse(json);
             if (root.isJsonNull() || root.isJsonPrimitive()) {
-                return "JSON must be an Array or Object";
+                return bundle.message("new.message.validator.json.primitive");
             }
         } catch (JsonSyntaxException e) {
-            return "This is not a valid JSON string";
+            return bundle.message("error.message.validator.json.invalid");
         }
         return null;
     }
