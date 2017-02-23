@@ -5,19 +5,23 @@ import com.intellij.openapi.ui.InputValidatorEx;
 import io.t28.pojojson.idea.PluginBundle;
 import io.t28.pojojson.idea.Type;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TypeValidator implements InputValidatorEx {
     private final PluginBundle bundle;
 
     @Inject
-    public TypeValidator(PluginBundle bundle) {
+    public TypeValidator(@Nonnull PluginBundle bundle) {
         this.bundle = bundle;
     }
 
     @Nullable
     @Override
     public String getErrorText(@Nullable String type) {
+        if (canClose(type)) {
+            return null;
+        }
         return bundle.message("error.message.validator.type.unsupported");
     }
 
