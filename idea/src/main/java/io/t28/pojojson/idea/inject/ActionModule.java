@@ -8,10 +8,6 @@ import com.google.inject.name.Names;
 import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.PsiNameHelper;
@@ -66,27 +62,6 @@ public class ActionModule implements Module {
     @Singleton
     public PluginBundle provideBundle() {
         return new PluginBundle();
-    }
-
-    @Nonnull
-    @Provides
-    @Singleton
-    public Application provideApplication() {
-        return ApplicationManager.getApplication();
-    }
-
-    @Nonnull
-    @Provides
-    @Singleton
-    public CommandProcessor provideCommandProcessor() {
-        return CommandProcessor.getInstance();
-    }
-
-    @Nonnull
-    @Provides
-    @Singleton
-    public EditorFactory provideEditorFactory() {
-        return EditorFactory.getInstance();
     }
 
     @Nonnull

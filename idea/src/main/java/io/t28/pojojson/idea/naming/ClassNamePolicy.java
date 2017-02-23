@@ -9,15 +9,15 @@ import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.Nonnull;
 
-public class IdeaClassNamePolicy implements NamePolicy {
+public class ClassNamePolicy implements NamePolicy {
     private final PsiNameHelper nameHelper;
 
-    public IdeaClassNamePolicy() {
+    public ClassNamePolicy() {
         this(PsiNameHelperImpl.getInstance());
     }
 
     @VisibleForTesting
-    IdeaClassNamePolicy(@Nonnull PsiNameHelper nameHelper) {
+    ClassNamePolicy(@Nonnull PsiNameHelper nameHelper) {
         this.nameHelper = nameHelper;
     }
 

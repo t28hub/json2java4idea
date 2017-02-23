@@ -3,9 +3,9 @@ package io.t28.pojojson.idea.ui;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.intellij.json.JsonFileType;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -101,12 +101,15 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     public void setJson(@NotNull String json) {
-        final Runnable command = SetTextCommand.builder()
-                .text(json)
-                .editor(jsonEditor)
-                .document(jsonDocument)
-                .build();
-        ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, command, null, null, UndoConfirmationPolicy.DEFAULT, jsonDocument));
+        CommandProcessor.getInstance().executeCommand(project, () -> {
+            final Application application = ApplicationManager.getApplication();
+            application.runWriteAction(SetTextCommand.builder()
+                    .text(json)
+                    .editor(jsonEditor)
+                    .document(jsonDocument)
+                    .build()
+            );
+        }, null, null);
     }
 
     @Nullable
@@ -220,7 +223,7 @@ public class NewClassDialog extends DialogWrapper {
         }
 
         @Override
-        protected void doAction(@NotNull ActionEvent event) {
+        protected void doAction(@Nonnull ActionEvent event) {
             if (isEnabled()) {
                 actionListener.onFormat(NewClassDialog.this);
             }

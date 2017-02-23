@@ -12,22 +12,25 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaDirectoryService;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.PlatformIcons;
 import io.t28.pojojson.idea.commands.NewClassCommand;
+import io.t28.pojojson.idea.exceptions.ClassAlreadyExistsException;
 import io.t28.pojojson.idea.exceptions.ClassCreationException;
+import io.t28.pojojson.idea.exceptions.InvalidDirectoryException;
+import io.t28.pojojson.idea.exceptions.InvalidJsonException;
 import io.t28.pojojson.idea.inject.ActionModule;
 import io.t28.pojojson.idea.ui.NewClassDialog;
-import io.t28.pojojson.idea.utils.Extensions;
 import io.t28.pojojson.idea.utils.JsonFormatter;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
@@ -79,11 +82,13 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
         injector = Guice.createInjector(new ActionModule(event));
         injector.injectMembers(this);
-        if (!isValidDirectory()) {
+
+        final PsiDirectory selected = ideView.getOrChooseDirectory();
+        if (selected == null) {
             final Notification notification = new Notification(
                     NOTIFICATION_DISPLAY_ID,
-                    bundle.message("error.title.invalid.directory"),
-                    bundle.message("error.message.invalid.directory"),
+                    bundle.message("error.title.directory.unselected"),
+                    bundle.message("error.message.directory.unselected"),
                     NotificationType.WARNING
             );
             Notifications.Bus.notify(notification, project);
@@ -108,52 +113,45 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onOk(@Nonnull NewClassDialog dialog) {
-        final PsiDirectory directory = ideView.getOrChooseDirectory();
-        if (directory == null) {
-            Messages.showMessageDialog(
-                    project,
-                    bundle.message("error.message.invalid.directory"),
-                    bundle.message("error.title.cannot.create.class"),
-                    Messages.getErrorIcon()
-            );
-            dialog.cancel();
-            return;
-        }
-
-        final String fileName = Extensions.append(dialog.getClassName(), StdFileTypes.JAVA);
-        final PsiFile found = directory.findFile(fileName);
-        if (found != null) {
-            Messages.showMessageDialog(
-                    project,
-                    bundle.message("error.message.class.exists", dialog.getClassName(), found.getVirtualFile().getPath()),
-                    bundle.message("error.title.cannot.create.class"),
-                    Messages.getErrorIcon()
-            );
-            return;
-        }
-
-        final CommandProcessor processor = injector.getInstance(CommandProcessor.class);
-        final Application application = injector.getInstance(Application.class);
-        processor.executeCommand(project, () -> {
+        CommandProcessor.getInstance().executeCommand(project, () -> {
+            final PsiDirectory directory = ideView.getOrChooseDirectory();
             try {
-                application.runWriteAction(NewClassCommand.builder()
-                        .directory(ideView.getOrChooseDirectory())
+                ApplicationManager.getApplication().runWriteAction(NewClassCommand.builder()
+                        .directory(directory)
                         .directoryService(JavaDirectoryService.getInstance())
                         .fileFactory(PsiFileFactory.getInstance(project))
                         .className(dialog.getClassName())
                         .classStyle(dialog.getClassStyle())
                         .json(dialog.getJson())
-                        .build());
+                        .build()
+                );
+                dialog.close();
+            } catch (InvalidDirectoryException e) {
+                final Notification notification = new Notification(
+                        NOTIFICATION_DISPLAY_ID,
+                        bundle.message("error.title.directory.invalid"),
+                        bundle.message("error.message.directory.invalid", directory),
+                        NotificationType.WARNING
+                );
+                Notifications.Bus.notify(notification);
+                dialog.close();
+            } catch (ClassAlreadyExistsException e) {
+                Messages.showMessageDialog(
+                        project,
+                        bundle.message("error.message.class.exists", dialog.getClassName()),
+                        bundle.message("error.title.cannot.create.class"),
+                        Messages.getErrorIcon()
+                );
             } catch (ClassCreationException e) {
                 final Notification notification = new Notification(
                         NOTIFICATION_DISPLAY_ID,
                         bundle.message("error.title.cannot.create.class"),
                         bundle.message("error.message.cannot.create", dialog.getClassName()),
-                        NotificationType.WARNING
+                        NotificationType.ERROR
                 );
-                Notifications.Bus.notify(notification, project);
+                Notifications.Bus.notify(notification);
+                dialog.close();
             }
-            dialog.close();
         }, null, null);
     }
 
@@ -164,11 +162,19 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onFormat(@Nonnull NewClassDialog dialog) {
-        final JsonFormatter formatter = injector.getInstance(JsonFormatter.class);
         try {
             final String json = dialog.getJson();
+            final JsonFormatter formatter = injector.getInstance(JsonFormatter.class);
             final String formatted = formatter.format(json);
             dialog.setJson(formatted);
+        } catch (InvalidJsonException e) {
+            final Notification notification = new Notification(
+                    NOTIFICATION_DISPLAY_ID,
+                    bundle.message("error.title.cannot.format.json"),
+                    bundle.message("error.message.json.syntax"),
+                    NotificationType.WARNING
+            );
+            Notifications.Bus.notify(notification, project);
         } catch (IOException e) {
             final Notification notification = new Notification(
                     NOTIFICATION_DISPLAY_ID,
@@ -177,27 +183,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
                     NotificationType.WARNING
             );
             Notifications.Bus.notify(notification, project);
-        } catch (IllegalArgumentException e) {
-            final Notification notification = new Notification(
-                    NOTIFICATION_DISPLAY_ID,
-                    bundle.message("error.title.cannot.format.json"),
-                    bundle.message("error.message.json.syntax"),
-                    NotificationType.WARNING
-            );
-            Notifications.Bus.notify(notification, project);
         }
-    }
-
-    @CheckReturnValue
-    private boolean isValidDirectory() {
-        final PsiDirectory targetDirectory = ideView.getOrChooseDirectory();
-        if (targetDirectory == null) {
-            return false;
-        }
-
-        final JavaDirectoryService directoryService = JavaDirectoryService.getInstance();
-        final PsiPackage targetPackage = directoryService.getPackage(targetDirectory);
-        return targetPackage != null;
     }
 
     @CheckReturnValue

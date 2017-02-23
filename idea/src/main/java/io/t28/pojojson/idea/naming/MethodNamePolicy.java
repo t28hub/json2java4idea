@@ -14,16 +14,16 @@ import io.t28.pojojson.idea.utils.PsiTypes;
 
 import javax.annotation.Nonnull;
 
-public class IdeaMethodNamePolicy implements NamePolicy {
+public class MethodNamePolicy implements NamePolicy {
     private final Project project;
     private final PsiNameHelper nameHelper;
 
-    public IdeaMethodNamePolicy(@Nonnull Project project) {
+    public MethodNamePolicy(@Nonnull Project project) {
         this(project, PsiNameHelperImpl.getInstance(project));
     }
 
     @VisibleForTesting
-    IdeaMethodNamePolicy(@Nonnull Project project, @Nonnull PsiNameHelper nameHelper) {
+    MethodNamePolicy(@Nonnull Project project, @Nonnull PsiNameHelper nameHelper) {
         this.project = project;
         this.nameHelper = nameHelper;
     }
