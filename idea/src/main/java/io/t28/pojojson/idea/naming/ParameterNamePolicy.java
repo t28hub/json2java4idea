@@ -13,18 +13,18 @@ import io.t28.pojojson.core.naming.NamePolicy;
 
 import javax.annotation.Nonnull;
 
-public class IdeaParameterNamePolicy implements NamePolicy {
+public class ParameterNamePolicy implements NamePolicy {
     private static final String PREFIX = "_";
 
     private final PsiNameHelper nameHelper;
     private final JavaCodeStyleManager codeStyleManager;
 
-    public IdeaParameterNamePolicy(@Nonnull Project project) {
+    public ParameterNamePolicy(@Nonnull Project project) {
         this(PsiNameHelperImpl.getInstance(project), JavaCodeStyleManager.getInstance(project));
     }
 
     @VisibleForTesting
-    IdeaParameterNamePolicy(@Nonnull PsiNameHelper nameHelper, @Nonnull JavaCodeStyleManager codeStyleManager) {
+    ParameterNamePolicy(@Nonnull PsiNameHelper nameHelper, @Nonnull JavaCodeStyleManager codeStyleManager) {
         this.nameHelper = nameHelper;
         this.codeStyleManager = codeStyleManager;
     }
