@@ -1,6 +1,5 @@
 package io.t28.pojojson.idea.validator;
 
-import com.google.common.base.Strings;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.psi.PsiNameHelper;
 import io.t28.pojojson.idea.PluginBundle;
@@ -22,6 +21,9 @@ public class NameValidator implements InputValidatorEx {
     @Nullable
     @Override
     public String getErrorText(@Nullable String name) {
+        if (nameHelper.isQualifiedName(name)) {
+            return null;
+        }
         return bundle.message("error.message.validator.name.invalid");
     }
 
@@ -33,9 +35,6 @@ public class NameValidator implements InputValidatorEx {
     @Override
     @SuppressWarnings("RedundantIfStatement")
     public boolean canClose(@Nullable String name) {
-        if (Strings.isNullOrEmpty(name)) {
-            return false;
-        }
         return nameHelper.isQualifiedName(name);
     }
 }
