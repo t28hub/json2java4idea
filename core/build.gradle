@@ -6,6 +6,4 @@ dependencies {
     compile 'com.squareup:javapoet:1.8.0'
     compile 'com.squareup.moshi:moshi:1.4.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
-
-    compileOnly 'org.immutables:value:2.4.0'
 }

@@ -3,8 +3,8 @@ package io.t28.test;
 import java.util.List;
 import javax.annotation.Generated;
 
-@Generated("io.t28.pojojson.core.PojoJson")
 @SuppressWarnings("all")
+@Generated("io.t28.json2java.core.JavaConverter")
 public class ObjectTest {
     private final int numberValue;
 

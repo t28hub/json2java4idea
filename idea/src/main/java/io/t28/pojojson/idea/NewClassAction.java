@@ -20,24 +20,23 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.PlatformIcons;
+import io.t28.pojojson.idea.commands.FormatJsonCommand;
 import io.t28.pojojson.idea.commands.NewClassCommand;
 import io.t28.pojojson.idea.exceptions.ClassAlreadyExistsException;
 import io.t28.pojojson.idea.exceptions.ClassCreationException;
 import io.t28.pojojson.idea.exceptions.InvalidDirectoryException;
 import io.t28.pojojson.idea.exceptions.InvalidJsonException;
-import io.t28.pojojson.idea.inject.ActionModule;
-import io.t28.pojojson.idea.ui.NewClassDialog;
-import io.t28.pojojson.idea.utils.JsonFormatter;
+import io.t28.pojojson.idea.exceptions.JsonFormatException;
+import io.t28.pojojson.idea.inject.CommandFactory;
+import io.t28.pojojson.idea.inject.PluginModule;
+import io.t28.pojojson.idea.view.NewClassDialog;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -45,15 +44,11 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     private static final String NOTIFICATION_DISPLAY_ID = "Json2Java4Idea";
 
     private static final Key<InputValidator> NAME_VALIDATOR_KEY = Key.get(
-            InputValidator.class, ActionModule.NAME_VALIDATOR_ANNOTATION
-    );
-
-    private static final Key<InputValidator> TYPE_VALIDATOR_KEY = Key.get(
-            InputValidator.class, ActionModule.TYPE_VALIDATOR_ANNOTATION
+            InputValidator.class, PluginModule.NAME_VALIDATOR_ANNOTATION
     );
 
     private static final Key<InputValidator> JSON_VALIDATOR_KEY = Key.get(
-            InputValidator.class, ActionModule.JSON_VALIDATOR_ANNOTATION
+            InputValidator.class, PluginModule.JSON_VALIDATOR_ANNOTATION
     );
 
     private Injector injector;
@@ -80,7 +75,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             return;
         }
 
-        injector = Guice.createInjector(new ActionModule(event));
+        injector = Guice.createInjector(new PluginModule(event));
         injector.injectMembers(this);
 
         final PsiDirectory selected = ideView.getOrChooseDirectory();
@@ -97,7 +92,6 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
         final NewClassDialog dialog = NewClassDialog.builder(project, bundle)
                 .nameValidator(injector.getInstance(NAME_VALIDATOR_KEY))
-                .typeValidator(injector.getInstance(TYPE_VALIDATOR_KEY))
                 .jsonValidator(injector.getInstance(JSON_VALIDATOR_KEY))
                 .actionListener(this)
                 .build();
@@ -116,16 +110,21 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
         CommandProcessor.getInstance().executeCommand(project, () -> {
             final PsiDirectory directory = ideView.getOrChooseDirectory();
             try {
-                ApplicationManager.getApplication().runWriteAction(NewClassCommand.builder()
-                        .directory(directory)
-                        .directoryService(JavaDirectoryService.getInstance())
-                        .fileFactory(PsiFileFactory.getInstance(project))
-                        .className(dialog.getClassName())
-                        .classStyle(dialog.getClassStyle())
-                        .json(dialog.getJson())
-                        .build()
+                final CommandFactory commandFactory = injector.getInstance(CommandFactory.class);
+                final NewClassCommand command = commandFactory.create(
+                        dialog.getClassName(),
+                        dialog.getJson(),
+                        directory
                 );
+                ApplicationManager.getApplication().runWriteAction(command);
                 dialog.close();
+            } catch (ClassAlreadyExistsException e) {
+                Messages.showMessageDialog(
+                        project,
+                        bundle.message("error.message.class.exists", dialog.getClassName()),
+                        bundle.message("error.title.cannot.create.class"),
+                        Messages.getErrorIcon()
+                );
             } catch (InvalidDirectoryException e) {
                 final Notification notification = new Notification(
                         NOTIFICATION_DISPLAY_ID,
@@ -135,13 +134,6 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
                 );
                 Notifications.Bus.notify(notification);
                 dialog.close();
-            } catch (ClassAlreadyExistsException e) {
-                Messages.showMessageDialog(
-                        project,
-                        bundle.message("error.message.class.exists", dialog.getClassName()),
-                        bundle.message("error.title.cannot.create.class"),
-                        Messages.getErrorIcon()
-                );
             } catch (ClassCreationException e) {
                 final Notification notification = new Notification(
                         NOTIFICATION_DISPLAY_ID,
@@ -162,28 +154,33 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onFormat(@Nonnull NewClassDialog dialog) {
-        try {
-            final String json = dialog.getJson();
-            final JsonFormatter formatter = injector.getInstance(JsonFormatter.class);
-            final String formatted = formatter.format(json);
-            dialog.setJson(formatted);
-        } catch (InvalidJsonException e) {
-            final Notification notification = new Notification(
-                    NOTIFICATION_DISPLAY_ID,
-                    bundle.message("error.title.cannot.format.json"),
-                    bundle.message("error.message.json.syntax"),
-                    NotificationType.WARNING
-            );
-            Notifications.Bus.notify(notification, project);
-        } catch (IOException e) {
-            final Notification notification = new Notification(
-                    NOTIFICATION_DISPLAY_ID,
-                    bundle.message("error.title.cannot.format.json"),
-                    bundle.message("error.message.io"),
-                    NotificationType.WARNING
-            );
-            Notifications.Bus.notify(notification, project);
-        }
+        CommandProcessor.getInstance().executeCommand(project, () -> {
+            try {
+                final CommandFactory commandFactory = injector.getInstance(CommandFactory.class);
+                final FormatJsonCommand command = commandFactory.create(
+                        dialog.getJson(),
+                        dialog.getJsonEditor(),
+                        dialog.getJsonDocument()
+                );
+                ApplicationManager.getApplication().runWriteAction(command);
+            } catch (InvalidJsonException e) {
+                final Notification notification = new Notification(
+                        NOTIFICATION_DISPLAY_ID,
+                        bundle.message("error.title.cannot.format.json"),
+                        bundle.message("error.message.json.syntax"),
+                        NotificationType.WARNING
+                );
+                Notifications.Bus.notify(notification, project);
+            } catch (JsonFormatException e) {
+                final Notification notification = new Notification(
+                        NOTIFICATION_DISPLAY_ID,
+                        bundle.message("error.title.cannot.format.json"),
+                        bundle.message("error.message.io"),
+                        NotificationType.WARNING
+                );
+                Notifications.Bus.notify(notification, project);
+            }
+        }, null, null);
     }
 
     @CheckReturnValue
