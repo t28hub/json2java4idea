@@ -6,7 +6,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 public final class Extensions {
-    private static final String DELOMITER = ".";
+    private static final String DELIMITER = ".";
 
     private Extensions() {
     }
@@ -15,7 +15,7 @@ public final class Extensions {
     @CheckReturnValue
     public static String remove(@Nonnull String fileName, @Nonnull FileType fileType) {
         final String extension = fileType.getDefaultExtension();
-        if (fileName.endsWith(DELOMITER + extension)) {
+        if (fileName.endsWith(DELIMITER + extension)) {
             return fileName.substring(0, fileName.length() - extension.length() + 1);
         }
         return fileName;
@@ -25,9 +25,9 @@ public final class Extensions {
     @CheckReturnValue
     public static String append(@Nonnull String fileName, @Nonnull FileType fileType) {
         final String extension = fileType.getDefaultExtension();
-        if (fileName.endsWith(DELOMITER + extension)) {
+        if (fileName.endsWith(DELIMITER + extension)) {
             return fileName;
         }
-        return fileName + DELOMITER + extension;
+        return fileName + DELIMITER + extension;
     }
 }
