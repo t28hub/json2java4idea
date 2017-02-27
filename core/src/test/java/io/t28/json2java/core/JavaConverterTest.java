@@ -24,7 +24,7 @@ public class JavaConverterTest {
     @Before
     public void setUp() throws Exception {
         final Configuration configuration = Configuration.builder()
-                .style(Configuration.Style.NONE)
+                .style(Style.NONE)
                 .classNamePolicy(DefaultNamePolicy.CLASS)
                 .methodNamePolicy(DefaultNamePolicy.METHOD)
                 .fieldNamePolicy(DefaultNamePolicy.FIELD)

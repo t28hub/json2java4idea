@@ -16,12 +16,17 @@
     </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="145.0"/>
+    <idea-version since-build="171.0"/>
 
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <projectService
+                serviceInterface="io.t28.pojojson.idea.settings.Json2JavaSettings"
+                serviceImplementation="io.t28.pojojson.idea.settings.Json2JavaSettings"/>
+        <projectConfigurable
+                id="other"
+                instance="io.t28.pojojson.idea.settings.Json2JavaConfigurable"/>
     </extensions>
 
     <actions>
