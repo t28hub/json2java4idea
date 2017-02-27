@@ -19,13 +19,13 @@ import com.intellij.psi.PsiNameHelper;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.json2java.core.Configuration;
 import io.t28.json2java.core.JavaConverter;
-import io.t28.json2java.core.Style;
 import io.t28.json2java.core.naming.NamePolicy;
 import io.t28.pojojson.idea.Json2JavaBundle;
 import io.t28.pojojson.idea.naming.ClassNamePolicy;
 import io.t28.pojojson.idea.naming.FieldNamePolicy;
 import io.t28.pojojson.idea.naming.MethodNamePolicy;
 import io.t28.pojojson.idea.naming.ParameterNamePolicy;
+import io.t28.pojojson.idea.settings.Json2JavaSettings;
 import io.t28.pojojson.idea.utils.GsonFormatter;
 import io.t28.pojojson.idea.utils.JsonFormatter;
 import io.t28.pojojson.idea.validator.JsonValidator;
@@ -88,12 +88,13 @@ public class PluginModule implements Module {
     @Nonnull
     @Provides
     @Singleton
-    public Configuration provideConfiguration(@Nonnull @Named("ClassName") NamePolicy classNamePolicy,
+    public Configuration provideConfiguration(@Nonnull Json2JavaSettings settings,
+                                              @Nonnull @Named("ClassName") NamePolicy classNamePolicy,
                                               @Nonnull @Named("FieldName") NamePolicy fieldNamePolicy,
                                               @Nonnull @Named("MethodName") NamePolicy methodNamePolicy,
                                               @Nonnull @Named("ParameterName") NamePolicy parameterNamePolicy) {
         return Configuration.builder()
-                .style(Style.GSON)
+                .style(settings.getStyle())
                 .classNamePolicy(classNamePolicy)
                 .fieldNamePolicy(fieldNamePolicy)
                 .methodNamePolicy(methodNamePolicy)
@@ -105,6 +106,13 @@ public class PluginModule implements Module {
     @Provides
     public JavaConverter provideJavaConverter(@Nonnull Configuration configuration) {
         return new JavaConverter(configuration);
+    }
+
+    @Nonnull
+    @Provides
+    @Singleton
+    public Json2JavaSettings provideSettings(@Nonnull Project project) {
+        return Json2JavaSettings.getInstance(project);
     }
 
     @Nonnull

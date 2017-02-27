@@ -60,21 +60,21 @@ public class SettingsPanel {
     @Nonnull
     @CheckReturnValue
     public String getClassNamePrefix() {
-        return classNameSuffixField.getText().trim();
+        return classNamePrefixField.getText().trim();
     }
 
     public void setClassNamePrefix(@Nonnull String prefix) {
-        classNameSuffixField.setText(prefix);
+        classNamePrefixField.setText(prefix);
     }
 
     @Nonnull
     @CheckReturnValue
     public String getClassNameSuffix() {
-        return classNamePrefixField.getText().trim();
+        return classNameSuffixField.getText().trim();
     }
 
     public void setClassNameSuffix(@Nonnull String suffix) {
-        classNamePrefixField.setText(suffix);
+        classNameSuffixField.setText(suffix);
     }
 
     private Stream<JRadioButton> getStyleButtonStream() {

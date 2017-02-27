@@ -69,7 +69,7 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             return true;
         }
 
-        return !Objects.equal(Style.fromName(panel.getClassStyle(), Style.NONE), settings.getClassStyle())
+        return !Objects.equal(Style.fromName(panel.getClassStyle(), Style.NONE), settings.getStyle())
                 || !Objects.equal(panel.getClassNamePrefix(), settings.getClassNamePrefix())
                 || !Objects.equal(panel.getClassNameSuffix(), settings.getClassNameSuffix());
     }
@@ -80,7 +80,7 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             return;
         }
 
-        settings.setClassStyle(Style.fromName(panel.getClassStyle(), Style.NONE));
+        settings.setStyle(Style.fromName(panel.getClassStyle(), Style.NONE));
         settings.setClassNamePrefix(panel.getClassNamePrefix());
         settings.setClassNameSuffix(panel.getClassNameSuffix());
     }
@@ -91,7 +91,7 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             return;
         }
 
-        panel.setClassStyle(settings.getClassStyle().name());
+        panel.setClassStyle(settings.getStyle().name());
         panel.setClassNamePrefix(settings.getClassNamePrefix());
         panel.setClassNameSuffix(settings.getClassNameSuffix());
     }
