@@ -1,4 +1,4 @@
-rootProject.name = 'pojo-json'
+rootProject.name = 'json2java4idea'
 include 'core'
 include 'idea'
 
