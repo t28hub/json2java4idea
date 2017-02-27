@@ -32,7 +32,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text resource-bundle="messages/Json2JavaBundle" key="settings.style"/>
+                  <text resource-bundle="messages/Json2JavaBundle" key="settings.label.style"/>
                 </properties>
               </component>
               <component id="33362" class="javax.swing.JSeparator">
@@ -55,7 +55,7 @@
                     </constraints>
                     <properties>
                       <selected value="true"/>
-                      <text resource-bundle="messages/Json2JavaBundle" key="settings.style.default"/>
+                      <text resource-bundle="messages/Json2JavaBundle" key="settings.label.style.default"/>
                     </properties>
                   </component>
                   <component id="32da9" class="javax.swing.JRadioButton" binding="gsonStyleButton" default-binding="true">
@@ -63,7 +63,7 @@
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text resource-bundle="messages/Json2JavaBundle" key="settings.style.gson"/>
+                      <text resource-bundle="messages/Json2JavaBundle" key="settings.label.style.gson"/>
                     </properties>
                   </component>
                   <component id="73c07" class="javax.swing.JRadioButton" binding="jacksonStyleButton" default-binding="true">
@@ -71,7 +71,7 @@
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text resource-bundle="messages/Json2JavaBundle" key="settings.style.jackson"/>
+                      <text resource-bundle="messages/Json2JavaBundle" key="settings.label.style.jackson"/>
                     </properties>
                   </component>
                   <component id="fd3ed" class="javax.swing.JRadioButton" binding="moshiStyleButton" default-binding="true">
@@ -80,7 +80,7 @@
                     </constraints>
                     <properties>
                       <selected value="false"/>
-                      <text resource-bundle="messages/Json2JavaBundle" key="settings.style.moshi"/>
+                      <text resource-bundle="messages/Json2JavaBundle" key="settings.label.style.moshi"/>
                     </properties>
                   </component>
                 </children>
@@ -105,7 +105,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text resource-bundle="messages/Json2JavaBundle" key="settings.class"/>
+                  <text resource-bundle="messages/Json2JavaBundle" key="settings.label.class"/>
                 </properties>
               </component>
               <component id="9436b" class="javax.swing.JSeparator">
@@ -129,7 +129,7 @@
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text resource-bundle="messages/Json2JavaBundle" key="settings.class.prefix"/>
+                      <text resource-bundle="messages/Json2JavaBundle" key="settings.label.class.prefix"/>
                     </properties>
                   </component>
                   <component id="84d12" class="javax.swing.JTextField" binding="classNamePrefixField">
@@ -152,7 +152,7 @@
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text resource-bundle="messages/Json2JavaBundle" key="settings.class.suffix"/>
+                      <text resource-bundle="messages/Json2JavaBundle" key="settings.label.class.suffix"/>
                     </properties>
                   </component>
                   <component id="f0bf4" class="javax.swing.JTextField" binding="classNameSuffixField">
