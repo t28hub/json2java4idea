@@ -7,7 +7,7 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.ui.UIUtil;
-import io.t28.pojojson.idea.PluginBundle;
+import io.t28.pojojson.idea.Json2JavaBundle;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -25,7 +25,7 @@ public class NameValidatorTest {
 
     private static IdeaProjectTestFixture fixture;
 
-    private PluginBundle bundle;
+    private Json2JavaBundle bundle;
 
     private NameValidator underTest;
 
@@ -43,7 +43,7 @@ public class NameValidatorTest {
     @Before
     public void setUp() throws Exception {
         final Project project = fixture.getProject();
-        bundle = spy(new PluginBundle());
+        bundle = spy(new Json2JavaBundle());
         underTest = new NameValidator(bundle, PsiNameHelper.getInstance(project));
     }
 

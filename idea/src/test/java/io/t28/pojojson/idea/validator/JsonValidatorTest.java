@@ -1,7 +1,7 @@
 package io.t28.pojojson.idea.validator;
 
 import com.google.gson.JsonParser;
-import io.t28.pojojson.idea.PluginBundle;
+import io.t28.pojojson.idea.Json2JavaBundle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,13 +10,13 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class JsonValidatorTest {
-    private PluginBundle bundle;
+    private Json2JavaBundle bundle;
 
     private JsonValidator underTest;
 
     @Before
     public void setUp() throws Exception {
-        bundle = spy(new PluginBundle());
+        bundle = spy(new Json2JavaBundle());
         underTest = new JsonValidator(bundle, new JsonParser());
     }
 

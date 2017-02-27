@@ -6,11 +6,16 @@ import org.jetbrains.annotations.PropertyKey;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
-public class PluginBundle extends AbstractBundle {
-    private static final String BUNDLE = "messages.PluginBundle";
+public class Json2JavaBundle extends AbstractBundle {
+    private static final String BUNDLE = "messages.Json2JavaBundle";
 
-    public PluginBundle() {
+    public Json2JavaBundle() {
         super(BUNDLE);
+    }
+
+    @Nonnull
+    public static Json2JavaBundle getInstance() {
+        return new Json2JavaBundle();
     }
 
     @Nonnull

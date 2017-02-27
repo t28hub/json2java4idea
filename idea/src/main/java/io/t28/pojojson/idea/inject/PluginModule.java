@@ -19,8 +19,9 @@ import com.intellij.psi.PsiNameHelper;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.json2java.core.Configuration;
 import io.t28.json2java.core.JavaConverter;
+import io.t28.json2java.core.Style;
 import io.t28.json2java.core.naming.NamePolicy;
-import io.t28.pojojson.idea.PluginBundle;
+import io.t28.pojojson.idea.Json2JavaBundle;
 import io.t28.pojojson.idea.naming.ClassNamePolicy;
 import io.t28.pojojson.idea.naming.FieldNamePolicy;
 import io.t28.pojojson.idea.naming.MethodNamePolicy;
@@ -75,8 +76,8 @@ public class PluginModule implements Module {
                 .to(ParameterNamePolicy.class);
 
         // Binding other classes
-        binder.bind(PluginBundle.class)
-                .toInstance(new PluginBundle());
+        binder.bind(Json2JavaBundle.class)
+                .toInstance(Json2JavaBundle.getInstance());
         binder.bind(JsonFormatter.class)
                 .to(GsonFormatter.class);
 
@@ -92,7 +93,7 @@ public class PluginModule implements Module {
                                               @Nonnull @Named("MethodName") NamePolicy methodNamePolicy,
                                               @Nonnull @Named("ParameterName") NamePolicy parameterNamePolicy) {
         return Configuration.builder()
-                .style(Configuration.Style.GSON)
+                .style(Style.GSON)
                 .classNamePolicy(classNamePolicy)
                 .fieldNamePolicy(fieldNamePolicy)
                 .methodNamePolicy(methodNamePolicy)

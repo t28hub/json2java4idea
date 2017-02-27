@@ -7,17 +7,17 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
 import com.intellij.openapi.ui.InputValidatorEx;
-import io.t28.pojojson.idea.PluginBundle;
+import io.t28.pojojson.idea.Json2JavaBundle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class JsonValidator implements InputValidatorEx {
-    private final PluginBundle bundle;
+    private final Json2JavaBundle bundle;
     private final JsonParser parser;
 
     @Inject
-    public JsonValidator(@Nonnull PluginBundle bundle, @Nonnull JsonParser parser) {
+    public JsonValidator(@Nonnull Json2JavaBundle bundle, @Nonnull JsonParser parser) {
         this.bundle = bundle;
         this.parser = parser;
     }

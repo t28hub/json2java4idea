@@ -15,7 +15,7 @@ import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
-import io.t28.pojojson.idea.PluginBundle;
+import io.t28.pojojson.idea.Json2JavaBundle;
 import io.t28.pojojson.idea.validator.NullValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +40,7 @@ public class NewClassDialog extends DialogWrapper {
     private final ActionListener actionListener;
 
     private final Action formatAction;
+    private final Action settingsAction;
 
     private JPanel centerPanel;
     private JTextField nameTextField;
@@ -54,8 +55,9 @@ public class NewClassDialog extends DialogWrapper {
         this.jsonValidator = builder.jsonValidator;
         this.actionListener = builder.actionListener;
 
-        final PluginBundle bundle = builder.bundle;
+        final Json2JavaBundle bundle = builder.bundle;
         this.formatAction = new FormatAction(bundle.message("dialog.action.format"));
+        this.settingsAction = new SettingsAction(bundle.message("dialog.action.settings"));
 
         setTitle(bundle.message("dialog.title"));
         setResizable(true);
@@ -63,7 +65,7 @@ public class NewClassDialog extends DialogWrapper {
     }
 
     @NotNull
-    public static Builder builder(@NotNull Project project, @Nonnull PluginBundle bundle) {
+    public static Builder builder(@NotNull Project project, @Nonnull Json2JavaBundle bundle) {
         return new Builder(project, bundle);
     }
 
@@ -142,6 +144,12 @@ public class NewClassDialog extends DialogWrapper {
         return centerPanel;
     }
 
+    @Override
+    protected void dispose() {
+        EditorFactory.getInstance().releaseEditor(jsonEditor);
+        super.dispose();
+    }
+
     @Nullable
     @Override
     protected ValidationInfo doValidate() {
@@ -201,7 +209,7 @@ public class NewClassDialog extends DialogWrapper {
     @NotNull
     @Override
     protected Action[] createLeftSideActions() {
-        return new Action[]{formatAction};
+        return new Action[]{settingsAction, formatAction};
     }
 
     class FormatAction extends DialogWrapperAction {
@@ -217,6 +225,19 @@ public class NewClassDialog extends DialogWrapper {
         }
     }
 
+    class SettingsAction extends DialogWrapperAction {
+        SettingsAction(@Nonnull String name) {
+            super(name);
+        }
+
+        @Override
+        protected void doAction(ActionEvent e) {
+            if (isEnabled()) {
+                actionListener.onSettings(NewClassDialog.this);
+            }
+        }
+    }
+
     public interface ActionListener {
         default void onOk(@Nonnull NewClassDialog dialog) {
         }
@@ -226,16 +247,19 @@ public class NewClassDialog extends DialogWrapper {
 
         default void onFormat(@Nonnull NewClassDialog dialog) {
         }
+
+        default void onSettings(@Nonnull NewClassDialog dialog) {
+        }
     }
 
     public static class Builder {
         private final Project project;
-        private final PluginBundle bundle;
+        private final Json2JavaBundle bundle;
         private InputValidator nameValidator;
         private InputValidator jsonValidator;
         private ActionListener actionListener;
 
-        private Builder(@NotNull Project project, @Nonnull PluginBundle bundle) {
+        private Builder(@NotNull Project project, @Nonnull Json2JavaBundle bundle) {
             this.project = project;
             this.bundle = bundle;
             this.nameValidator = new NullValidator();

@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -63,7 +64,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Inject
     @SuppressWarnings("unused")
-    private PluginBundle bundle;
+    private Json2JavaBundle bundle;
 
     public NewClassAction() {
         super(PlatformIcons.CLASS_ICON);
@@ -181,6 +182,11 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
                 Notifications.Bus.notify(notification, project);
             }
         }, null, null);
+    }
+
+    @Override
+    public void onSettings(@Nonnull NewClassDialog dialog) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, "Json2Java");
     }
 
     @CheckReturnValue
