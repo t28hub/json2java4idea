@@ -8,9 +8,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea/idea.iml" filepath="$PROJECT_DIR$/.idea/modules/idea/idea.iml" group="idea" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea/idea_main.iml" filepath="$PROJECT_DIR$/.idea/modules/idea/idea_main.iml" group="idea" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea/idea_test.iml" filepath="$PROJECT_DIR$/.idea/modules/idea/idea_test.iml" group="idea" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pojo-json.iml" filepath="$PROJECT_DIR$/.idea/modules/pojo-json.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pojo-json_main.iml" filepath="$PROJECT_DIR$/.idea/modules/pojo-json_main.iml" group="pojo-json" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pojo-json_test.iml" filepath="$PROJECT_DIR$/.idea/modules/pojo-json_test.iml" group="pojo-json" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/json2java4idea.iml" filepath="$PROJECT_DIR$/.idea/modules/json2java4idea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/json2java4idea_main.iml" filepath="$PROJECT_DIR$/.idea/modules/json2java4idea_main.iml" group="json2java4idea" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/json2java4idea_test.iml" filepath="$PROJECT_DIR$/.idea/modules/json2java4idea_test.iml" group="json2java4idea" />
     </modules>
   </component>
 </project>

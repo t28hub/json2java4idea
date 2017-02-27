@@ -22,16 +22,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService
-                serviceInterface="io.t28.pojojson.idea.settings.Json2JavaSettings"
-                serviceImplementation="io.t28.pojojson.idea.settings.Json2JavaSettings"/>
+                serviceInterface="io.t28.json2java.idea.settings.Json2JavaSettings"
+                serviceImplementation="io.t28.json2java.idea.settings.Json2JavaSettings"/>
         <projectConfigurable
                 id="other"
-                instance="io.t28.pojojson.idea.settings.Json2JavaConfigurable"/>
+                instance="io.t28.json2java.idea.settings.Json2JavaConfigurable"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
-        <action id="PojoJson.NewClass" class="io.t28.pojojson.idea.NewClassAction" text="POJO Class from JSON">
+        <action id="Json2Java.NewClass" class="io.t28.json2java.idea.NewClassAction" text="Java Class from JSON">
             <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewClass"/>
         </action>
     </actions>
