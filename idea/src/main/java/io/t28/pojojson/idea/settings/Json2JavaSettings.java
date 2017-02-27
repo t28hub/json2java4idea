@@ -19,21 +19,20 @@ import javax.annotation.Nonnull;
 public class Json2JavaSettings implements PersistentStateComponent<Element> {
     private static final String NO_TEXT = "";
     private static final String ROOT_ELEMENT = "component";
-    private static final String CLASS_STYLE_ATTRIBUTE = "classStyle";
+    private static final String CLASS_STYLE_ATTRIBUTE = "style";
     private static final String CLASS_NAME_PREFIX_ATTRIBUTE = "classNamePrefix";
     private static final String CLASS_NAME_SUFFIX_ATTRIBUTE = "classNameSuffix";
 
-    private Style classStyle;
+    private Style style;
     private String classNamePrefix;
     private String classNameSuffix;
 
     public Json2JavaSettings() {
-        classStyle = Style.NONE;
+        style = Style.NONE;
         classNamePrefix = NO_TEXT;
         classNameSuffix = NO_TEXT;
     }
 
-    @SuppressWarnings("WeakerAccess")
     @Nonnull
     @CheckReturnValue
     public static Json2JavaSettings getInstance(@Nonnull Project project) {
@@ -44,7 +43,7 @@ public class Json2JavaSettings implements PersistentStateComponent<Element> {
     @Override
     public Element getState() {
         final Element state = new Element(ROOT_ELEMENT);
-        state.setAttribute(CLASS_STYLE_ATTRIBUTE, classStyle.name());
+        state.setAttribute(CLASS_STYLE_ATTRIBUTE, style.name());
         state.setAttribute(CLASS_NAME_PREFIX_ATTRIBUTE, classNamePrefix);
         state.setAttribute(CLASS_NAME_SUFFIX_ATTRIBUTE, classNameSuffix);
         return state;
@@ -52,31 +51,31 @@ public class Json2JavaSettings implements PersistentStateComponent<Element> {
 
     @Override
     public void loadState(@Nonnull Element state) {
-        classStyle = Style.fromName(state.getAttributeValue(CLASS_STYLE_ATTRIBUTE), Style.NONE);
+        style = Style.fromName(state.getAttributeValue(CLASS_STYLE_ATTRIBUTE), Style.NONE);
         classNamePrefix = state.getAttributeValue(CLASS_NAME_PREFIX_ATTRIBUTE, NO_TEXT);
         classNameSuffix = state.getAttributeValue(CLASS_NAME_SUFFIX_ATTRIBUTE, NO_TEXT);
     }
 
     @Override
     public void noStateLoaded() {
-        classStyle = Style.NONE;
+        style = Style.NONE;
         classNamePrefix = NO_TEXT;
         classNameSuffix = NO_TEXT;
     }
 
     @Nonnull
     @CheckReturnValue
-    Style getClassStyle() {
-        return classStyle;
+    public Style getStyle() {
+        return style;
     }
 
-    void setClassStyle(@Nonnull Style classStyle) {
-        this.classStyle = classStyle;
+    void setStyle(@Nonnull Style classStyle) {
+        this.style = classStyle;
     }
 
     @Nonnull
     @CheckReturnValue
-    String getClassNamePrefix() {
+    public String getClassNamePrefix() {
         return classNamePrefix;
     }
 
@@ -86,7 +85,7 @@ public class Json2JavaSettings implements PersistentStateComponent<Element> {
 
     @Nonnull
     @CheckReturnValue
-    String getClassNameSuffix() {
+    public String getClassNameSuffix() {
         return classNameSuffix;
     }
 
