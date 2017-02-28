@@ -102,6 +102,7 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             return;
         }
 
+        panel.dispose();
         panel = null;
     }
 }
