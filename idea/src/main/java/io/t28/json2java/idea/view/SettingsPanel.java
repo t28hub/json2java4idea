@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
+import io.t28.json2java.core.Style;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -17,19 +18,21 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.stream.Stream;
 
-public class SettingsPanel implements Disposable {
+public class SettingsPanel implements Disposable, ActionListener {
     private final ButtonGroup styleGroup;
 
     private JPanel rootPanel;
-    private JTextField classNameSuffixField;
-    private JTextField classNamePrefixField;
     private JRadioButton defaultStyleButton;
     private JRadioButton gsonStyleButton;
     private JRadioButton jacksonStyleButton;
     private JRadioButton moshiStyleButton;
+    private JTextField classNameSuffixField;
+    private JTextField classNamePrefixField;
     private JPanel previewPanel;
 
     private Editor previewEditor;
@@ -42,11 +45,22 @@ public class SettingsPanel implements Disposable {
         styleGroup.add(jacksonStyleButton);
         styleGroup.add(moshiStyleButton);
 
+        Collections.list(styleGroup.getElements()).forEach(button -> button.addActionListener(this));
+        classNamePrefixField.addActionListener(this);
+        classNameSuffixField.addActionListener(this);
     }
 
     @Override
     public void dispose() {
+        if (previewEditor == null || previewEditor.isDisposed()) {
+            return;
+        }
         EditorFactory.getInstance().releaseEditor(previewEditor);
+    }
+
+    @Override
+    public void actionPerformed(@Nonnull ActionEvent event) {
+        onChanged();
     }
 
     @Nonnull
@@ -57,22 +71,25 @@ public class SettingsPanel implements Disposable {
 
     @Nonnull
     @CheckReturnValue
-    public String getClassStyle() {
+    public Style getStyle() {
         final ButtonModel selected = styleGroup.getSelection();
         return getStyleButtonStream()
                 .filter(button -> {
                     final ButtonModel model = button.getModel();
                     return model.equals(selected);
                 })
-                .map(JRadioButton::getText)
+                .map(button -> {
+                    final String name = button.getText();
+                    return Style.fromName(name, Style.NONE);
+                })
                 .findFirst()
-                .orElse("");
+                .orElse(Style.NONE);
     }
 
-    public void setClassStyle(@Nonnull String style) {
+    public void setStyle(@Nonnull Style style) {
         getStyleButtonStream().forEach(button -> {
             final String text = button.getText();
-            button.setSelected(style.equalsIgnoreCase(text));
+            button.setSelected(style.name().equalsIgnoreCase(text));
         });
     }
 
@@ -104,6 +121,9 @@ public class SettingsPanel implements Disposable {
         if (caret.getOffset() >= textLength) {
             caret.moveToOffset(textLength);
         }
+    }
+
+    protected void onChanged() {
     }
 
     private Stream<JRadioButton> getStyleButtonStream() {
