@@ -1,6 +1,5 @@
 package io.t28.json2java.idea.naming;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.intellij.psi.PsiNameHelper;
 import com.squareup.javapoet.TypeName;
@@ -20,8 +19,7 @@ public class ClassNamePolicy implements NamePolicy {
         this(nameHelper, settings.getClassNamePrefix(), settings.getClassNameSuffix());
     }
 
-    @VisibleForTesting
-    ClassNamePolicy(@Nonnull PsiNameHelper nameHelper, @Nonnull String prefix, @Nonnull String suffix) {
+    public ClassNamePolicy(@Nonnull PsiNameHelper nameHelper, @Nonnull String prefix, @Nonnull String suffix) {
         this.nameHelper = nameHelper;
         this.prefix = prefix;
         this.suffix = suffix;

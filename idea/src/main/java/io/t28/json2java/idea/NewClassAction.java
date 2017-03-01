@@ -10,6 +10,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,7 +33,7 @@ import io.t28.json2java.idea.exceptions.ClassCreationException;
 import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
 import io.t28.json2java.idea.exceptions.InvalidJsonException;
 import io.t28.json2java.idea.inject.CommandFactory;
-import io.t28.json2java.idea.inject.PluginModule;
+import io.t28.json2java.idea.inject.ProjectModule;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 import javax.annotation.CheckReturnValue;
@@ -45,22 +46,18 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     private static final String NOTIFICATION_DISPLAY_ID = "Json2Java4Idea";
 
     private static final Key<InputValidator> NAME_VALIDATOR_KEY = Key.get(
-            InputValidator.class, PluginModule.NAME_VALIDATOR_ANNOTATION
+            InputValidator.class, ProjectModule.NAME_VALIDATOR_ANNOTATION
     );
 
     private static final Key<InputValidator> JSON_VALIDATOR_KEY = Key.get(
-            InputValidator.class, PluginModule.JSON_VALIDATOR_ANNOTATION
+            InputValidator.class, ProjectModule.JSON_VALIDATOR_ANNOTATION
     );
 
-    private Injector injector;
-
-    @Inject
-    @SuppressWarnings("unused")
     private Project project;
 
-    @Inject
-    @SuppressWarnings("unused")
     private IdeView ideView;
+
+    private Injector injector;
 
     @Inject
     @SuppressWarnings("unused")
@@ -76,7 +73,9 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             return;
         }
 
-        injector = Guice.createInjector(new PluginModule(event));
+        project = event.getProject();
+        ideView = event.getData(DataKeys.IDE_VIEW);
+        injector = Guice.createInjector(new ProjectModule(project));
         injector.injectMembers(this);
 
         final PsiDirectory selected = ideView.getOrChooseDirectory();

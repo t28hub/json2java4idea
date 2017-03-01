@@ -7,9 +7,6 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.intellij.ide.IdeView;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.JavaDirectoryService;
@@ -33,23 +30,20 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 
 @SuppressWarnings("unused")
-public class PluginModule implements Module {
+public class ProjectModule implements Module {
     public static final Annotation NAME_VALIDATOR_ANNOTATION = Names.named("Name");
     public static final Annotation JSON_VALIDATOR_ANNOTATION = Names.named("Json");
 
-    private final AnActionEvent event;
+    private final Project project;
 
-    public PluginModule(@Nonnull AnActionEvent event) {
-        this.event = event;
+    public ProjectModule(@Nonnull Project project) {
+        this.project = project;
     }
 
     @Override
     public void configure(@Nonnull Binder binder) {
-        // Binding AnActionEvent context related classes
         binder.bind(Project.class)
-                .toInstance(event.getProject());
-        binder.bind(IdeView.class)
-                .toInstance(event.getData(LangDataKeys.IDE_VIEW));
+                .toInstance(project);
 
         // Binding InputValidator related classes
         binder.bind(InputValidator.class)
