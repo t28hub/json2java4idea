@@ -24,16 +24,16 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
-import io.t28.json2java.idea.commands.NewClassCommand;
-import io.t28.json2java.idea.exceptions.JsonFormatException;
-import io.t28.json2java.idea.view.NewClassDialog;
 import io.t28.json2java.idea.commands.FormatJsonCommand;
+import io.t28.json2java.idea.commands.NewClassCommand;
 import io.t28.json2java.idea.exceptions.ClassAlreadyExistsException;
 import io.t28.json2java.idea.exceptions.ClassCreationException;
 import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
 import io.t28.json2java.idea.exceptions.InvalidJsonException;
+import io.t28.json2java.idea.exceptions.JsonFormatException;
 import io.t28.json2java.idea.inject.CommandFactory;
 import io.t28.json2java.idea.inject.ProjectModule;
+import io.t28.json2java.idea.view.NewClassDialog;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 import javax.annotation.CheckReturnValue;
@@ -75,18 +75,13 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
         project = event.getProject();
         ideView = event.getData(DataKeys.IDE_VIEW);
+
         injector = Guice.createInjector(new ProjectModule(project));
         injector.injectMembers(this);
 
+        // 'selected' is null when directory selection is canceled although multiple directories are chosen.
         final PsiDirectory selected = ideView.getOrChooseDirectory();
         if (selected == null) {
-            final Notification notification = new Notification(
-                    NOTIFICATION_DISPLAY_ID,
-                    bundle.message("error.title.directory.unselected"),
-                    bundle.message("error.message.directory.unselected"),
-                    NotificationType.WARNING
-            );
-            Notifications.Bus.notify(notification, project);
             return;
         }
 
