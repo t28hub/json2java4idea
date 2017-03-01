@@ -20,15 +20,13 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.json2java.core.Configuration;
 import io.t28.json2java.core.JavaConverter;
 import io.t28.json2java.core.naming.NamePolicy;
-import io.t28.json2java.idea.naming.MethodNamePolicy;
-import io.t28.json2java.idea.utils.GsonFormatter;
-import io.t28.json2java.idea.validator.JsonValidator;
 import io.t28.json2java.idea.Json2JavaBundle;
 import io.t28.json2java.idea.naming.ClassNamePolicy;
 import io.t28.json2java.idea.naming.FieldNamePolicy;
+import io.t28.json2java.idea.naming.MethodNamePolicy;
 import io.t28.json2java.idea.naming.ParameterNamePolicy;
 import io.t28.json2java.idea.settings.Json2JavaSettings;
-import io.t28.json2java.idea.utils.JsonFormatter;
+import io.t28.json2java.idea.validator.JsonValidator;
 import io.t28.json2java.idea.validator.NameValidator;
 
 import javax.annotation.Nonnull;
@@ -78,8 +76,6 @@ public class PluginModule implements Module {
         // Binding other classes
         binder.bind(Json2JavaBundle.class)
                 .toInstance(Json2JavaBundle.getInstance());
-        binder.bind(JsonFormatter.class)
-                .to(GsonFormatter.class);
 
         // Installation factory modules
         binder.install(new FactoryModuleBuilder().build(CommandFactory.class));
