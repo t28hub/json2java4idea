@@ -31,8 +31,9 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="Json2Java.NewClass" class="io.t28.json2java.idea.NewClassAction" text="Java Class from JSON">
-            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewClass"/>
+        <action id="Json2Java.NewClass" class="io.t28.json2java.idea.NewClassAction"
+                text="Java Class from JSON" description="Generate new Java Class from JSON">
+            <add-to-group group-id="NewGroup1" anchor="after" relative-to-action="NewClass"/>
         </action>
     </actions>
 
