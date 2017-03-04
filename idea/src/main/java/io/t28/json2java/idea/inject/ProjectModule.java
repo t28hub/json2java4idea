@@ -5,7 +5,6 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
@@ -14,8 +13,6 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiNameHelper;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import io.t28.json2java.core.Configuration;
-import io.t28.json2java.core.JavaConverter;
 import io.t28.json2java.core.naming.NamePolicy;
 import io.t28.json2java.idea.Json2JavaBundle;
 import io.t28.json2java.idea.naming.ClassNamePolicy;
@@ -77,30 +74,6 @@ public class ProjectModule implements Module {
 
     @Nonnull
     @Provides
-    @Singleton
-    public Configuration provideConfiguration(@Nonnull Json2JavaSettings settings,
-                                              @Nonnull @Named("ClassName") NamePolicy classNamePolicy,
-                                              @Nonnull @Named("FieldName") NamePolicy fieldNamePolicy,
-                                              @Nonnull @Named("MethodName") NamePolicy methodNamePolicy,
-                                              @Nonnull @Named("ParameterName") NamePolicy parameterNamePolicy) {
-        return Configuration.builder()
-                .style(settings.getStyle())
-                .classNamePolicy(classNamePolicy)
-                .fieldNamePolicy(fieldNamePolicy)
-                .methodNamePolicy(methodNamePolicy)
-                .parameterNamePolicy(parameterNamePolicy)
-                .build();
-    }
-
-    @Nonnull
-    @Provides
-    public JavaConverter provideJavaConverter(@Nonnull Configuration configuration) {
-        return new JavaConverter(configuration);
-    }
-
-    @Nonnull
-    @Provides
-    @Singleton
     public Json2JavaSettings provideSettings(@Nonnull Project project) {
         return Json2JavaSettings.getInstance(project);
     }

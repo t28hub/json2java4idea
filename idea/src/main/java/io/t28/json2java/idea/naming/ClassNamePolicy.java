@@ -5,7 +5,6 @@ import com.intellij.psi.PsiNameHelper;
 import com.squareup.javapoet.TypeName;
 import io.t28.json2java.core.naming.DefaultNamePolicy;
 import io.t28.json2java.core.naming.NamePolicy;
-import io.t28.json2java.idea.settings.Json2JavaSettings;
 
 import javax.annotation.Nonnull;
 
@@ -15,10 +14,6 @@ public class ClassNamePolicy implements NamePolicy {
     private final String suffix;
 
     @Inject
-    public ClassNamePolicy(@Nonnull PsiNameHelper nameHelper, @Nonnull Json2JavaSettings settings) {
-        this(nameHelper, settings.getClassNamePrefix(), settings.getClassNameSuffix());
-    }
-
     public ClassNamePolicy(@Nonnull PsiNameHelper nameHelper, @Nonnull String prefix, @Nonnull String suffix) {
         this.nameHelper = nameHelper;
         this.prefix = prefix;
