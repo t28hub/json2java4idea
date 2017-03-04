@@ -1,7 +1,6 @@
 package io.t28.json2java.idea;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.intellij.ide.IdeView;
@@ -32,7 +31,10 @@ import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
 import io.t28.json2java.idea.exceptions.InvalidJsonException;
 import io.t28.json2java.idea.exceptions.JsonFormatException;
 import io.t28.json2java.idea.inject.CommandFactory;
+import io.t28.json2java.idea.inject.GuiceManager;
+import io.t28.json2java.idea.inject.JavaConverterFactory;
 import io.t28.json2java.idea.inject.ProjectModule;
+import io.t28.json2java.idea.settings.Json2JavaSettings;
 import io.t28.json2java.idea.view.NewClassDialog;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
@@ -63,6 +65,10 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     @SuppressWarnings("unused")
     private Json2JavaBundle bundle;
 
+    @Inject
+    @SuppressWarnings("unused")
+    private Json2JavaSettings settings;
+
     public NewClassAction() {
         super(PlatformIcons.CLASS_ICON);
     }
@@ -75,8 +81,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
         project = event.getProject();
         ideView = event.getData(DataKeys.IDE_VIEW);
-
-        injector = Guice.createInjector(new ProjectModule(project));
+        injector = GuiceManager.getInstance(project).getInjector();
         injector.injectMembers(this);
 
         // 'selected' is null when directory selection is canceled although multiple directories are chosen.
@@ -102,14 +107,21 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onOk(@Nonnull NewClassDialog dialog) {
+        final PsiDirectory directory = ideView.getOrChooseDirectory();
+        if (directory == null) {
+            dialog.cancel();
+            return;
+        }
+
         CommandProcessor.getInstance().executeCommand(project, () -> {
-            final PsiDirectory directory = ideView.getOrChooseDirectory();
             try {
                 final CommandFactory commandFactory = injector.getInstance(CommandFactory.class);
+                final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
                 final NewClassCommand command = commandFactory.create(
                         dialog.getClassName(),
                         dialog.getJson(),
-                        directory
+                        directory,
+                        converterFactory.create(settings)
                 );
                 ApplicationManager.getApplication().runWriteAction(command);
                 dialog.close();

@@ -20,7 +20,6 @@ import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
 import io.t28.json2java.idea.utils.Extensions;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 
 public class NewClassCommand implements ThrowableComputable<PsiFile, ClassCreationException> {
@@ -34,8 +33,8 @@ public class NewClassCommand implements ThrowableComputable<PsiFile, ClassCreati
     @Inject
     public NewClassCommand(@Nonnull @Assisted("Name") String name,
                            @Nonnull @Assisted("Json") String json,
-                           @Nullable @Assisted PsiDirectory directory,
-                           @Nonnull JavaConverter converter,
+                           @Nonnull @Assisted PsiDirectory directory,
+                           @Nonnull @Assisted JavaConverter converter,
                            @Nonnull PsiFileFactory fileFactory,
                            @Nonnull JavaDirectoryService directoryService) {
         this.name = Preconditions.checkNotNull(name);

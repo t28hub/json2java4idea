@@ -2,23 +2,18 @@ package io.t28.json2java.idea.settings;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiNameHelper;
-import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import io.t28.json2java.core.Configuration;
 import io.t28.json2java.core.JavaConverter;
 import io.t28.json2java.idea.Json2JavaBundle;
-import io.t28.json2java.idea.naming.ClassNamePolicy;
-import io.t28.json2java.idea.naming.FieldNamePolicy;
-import io.t28.json2java.idea.naming.MethodNamePolicy;
-import io.t28.json2java.idea.naming.ParameterNamePolicy;
-import io.t28.json2java.idea.utils.PsiTypeConverter;
+import io.t28.json2java.idea.inject.GuiceManager;
+import io.t28.json2java.idea.inject.JavaConverterFactory;
 import io.t28.json2java.idea.view.SettingsPanel;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -34,22 +29,32 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
     private static final String SAMPLE_JSON = "{\"id\":1,\"name\":\"foo\",\"is_public\":true,\"tags\":[\"bar\"],\"author\":null}";
 
     private final Project project;
-    private final Json2JavaSettings settings;
-    private final Json2JavaBundle bundle;
+    private final Injector injector;
+
+    @Inject
+    private Json2JavaSettings settings;
+
+    @Inject
+    private Json2JavaBundle bundle;
 
     @Nullable
     private SettingsPanel panel;
 
     @SuppressWarnings("unused")
     public Json2JavaConfigurable(@Nonnull Project project) {
-        this(project, Json2JavaSettings.getInstance(project), Json2JavaBundle.getInstance());
+        this(project, GuiceManager.getInstance(project));
     }
 
     @VisibleForTesting
-    Json2JavaConfigurable(@Nonnull Project project, @Nonnull Json2JavaSettings settings, @Nonnull Json2JavaBundle bundle) {
+    Json2JavaConfigurable(@Nonnull Project project, @Nonnull GuiceManager guiceManager) {
+        this(project, guiceManager.getInjector());
+    }
+
+    @VisibleForTesting
+    Json2JavaConfigurable(@Nonnull Project project, @Nonnull Injector injector) {
         this.project = project;
-        this.settings = settings;
-        this.bundle = bundle;
+        this.injector = injector;
+        injector.injectMembers(this);
     }
 
     @NotNull
@@ -140,15 +145,13 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         CommandProcessor.getInstance().executeCommand(project, () -> {
             final Application application = ApplicationManager.getApplication();
             application.runWriteAction(() -> {
+                final Json2JavaSettings settings = Json2JavaSettings.getInstance();
+                settings.setStyle(panel.getStyle());
+                settings.setClassNamePrefix(panel.getClassNamePrefix());
+                settings.setClassNameSuffix(panel.getClassNameSuffix());
                 try {
-                    final Configuration configuration = Configuration.builder()
-                            .style(panel.getStyle())
-                            .classNamePolicy(new ClassNamePolicy(PsiNameHelper.getInstance(project), panel.getClassNamePrefix(), panel.getClassNameSuffix()))
-                            .fieldNamePolicy(new FieldNamePolicy(PsiNameHelper.getInstance(project), JavaCodeStyleManager.getInstance(project)))
-                            .methodNamePolicy(new MethodNamePolicy(project, PsiNameHelper.getInstance(project), new PsiTypeConverter(PsiManager.getInstance(project))))
-                            .parameterNamePolicy(new ParameterNamePolicy(PsiNameHelper.getInstance(project), JavaCodeStyleManager.getInstance(project)))
-                            .build();
-                    final JavaConverter converter = new JavaConverter(configuration);
+                    final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
+                    final JavaConverter converter = converterFactory.create(settings);
                     final String java = converter.convert(SAMPLE_PACKAGE, SAMPLE_CLASS, SAMPLE_JSON);
                     panel.setPreviewText(java);
                 } catch (IOException ignore) {

@@ -23,18 +23,22 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectService
                 serviceInterface="io.t28.json2java.idea.settings.Json2JavaSettings"
-                serviceImplementation="io.t28.json2java.idea.settings.Json2JavaSettings"/>
+                serviceImplementation="io.t28.json2java.idea.settings.PersistentJson2JavaSettings"/>
         <projectConfigurable
                 id="other"
                 instance="io.t28.json2java.idea.settings.Json2JavaConfigurable"/>
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
         <action id="Json2Java.NewClass" class="io.t28.json2java.idea.NewClassAction"
                 text="Java Class from JSON" description="Generate new Java Class from JSON">
             <add-to-group group-id="NewGroup1" anchor="after" relative-to-action="NewClass"/>
         </action>
     </actions>
 
+    <project-components>
+        <component>
+            <implementation-class>io.t28.json2java.idea.inject.GuiceManager</implementation-class>
+        </component>
+    </project-components>
 </idea-plugin>
