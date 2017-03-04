@@ -62,9 +62,11 @@ public class PersistentJson2JavaSettings implements Json2JavaSettings, Persisten
         return style;
     }
 
+    @Nonnull
     @Override
-    public void setStyle(@Nonnull Style classStyle) {
+    public PersistentJson2JavaSettings setStyle(@Nonnull Style classStyle) {
         this.style = classStyle;
+        return this;
     }
 
     @Nonnull
@@ -74,9 +76,11 @@ public class PersistentJson2JavaSettings implements Json2JavaSettings, Persisten
         return classNamePrefix;
     }
 
+    @Nonnull
     @Override
-    public void setClassNamePrefix(@Nonnull String classNamePrefix) {
+    public PersistentJson2JavaSettings setClassNamePrefix(@Nonnull String classNamePrefix) {
         this.classNamePrefix = classNamePrefix;
+        return this;
     }
 
     @Nonnull
@@ -86,8 +90,10 @@ public class PersistentJson2JavaSettings implements Json2JavaSettings, Persisten
         return classNameSuffix;
     }
 
+    @Nonnull
     @Override
-    public void setClassNameSuffix(@Nonnull String classNameSuffix) {
+    public PersistentJson2JavaSettings setClassNameSuffix(@Nonnull String classNameSuffix) {
         this.classNameSuffix = classNameSuffix;
+        return this;
     }
 }

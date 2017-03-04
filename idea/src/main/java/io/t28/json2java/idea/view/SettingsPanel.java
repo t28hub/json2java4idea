@@ -2,6 +2,9 @@ package io.t28.json2java.idea.view;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -24,6 +27,9 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 public class SettingsPanel implements Disposable, ActionListener {
+    private static final String EMPTY_TEXT = "";
+    private static final int INITIAL_OFFSET = 0;
+
     private final ButtonGroup styleGroup;
 
     private JPanel rootPanel;
@@ -114,13 +120,19 @@ public class SettingsPanel implements Disposable, ActionListener {
     }
 
     public void setPreviewText(@Nonnull String text) {
-        previewDocument.replaceString(0, previewDocument.getTextLength(), text);
+        final CommandProcessor processor = CommandProcessor.getInstance();
+        processor.executeCommand(null, () -> {
+            final Application application = ApplicationManager.getApplication();
+            application.runWriteAction(() -> {
+                previewDocument.replaceString(INITIAL_OFFSET, previewDocument.getTextLength(), text);
 
-        final int textLength = previewDocument.getTextLength();
-        final CaretModel caret = previewEditor.getCaretModel();
-        if (caret.getOffset() >= textLength) {
-            caret.moveToOffset(textLength);
-        }
+                final int textLength = previewDocument.getTextLength();
+                final CaretModel caret = previewEditor.getCaretModel();
+                if (caret.getOffset() >= textLength) {
+                    caret.moveToOffset(textLength);
+                }
+            });
+        }, null, null);
     }
 
     protected void onChanged() {
@@ -135,7 +147,7 @@ public class SettingsPanel implements Disposable, ActionListener {
 
     private void createUIComponents() {
         final EditorFactory editorFactory = EditorFactory.getInstance();
-        previewDocument = editorFactory.createDocument("");
+        previewDocument = editorFactory.createDocument(EMPTY_TEXT);
         previewEditor = editorFactory.createEditor(previewDocument, null, JavaFileType.INSTANCE, true);
 
         final EditorSettings settings = previewEditor.getSettings();

@@ -3,6 +3,10 @@ package io.t28.json2java.idea.view;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.intellij.json.JsonFileType;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -14,7 +18,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.uiDesigner.core.GridConstraints;
 import io.t28.json2java.idea.Json2JavaBundle;
 import io.t28.json2java.idea.validator.NullValidator;
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +30,11 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 public class NewClassDialog extends DialogWrapper {
     private static final String EMPTY_TEXT = "";
+    private static final int INITIAL_OFFSET = 0;
 
     private final Project project;
 
@@ -44,7 +47,8 @@ public class NewClassDialog extends DialogWrapper {
 
     private JPanel centerPanel;
     private JTextField nameTextField;
-    private JComponent jsonEditorComponent;
+    private JPanel jsonPanel;
+
     private Editor jsonEditor;
     private Document jsonDocument;
 
@@ -90,16 +94,20 @@ public class NewClassDialog extends DialogWrapper {
         return jsonDocument.getText().trim();
     }
 
-    @NotNull
-    @CheckReturnValue
-    public Editor getJsonEditor() {
-        return jsonEditor;
-    }
+    public void setJson(@NotNull String json) {
+        final CommandProcessor processor = CommandProcessor.getInstance();
+        processor.executeCommand(project, () -> {
+            final Application application = ApplicationManager.getApplication();
+            application.runWriteAction(() -> {
+                jsonDocument.replaceString(INITIAL_OFFSET, jsonDocument.getTextLength(), json);
 
-    @NotNull
-    @CheckReturnValue
-    public Document getJsonDocument() {
-        return jsonDocument;
+                final int textLength = jsonDocument.getTextLength();
+                final CaretModel caret = jsonEditor.getCaretModel();
+                if (caret.getOffset() >= textLength) {
+                    caret.moveToOffset(textLength);
+                }
+            });
+        }, null, null);
     }
 
     @Nullable
@@ -111,42 +119,14 @@ public class NewClassDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-        final EditorFactory editorFactory = EditorFactory.getInstance();
-        jsonDocument = editorFactory.createDocument(EMPTY_TEXT);
-        jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
-        final EditorSettings settings = jsonEditor.getSettings();
-        settings.setLineNumbersShown(true);
-        settings.setAdditionalColumnsCount(0);
-        settings.setAdditionalLinesCount(0);
-        settings.setRightMarginShown(false);
-        settings.setFoldingOutlineShown(false);
-        settings.setLineMarkerAreaShown(false);
-        settings.setIndentGuidesShown(false);
-        settings.setVirtualSpace(false);
-        settings.setWheelFontChangeEnabled(false);
-
-        final EditorColorsScheme colorsScheme = jsonEditor.getColorsScheme();
-        colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
-
-        final GridConstraints constraints = new GridConstraints(
-                1, 1, 1, 1,
-                GridConstraints.ANCHOR_CENTER,
-                GridConstraints.FILL_BOTH,
-                3,
-                3,
-                new Dimension(480, 300),
-                null,
-                null
-        );
-        jsonEditorComponent = jsonEditor.getComponent();
-        jsonEditor.getContentComponent().setFocusable(true);
-        ((JPanel) centerPanel.getComponent(0)).add(jsonEditorComponent, constraints);
         return centerPanel;
     }
 
     @Override
     protected void dispose() {
-        EditorFactory.getInstance().releaseEditor(jsonEditor);
+        if (jsonEditor != null && !jsonEditor.isDisposed()) {
+            EditorFactory.getInstance().releaseEditor(jsonEditor);
+        }
         super.dispose();
     }
 
@@ -156,7 +136,7 @@ public class NewClassDialog extends DialogWrapper {
         return ImmutableList
                 .of(
                         Tuple.tuple(getClassName(), nameValidator, nameTextField),
-                        Tuple.tuple(getJson(), jsonValidator, jsonEditorComponent)
+                        Tuple.tuple(getJson(), jsonValidator, jsonPanel)
                 )
                 .stream()
                 .filter(tuple -> {
@@ -210,6 +190,31 @@ public class NewClassDialog extends DialogWrapper {
     @Override
     protected Action[] createLeftSideActions() {
         return new Action[]{settingsAction, formatAction};
+    }
+
+    private void createUIComponents() {
+        final EditorFactory editorFactory = EditorFactory.getInstance();
+        jsonDocument = editorFactory.createDocument(EMPTY_TEXT);
+        jsonEditor = editorFactory.createEditor(jsonDocument, project, JsonFileType.INSTANCE, false);
+
+        final EditorSettings settings = jsonEditor.getSettings();
+        settings.setWhitespacesShown(true);
+        settings.setLineMarkerAreaShown(false);
+        settings.setIndentGuidesShown(false);
+        settings.setLineNumbersShown(true);
+        settings.setFoldingOutlineShown(false);
+        settings.setRightMarginShown(false);
+        settings.setVirtualSpace(false);
+        settings.setWheelFontChangeEnabled(false);
+        settings.setUseSoftWraps(false);
+        settings.setAdditionalColumnsCount(0);
+        settings.setAdditionalLinesCount(1);
+
+        final EditorColorsScheme colorsScheme = jsonEditor.getColorsScheme();
+        colorsScheme.setColor(EditorColors.CARET_ROW_COLOR, null);
+
+        jsonEditor.getContentComponent().setFocusable(true);
+        jsonPanel = (JPanel) jsonEditor.getComponent();
     }
 
     class FormatAction extends DialogWrapperAction {

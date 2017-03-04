@@ -24,17 +24,20 @@ public interface Json2JavaSettings {
     @CheckReturnValue
     Style getStyle();
 
-    void setStyle(@Nonnull Style style);
+    @Nonnull
+    Json2JavaSettings setStyle(@Nonnull Style style);
 
     @Nonnull
     @CheckReturnValue
     String getClassNamePrefix();
 
-    void setClassNamePrefix(@Nonnull String classNamePrefix);
+    @Nonnull
+    Json2JavaSettings setClassNamePrefix(@Nonnull String classNamePrefix);
 
     @Nonnull
     @CheckReturnValue
     String getClassNameSuffix();
 
-    void setClassNameSuffix(@Nonnull String classNameSuffix);
+    @Nonnull
+    Json2JavaSettings setClassNameSuffix(@Nonnull String classNameSuffix);
 }

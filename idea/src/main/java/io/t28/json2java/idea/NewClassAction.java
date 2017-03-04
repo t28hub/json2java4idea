@@ -23,18 +23,17 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
-import io.t28.json2java.idea.commands.FormatJsonCommand;
 import io.t28.json2java.idea.commands.NewClassCommand;
 import io.t28.json2java.idea.exceptions.ClassAlreadyExistsException;
 import io.t28.json2java.idea.exceptions.ClassCreationException;
 import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
-import io.t28.json2java.idea.exceptions.InvalidJsonException;
-import io.t28.json2java.idea.exceptions.JsonFormatException;
 import io.t28.json2java.idea.inject.CommandFactory;
 import io.t28.json2java.idea.inject.GuiceManager;
 import io.t28.json2java.idea.inject.JavaConverterFactory;
 import io.t28.json2java.idea.inject.ProjectModule;
 import io.t28.json2java.idea.settings.Json2JavaSettings;
+import io.t28.json2java.idea.utils.Formatter;
+import io.t28.json2java.idea.utils.JsonFormatter;
 import io.t28.json2java.idea.view.NewClassDialog;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
@@ -161,33 +160,9 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onFormat(@Nonnull NewClassDialog dialog) {
-        CommandProcessor.getInstance().executeCommand(project, () -> {
-            try {
-                final CommandFactory commandFactory = injector.getInstance(CommandFactory.class);
-                final FormatJsonCommand command = commandFactory.create(
-                        dialog.getJson(),
-                        dialog.getJsonEditor(),
-                        dialog.getJsonDocument()
-                );
-                ApplicationManager.getApplication().runWriteAction(command);
-            } catch (InvalidJsonException e) {
-                final Notification notification = new Notification(
-                        NOTIFICATION_DISPLAY_ID,
-                        bundle.message("error.title.cannot.format.json"),
-                        bundle.message("error.message.json.syntax"),
-                        NotificationType.WARNING
-                );
-                Notifications.Bus.notify(notification, project);
-            } catch (JsonFormatException e) {
-                final Notification notification = new Notification(
-                        NOTIFICATION_DISPLAY_ID,
-                        bundle.message("error.title.cannot.format.json"),
-                        bundle.message("error.message.io"),
-                        NotificationType.WARNING
-                );
-                Notifications.Bus.notify(notification, project);
-            }
-        }, null, null);
+        final Formatter formatter = injector.getInstance(JsonFormatter.class);
+        final String formatted = formatter.format(dialog.getJson());
+        dialog.setJson(formatted);
     }
 
     @Override

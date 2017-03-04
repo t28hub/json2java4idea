@@ -2,11 +2,7 @@ package io.t28.json2java.idea.settings;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -26,35 +22,31 @@ import java.io.IOException;
 public class Json2JavaConfigurable implements SearchableConfigurable {
     private static final String SAMPLE_PACKAGE = "sample";
     private static final String SAMPLE_CLASS = "Sample";
-    private static final String SAMPLE_JSON = "{\"id\":1,\"name\":\"foo\",\"is_public\":true,\"tags\":[\"bar\"],\"author\":null}";
+    private static final String SAMPLE_JSON = "{\"id\":1}";
 
-    private final Project project;
     private final Injector injector;
 
-    @Inject
-    private Json2JavaSettings settings;
+    private final Json2JavaSettings settings;
 
-    @Inject
-    private Json2JavaBundle bundle;
+    private final Json2JavaBundle bundle;
 
     @Nullable
     private SettingsPanel panel;
 
     @SuppressWarnings("unused")
     public Json2JavaConfigurable(@Nonnull Project project) {
-        this(project, GuiceManager.getInstance(project));
+        this(
+                GuiceManager.getInstance(project).getInjector(),
+                Json2JavaSettings.getInstance(project),
+                Json2JavaBundle.getInstance()
+        );
     }
 
     @VisibleForTesting
-    Json2JavaConfigurable(@Nonnull Project project, @Nonnull GuiceManager guiceManager) {
-        this(project, guiceManager.getInjector());
-    }
-
-    @VisibleForTesting
-    Json2JavaConfigurable(@Nonnull Project project, @Nonnull Injector injector) {
-        this.project = project;
+    Json2JavaConfigurable(@Nonnull Injector injector, @Nonnull Json2JavaSettings settings, Json2JavaBundle bundle) {
         this.injector = injector;
-        injector.injectMembers(this);
+        this.settings = settings;
+        this.bundle = bundle;
     }
 
     @NotNull
@@ -92,16 +84,24 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         return panel.getComponent();
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean isModified() {
         if (panel == null) {
             return true;
         }
 
-        return !Objects.equal(panel.getStyle(), settings.getStyle())
-                || !Objects.equal(panel.getClassNamePrefix(), settings.getClassNamePrefix())
-                || !Objects.equal(panel.getClassNameSuffix(), settings.getClassNameSuffix());
+        if (!Objects.equal(panel.getStyle(), settings.getStyle())) {
+            return true;
+        }
+
+        if (!Objects.equal(panel.getClassNamePrefix(), settings.getClassNamePrefix())) {
+            return true;
+        }
+
+        if (!Objects.equal(panel.getClassNameSuffix(), settings.getClassNameSuffix())) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -142,21 +142,17 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             return;
         }
 
-        CommandProcessor.getInstance().executeCommand(project, () -> {
-            final Application application = ApplicationManager.getApplication();
-            application.runWriteAction(() -> {
-                final Json2JavaSettings settings = Json2JavaSettings.getInstance();
-                settings.setStyle(panel.getStyle());
-                settings.setClassNamePrefix(panel.getClassNamePrefix());
-                settings.setClassNameSuffix(panel.getClassNameSuffix());
-                try {
-                    final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
-                    final JavaConverter converter = converterFactory.create(settings);
-                    final String java = converter.convert(SAMPLE_PACKAGE, SAMPLE_CLASS, SAMPLE_JSON);
-                    panel.setPreviewText(java);
-                } catch (IOException ignore) {
-                }
-            });
-        }, null, null);
+        final Json2JavaSettings settings = Json2JavaSettings.getInstance()
+                .setStyle(panel.getStyle())
+                .setClassNamePrefix(panel.getClassNamePrefix())
+                .setClassNameSuffix(panel.getClassNameSuffix());
+        final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
+        final JavaConverter converter = converterFactory.create(settings);
+
+        try {
+            final String java = converter.convert(SAMPLE_PACKAGE, SAMPLE_CLASS, SAMPLE_JSON);
+            panel.setPreviewText(java);
+        } catch (IOException ignore) {
+        }
     }
 }

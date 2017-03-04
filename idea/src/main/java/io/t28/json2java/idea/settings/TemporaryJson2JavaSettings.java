@@ -24,9 +24,11 @@ public class TemporaryJson2JavaSettings implements Json2JavaSettings {
         return style;
     }
 
+    @Nonnull
     @Override
-    public void setStyle(@Nonnull Style style) {
+    public TemporaryJson2JavaSettings setStyle(@Nonnull Style style) {
         this.style = style;
+        return this;
     }
 
     @Nonnull
@@ -35,9 +37,11 @@ public class TemporaryJson2JavaSettings implements Json2JavaSettings {
         return classNamePrefix;
     }
 
+    @Nonnull
     @Override
-    public void setClassNamePrefix(@Nonnull String classNamePrefix) {
+    public TemporaryJson2JavaSettings setClassNamePrefix(@Nonnull String classNamePrefix) {
         this.classNamePrefix = classNamePrefix;
+        return this;
     }
 
     @Nonnull
@@ -46,8 +50,10 @@ public class TemporaryJson2JavaSettings implements Json2JavaSettings {
         return classNameSuffix;
     }
 
+    @Nonnull
     @Override
-    public void setClassNameSuffix(@Nonnull String classNameSuffix) {
+    public TemporaryJson2JavaSettings setClassNameSuffix(@Nonnull String classNameSuffix) {
         this.classNameSuffix = classNameSuffix;
+        return this;
     }
 }
