@@ -2,7 +2,8 @@ package io.t28.json2java.idea;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import com.intellij.ide.IdeView;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -21,13 +22,12 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
+import io.t28.json2java.idea.command.CommandActionFactory;
 import io.t28.json2java.idea.command.NewClassCommandAction;
 import io.t28.json2java.idea.exceptions.ClassAlreadyExistsException;
 import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
-import io.t28.json2java.idea.command.CommandActionFactory;
 import io.t28.json2java.idea.inject.GuiceManager;
 import io.t28.json2java.idea.inject.JavaConverterFactory;
-import io.t28.json2java.idea.inject.ProjectModule;
 import io.t28.json2java.idea.settings.Json2JavaSettings;
 import io.t28.json2java.idea.utils.Formatter;
 import io.t28.json2java.idea.utils.JsonFormatter;
@@ -44,14 +44,6 @@ import java.util.stream.Stream;
 public class NewClassAction extends AnAction implements NewClassDialog.ActionListener {
     private static final String NOTIFICATION_DISPLAY_ID = "Json2Java4Idea";
 
-    private static final Key<InputValidator> NAME_VALIDATOR_KEY = Key.get(
-            InputValidator.class, ProjectModule.NAME_VALIDATOR_ANNOTATION
-    );
-
-    private static final Key<InputValidator> JSON_VALIDATOR_KEY = Key.get(
-            InputValidator.class, ProjectModule.JSON_VALIDATOR_ANNOTATION
-    );
-
     private Project project;
 
     private IdeView ideView;
@@ -65,6 +57,16 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     @Inject
     @SuppressWarnings("unused")
     private Json2JavaSettings settings;
+
+    @Inject
+    @Named("Name")
+    @SuppressWarnings("unused")
+    private Provider<InputValidator> nameValidatorProvider;
+
+    @Inject
+    @Named("Json")
+    @SuppressWarnings("unused")
+    private Provider<InputValidator> jsonValidatorProvider;
 
     public NewClassAction() {
         super(PlatformIcons.CLASS_ICON);
@@ -88,8 +90,8 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
         }
 
         final NewClassDialog dialog = NewClassDialog.builder(project, bundle)
-                .nameValidator(injector.getInstance(NAME_VALIDATOR_KEY))
-                .jsonValidator(injector.getInstance(JSON_VALIDATOR_KEY))
+                .nameValidator(nameValidatorProvider.get())
+                .jsonValidator(jsonValidatorProvider.get())
                 .actionListener(this)
                 .build();
         dialog.show();

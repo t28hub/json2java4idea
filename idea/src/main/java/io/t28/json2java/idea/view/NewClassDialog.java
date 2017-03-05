@@ -37,6 +37,7 @@ public class NewClassDialog extends DialogWrapper {
     private static final int INITIAL_OFFSET = 0;
 
     private final Project project;
+    private final Json2JavaBundle bundle;
 
     private final InputValidator nameValidator;
     private final InputValidator jsonValidator;
@@ -55,11 +56,11 @@ public class NewClassDialog extends DialogWrapper {
     private NewClassDialog(@NotNull Builder builder) {
         super(builder.project, true);
         this.project = builder.project;
+        this.bundle = builder.bundle;
         this.nameValidator = builder.nameValidator;
         this.jsonValidator = builder.jsonValidator;
         this.actionListener = builder.actionListener;
 
-        final Json2JavaBundle bundle = builder.bundle;
         this.formatAction = new FormatAction(bundle.message("dialog.action.format"));
         this.settingsAction = new SettingsAction(bundle.message("dialog.action.settings"));
 
@@ -158,7 +159,7 @@ public class NewClassDialog extends DialogWrapper {
                         message = ((InputValidatorEx) validator).getErrorText(text);
                     }
                     if (Strings.isNullOrEmpty(message)) {
-                        message = "Unknown error occurs";
+                        message = bundle.message("error.message.unknown");
                     }
                     return new ValidationInfo(message, tuple.v3());
                 })
