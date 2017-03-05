@@ -21,6 +21,8 @@ import io.t28.json2java.idea.naming.FieldNamePolicy;
 import io.t28.json2java.idea.naming.MethodNamePolicy;
 import io.t28.json2java.idea.naming.ParameterNamePolicy;
 import io.t28.json2java.idea.settings.Json2JavaSettings;
+import io.t28.json2java.idea.validator.ClassPrefixValidator;
+import io.t28.json2java.idea.validator.ClassSuffixValidator;
 import io.t28.json2java.idea.validator.JsonValidator;
 import io.t28.json2java.idea.validator.NameValidator;
 
@@ -29,9 +31,6 @@ import java.lang.annotation.Annotation;
 
 @SuppressWarnings("unused")
 public class ProjectModule implements Module {
-    public static final Annotation NAME_VALIDATOR_ANNOTATION = Names.named("Name");
-    public static final Annotation JSON_VALIDATOR_ANNOTATION = Names.named("Json");
-
     private final Project project;
 
     public ProjectModule(@Nonnull Project project) {
@@ -45,24 +44,30 @@ public class ProjectModule implements Module {
 
         // Binding InputValidator related classes
         binder.bind(InputValidator.class)
-                .annotatedWith(NAME_VALIDATOR_ANNOTATION)
+                .annotatedWith(Name.NAME_VALIDATOR.annotation())
                 .to(NameValidator.class);
         binder.bind(InputValidator.class)
-                .annotatedWith(JSON_VALIDATOR_ANNOTATION)
+                .annotatedWith(Name.JSON_VALIDATOR.annotation())
                 .to(JsonValidator.class);
+        binder.bind(InputValidator.class)
+                .annotatedWith(Name.CLASS_PREFIX_VALIDATOR.annotation())
+                .to(ClassPrefixValidator.class);
+        binder.bind(InputValidator.class)
+                .annotatedWith(Name.CLASS_SUFFIX_VALIDATOR.annotation())
+                .to(ClassSuffixValidator.class);
 
         // Binding NamePolicy classes
         binder.bind(NamePolicy.class)
-                .annotatedWith(Names.named("ClassName"))
+                .annotatedWith(Name.CLASS_NAME_POLICY.annotation())
                 .to(ClassNamePolicy.class);
         binder.bind(NamePolicy.class)
-                .annotatedWith(Names.named("FieldName"))
+                .annotatedWith(Name.FIELD_NAME_POLICY.annotation())
                 .to(FieldNamePolicy.class);
         binder.bind(NamePolicy.class)
-                .annotatedWith(Names.named("MethodName"))
+                .annotatedWith(Name.METHOD_NAME_POLICY.annotation())
                 .to(MethodNamePolicy.class);
         binder.bind(NamePolicy.class)
-                .annotatedWith(Names.named("ParameterName"))
+                .annotatedWith(Name.PARAMETER_NAME_POLICY.annotation())
                 .to(ParameterNamePolicy.class);
 
         // Binding other classes
@@ -112,5 +117,27 @@ public class ProjectModule implements Module {
     @Singleton
     public PsiFileFactory provideFileFactory(@Nonnull Project project) {
         return PsiFileFactory.getInstance(project);
+    }
+
+    enum Name {
+        NAME_VALIDATOR("Name"),
+        JSON_VALIDATOR("Json"),
+        CLASS_PREFIX_VALIDATOR("ClassPrefix"),
+        CLASS_SUFFIX_VALIDATOR("ClassSuffix"),
+        CLASS_NAME_POLICY("ClassName"),
+        FIELD_NAME_POLICY("FieldName"),
+        METHOD_NAME_POLICY("MethodName"),
+        PARAMETER_NAME_POLICY("ParameterName");
+
+        private final String name;
+
+        Name(@Nonnull String name) {
+            this.name = name;
+        }
+
+        @Nonnull
+        Annotation annotation() {
+            return Names.named(name);
+        }
     }
 }
