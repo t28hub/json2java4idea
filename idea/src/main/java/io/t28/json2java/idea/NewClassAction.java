@@ -12,8 +12,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -23,11 +21,10 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
-import io.t28.json2java.idea.commands.NewClassCommand;
+import io.t28.json2java.idea.command.NewClassCommandAction;
 import io.t28.json2java.idea.exceptions.ClassAlreadyExistsException;
-import io.t28.json2java.idea.exceptions.ClassCreationException;
 import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
-import io.t28.json2java.idea.inject.CommandFactory;
+import io.t28.json2java.idea.command.CommandActionFactory;
 import io.t28.json2java.idea.inject.GuiceManager;
 import io.t28.json2java.idea.inject.JavaConverterFactory;
 import io.t28.json2java.idea.inject.ProjectModule;
@@ -39,6 +36,7 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -112,45 +110,21 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             return;
         }
 
-        CommandProcessor.getInstance().executeCommand(project, () -> {
-            try {
-                final CommandFactory commandFactory = injector.getInstance(CommandFactory.class);
-                final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
-                final NewClassCommand command = commandFactory.create(
-                        dialog.getClassName(),
-                        dialog.getJson(),
-                        directory,
-                        converterFactory.create(settings)
-                );
-                ApplicationManager.getApplication().runWriteAction(command);
-                dialog.close();
-            } catch (ClassAlreadyExistsException e) {
-                Messages.showMessageDialog(
-                        project,
-                        bundle.message("error.message.class.exists", dialog.getClassName()),
-                        bundle.message("error.title.cannot.create.class"),
-                        Messages.getErrorIcon()
-                );
-            } catch (InvalidDirectoryException e) {
-                final Notification notification = new Notification(
-                        NOTIFICATION_DISPLAY_ID,
-                        bundle.message("error.title.directory.invalid"),
-                        bundle.message("error.message.directory.invalid", directory),
-                        NotificationType.WARNING
-                );
-                Notifications.Bus.notify(notification);
-                dialog.close();
-            } catch (ClassCreationException e) {
-                final Notification notification = new Notification(
-                        NOTIFICATION_DISPLAY_ID,
-                        bundle.message("error.title.cannot.create.class"),
-                        bundle.message("error.message.cannot.create", dialog.getClassName()),
-                        NotificationType.ERROR
-                );
-                Notifications.Bus.notify(notification);
-                dialog.close();
-            }
-        }, null, null);
+        final CommandActionFactory actionFactory = injector.getInstance(CommandActionFactory.class);
+        final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
+        final NewClassCommandAction action = actionFactory.create(
+                dialog.getClassName(),
+                dialog.getJson(),
+                directory,
+                converterFactory.create(settings)
+        );
+
+        try {
+            action.execute().getResultObject();
+            dialog.close();
+        } catch (RuntimeException e) {
+            onError(dialog, e.getCause());
+        }
     }
 
     @Override
@@ -168,6 +142,40 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     @Override
     public void onSettings(@Nonnull NewClassDialog dialog) {
         ShowSettingsUtil.getInstance().showSettingsDialog(project, "Json2Java");
+    }
+
+    private void onError(@Nonnull NewClassDialog dialog, @Nullable Throwable cause) {
+        if (cause instanceof ClassAlreadyExistsException) {
+            // Dialog is not closed or cancelled since user can rename class after message showing
+            Messages.showMessageDialog(
+                    project,
+                    bundle.message("error.message.class.exists", dialog.getClassName()),
+                    bundle.message("error.title.cannot.create.class"),
+                    Messages.getErrorIcon()
+            );
+            return;
+        }
+
+        if (cause instanceof InvalidDirectoryException) {
+            final Notification notification = new Notification(
+                    NOTIFICATION_DISPLAY_ID,
+                    bundle.message("error.title.directory.invalid"),
+                    bundle.message("error.message.directory.invalid"),
+                    NotificationType.WARNING
+            );
+            Notifications.Bus.notify(notification);
+            dialog.close();
+            return;
+        }
+
+        final Notification notification = new Notification(
+                NOTIFICATION_DISPLAY_ID,
+                bundle.message("error.title.cannot.create.class"),
+                bundle.message("error.message.cannot.create", dialog.getClassName()),
+                NotificationType.ERROR
+        );
+        Notifications.Bus.notify(notification);
+        dialog.close();
     }
 
     @CheckReturnValue
