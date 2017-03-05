@@ -15,6 +15,7 @@ import com.intellij.psi.PsiNameHelper;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.json2java.core.naming.NamePolicy;
 import io.t28.json2java.idea.Json2JavaBundle;
+import io.t28.json2java.idea.command.CommandActionFactory;
 import io.t28.json2java.idea.naming.ClassNamePolicy;
 import io.t28.json2java.idea.naming.FieldNamePolicy;
 import io.t28.json2java.idea.naming.MethodNamePolicy;
@@ -69,7 +70,7 @@ public class ProjectModule implements Module {
                 .toInstance(Json2JavaBundle.getInstance());
 
         // Installation factory modules
-        binder.install(new FactoryModuleBuilder().build(CommandFactory.class));
+        binder.install(new FactoryModuleBuilder().build(CommandActionFactory.class));
     }
 
     @Nonnull

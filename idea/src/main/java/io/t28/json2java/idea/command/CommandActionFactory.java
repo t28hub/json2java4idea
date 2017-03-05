@@ -1,17 +1,16 @@
-package io.t28.json2java.idea.inject;
+package io.t28.json2java.idea.command;
 
 import com.google.inject.assistedinject.Assisted;
 import com.intellij.psi.PsiDirectory;
 import io.t28.json2java.core.JavaConverter;
-import io.t28.json2java.idea.commands.NewClassCommand;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
-public interface CommandFactory {
+public interface CommandActionFactory {
     @Nonnull
     @CheckReturnValue
-    NewClassCommand create(
+    NewClassCommandAction create(
             @Nonnull @Assisted("Name") String name,
             @Nonnull @Assisted("Json") String json,
             @Nonnull PsiDirectory directory,
