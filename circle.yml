@@ -5,13 +5,26 @@ jobs:
     docker:
       - image: openjdk:8
     steps:
-      - run: apt-get -qq update; apt-get -y install git
+      - type: shell
+        name: Set up the build environment
+        command: apt-get -qq update; apt-get -y install git
       - type: checkout
-      - run: chmod +x ./gradlew
-      - run: ./gradlew --version
-      - run: ./gradlew assemble --full-stacktrace
-      - run: ./gradlew test --full-stacktrace
+      - type: shell
+        name: Set up the Gradle build
+        command: chmod +x ./gradlew; ./gradlew --version
+      - type: shell
+        name: Assemble the outputs of this project
+        command: ./gradlew assemble --full-stacktrace
+      - type: shell
+        name: Run all checks including unit test and static code analysis
+        command: ./gradlew check --full-stacktrace
       - type: test-results-store
         path: core/build/test-results/
       - type: test-results-store
         path: idea/build/test-results/
+      - type: artifacts-store
+        path: core/build/reports/jacoco/test
+        destination: core/jacoco
+      - type: artifacts-store
+        path: idea/build/reports/jacoco/test
+        destination: idea/jacoco

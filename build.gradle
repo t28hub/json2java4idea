@@ -4,6 +4,7 @@ allprojects {
 
     apply plugin: 'idea'
     apply plugin: 'java'
+    apply plugin: 'jacoco'
 }
 
 subprojects {
@@ -26,4 +27,22 @@ subprojects {
         testCompile 'org.mockito:mockito-core:2.7.5'
         testCompile 'org.assertj:assertj-core:3.6.2'
     }
+
+    jacoco {
+        toolVersion = '0.7.9'
+        reportsDir = file("${project.buildDir}/reports/jacoco")
+    }
+
+    jacocoTestReport {
+        group = 'verification'
+        description = 'Generate test coverage reports'
+        dependsOn = ['test']
+
+        reports {
+            xml.enabled = true
+            csv.enabled = false
+            html.enabled = true
+        }
+    }
+    check.dependsOn jacocoTestReport
 }
