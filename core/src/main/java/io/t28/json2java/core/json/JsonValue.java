@@ -68,7 +68,7 @@ public abstract class JsonValue {
         if (isNull()) {
             return (JsonNull) this;
         }
-        throw new IllegalStateException("This value is not null");
+        throw new IllegalStateException("This value is not a null");
     }
 
     @Nonnull
@@ -77,7 +77,7 @@ public abstract class JsonValue {
         if (isBoolean()) {
             return (JsonBoolean) this;
         }
-        throw new IllegalStateException("This value is not a type of boolean");
+        throw new IllegalStateException("This value is not a boolean");
     }
 
     @Nonnull
@@ -86,7 +86,7 @@ public abstract class JsonValue {
         if (isNumber()) {
             return (JsonNumber) this;
         }
-        throw new IllegalStateException("This value is not a type of number");
+        throw new IllegalStateException("This value is not a number");
     }
 
     @Nonnull
@@ -95,7 +95,7 @@ public abstract class JsonValue {
         if (isString()) {
             return (JsonString) this;
         }
-        throw new IllegalStateException("This value is not a type of string");
+        throw new IllegalStateException("This value is not a string");
     }
 
     @Nonnull
@@ -104,7 +104,7 @@ public abstract class JsonValue {
         if (isArray()) {
             return (JsonArray) this;
         }
-        throw new IllegalStateException("This value is not a type of array");
+        throw new IllegalStateException("This value is not an array");
     }
 
     @Nonnull
@@ -113,6 +113,6 @@ public abstract class JsonValue {
         if (isObject()) {
             return (JsonObject) this;
         }
-        throw new IllegalStateException("This value is not a type of object");
+        throw new IllegalStateException("This value is not an object");
     }
 }

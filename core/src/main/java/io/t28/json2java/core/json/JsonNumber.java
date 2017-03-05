@@ -25,9 +25,4 @@ public class JsonNumber extends JsonValue {
     public Number getValue() {
         return value;
     }
-
-    @Nonnull
-    public TypeName getBoxedType() {
-        return getType().box();
-    }
 }

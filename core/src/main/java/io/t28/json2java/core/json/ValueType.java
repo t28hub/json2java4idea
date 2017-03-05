@@ -21,7 +21,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNull();
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not null");
+            throw new IllegalArgumentException("Value '" + value + "' is not a null");
         }
     },
     BOOLEAN {
@@ -36,7 +36,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonBoolean((Boolean) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Boolean");
+            throw new IllegalArgumentException("Value '" + value + "' is not a boolean");
         }
     },
     INT {
@@ -51,7 +51,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNumber(int.class, (Integer) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Integer");
+            throw new IllegalArgumentException("Value '" + value + "' is not an int");
         }
     },
     LONG {
@@ -66,7 +66,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNumber(long.class, (Long) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Long");
+            throw new IllegalArgumentException("Value '" + value + "' is not a long");
         }
     },
     FLOAT {
@@ -81,7 +81,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNumber(float.class, (Float) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Float");
+            throw new IllegalArgumentException("Value '" + value + "' is not a float");
         }
     },
     DOUBLE {
@@ -96,7 +96,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNumber(double.class, (Double) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Double");
+            throw new IllegalArgumentException("Value '" + value + "' is not a double");
         }
     },
     BIG_INTEGER {
@@ -111,7 +111,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNumber(BigInteger.class, (BigInteger) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of BigInteger");
+            throw new IllegalArgumentException("Value '" + value + "' is not a big integer");
         }
     },
     BIG_DECIMAL {
@@ -126,7 +126,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonNumber(BigDecimal.class, (BigDecimal) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of BigDecimal");
+            throw new IllegalArgumentException("Value '" + value + "' is not a big decimal");
         }
     },
     STRING {
@@ -141,7 +141,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonString((String) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of String");
+            throw new IllegalArgumentException("Value '" + value + "' is not a string");
         }
     },
     ARRAY {
@@ -157,7 +157,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonArray((List<Object>) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of List");
+            throw new IllegalArgumentException("Value '" + value + "' is not an array");
         }
     },
     OBJECT {
@@ -173,7 +173,7 @@ enum ValueType {
             if (isAcceptable(value)) {
                 return new JsonObject((Map<String, Object>) value);
             }
-            throw new IllegalArgumentException("Specified value(" + value + ") is not an instance of Map");
+            throw new IllegalArgumentException("Value '" + value + "' is not an object");
         }
     };
 
