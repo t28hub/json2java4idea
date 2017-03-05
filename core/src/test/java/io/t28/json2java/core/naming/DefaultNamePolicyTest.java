@@ -9,6 +9,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -166,6 +167,34 @@ public class DefaultNamePolicyTest {
 
             // verify
             assertThat(actual).isEqualTo(expected);
+        }
+    }
+
+    @RunWith(JUnit4.class)
+    public static class MethodTest {
+        @Test
+        public void valueOf() throws Exception {
+            // exercise
+            final DefaultNamePolicy actual = DefaultNamePolicy.valueOf("CLASS");
+
+            // verify
+            assertThat(actual).isEqualTo(DefaultNamePolicy.CLASS);
+        }
+
+        @Test
+        public void values() throws Exception {
+            // exercise
+            final DefaultNamePolicy[] actual = DefaultNamePolicy.values();
+
+            // verify
+            assertThat(actual)
+                    .hasSize(4)
+                    .containsOnlyOnce(
+                            DefaultNamePolicy.CLASS,
+                            DefaultNamePolicy.FIELD,
+                            DefaultNamePolicy.METHOD,
+                            DefaultNamePolicy.PARAMETER
+                    );
         }
     }
 }
