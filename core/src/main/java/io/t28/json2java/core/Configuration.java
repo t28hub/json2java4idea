@@ -40,19 +40,6 @@ public class Configuration {
 
     @Nonnull
     @CheckReturnValue
-    public Builder toBuilder() {
-        return builder()
-                .style(style)
-                .classNamePolicy(classNamePolicy)
-                .fieldNamePolicy(fieldNamePolicy)
-                .methodNamePolicy(methodNamePolicy)
-                .parameterNamePolicy(parameterNamePolicy)
-                .jsonParser(jsonParser)
-                .javaBuilder(javaBuilder);
-    }
-
-    @Nonnull
-    @CheckReturnValue
     public Style style() {
         return style;
     }
