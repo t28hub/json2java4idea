@@ -14,10 +14,10 @@ import io.t28.json2java.core.naming.NamePolicy;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,8 +39,8 @@ public abstract class ClassBuilder {
         this.methodNamePolicy = methodNamePolicy;
         this.parameterNamePolicy = parameterNamePolicy;
         this.modifiers = new HashSet<>();
-        this.properties = new HashMap<>();
-        this.innerTypes = new ArrayList<>();
+        this.properties = new LinkedHashMap<>();
+        this.innerTypes = new LinkedList<>();
     }
 
     @Nonnull
