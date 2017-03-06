@@ -6,23 +6,27 @@ import javax.annotation.Generated;
 @SuppressWarnings("all")
 @Generated("io.t28.json2java.core.JavaConverter")
 public class ObjectTest {
+    private final Object nullValue;
+
     private final int numberValue;
 
     private final String stringValue;
-
-    private final Object nullValue;
 
     private final List<String> arrayValue;
 
     private final ObjectValue objectValue;
 
-    public ObjectTest(int numberValue, String stringValue, Object nullValue,
+    public ObjectTest(Object nullValue, int numberValue, String stringValue,
             List<String> arrayValue, ObjectValue objectValue) {
+        this.nullValue = nullValue;
         this.numberValue = numberValue;
         this.stringValue = stringValue;
-        this.nullValue = nullValue;
         this.arrayValue = arrayValue;
         this.objectValue = objectValue;
+    }
+
+    public Object getNullValue() {
+        return nullValue;
     }
 
     public int getNumberValue() {
@@ -31,10 +35,6 @@ public class ObjectTest {
 
     public String getStringValue() {
         return stringValue;
-    }
-
-    public Object getNullValue() {
-        return nullValue;
     }
 
     public List<String> getArrayValue() {
