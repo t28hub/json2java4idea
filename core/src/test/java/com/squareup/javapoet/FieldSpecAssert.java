@@ -51,6 +51,18 @@ public class FieldSpecAssert extends AbstractAssert<FieldSpecAssert, FieldSpec> 
     }
 
     @Nonnull
+    public FieldSpecAssert hasAnnotation(@Nonnull AnnotationSpec expected) {
+        isNotNull();
+
+        final List<AnnotationSpec> actual = this.actual.annotations;
+        Assertions.assertThat(actual)
+                .overridingErrorMessage("Expecting <%s> to contain but could not find <%s>", actual, expected)
+                .contains(expected);
+
+        return this;
+    }
+
+    @Nonnull
     public FieldSpecAssert hasNoAnnotation() {
         isNotNull();
 
@@ -63,13 +75,23 @@ public class FieldSpecAssert extends AbstractAssert<FieldSpecAssert, FieldSpec> 
     }
 
     @Nonnull
+    public FieldSpecAssert isPrivate() {
+        return hasModifier(Modifier.PRIVATE);
+    }
+
+    @Nonnull
+    public FieldSpecAssert isFinal() {
+        return hasModifier(Modifier.FINAL);
+    }
+
+    @Nonnull
     public FieldSpecAssert hasModifier(@Nonnull Modifier... expected) {
         isNotNull();
 
         final Set<Modifier> actual = this.actual.modifiers;
         Assertions.assertThat(actual)
                 .overridingErrorMessage("Expected modifier to be <%s>, but was <%s>", expected, actual)
-                .containsOnly(expected);
+                .contains(expected);
 
         return this;
     }

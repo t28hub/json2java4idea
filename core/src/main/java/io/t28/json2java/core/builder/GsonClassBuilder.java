@@ -24,7 +24,8 @@ public class GsonClassBuilder extends ClassBuilder {
     @Nonnull
     @Override
     protected List<FieldSpec> buildFields() {
-        return getProperties().entrySet()
+        return getProperties()
+                .entrySet()
                 .stream()
                 .map(property -> {
                     final String name = property.getKey();
