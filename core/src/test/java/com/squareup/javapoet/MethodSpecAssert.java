@@ -63,6 +63,18 @@ public class MethodSpecAssert extends AbstractAssert<MethodSpecAssert, MethodSpe
     }
 
     @Nonnull
+    public MethodSpecAssert hasAnnotation(@Nonnull AnnotationSpec expected) {
+        isNotNull();
+
+        final List<AnnotationSpec> actual = this.actual.annotations;
+        Assertions.assertThat(actual)
+                .overridingErrorMessage("Expecting <%s> to contain but could not find <%s>", actual, expected)
+                .contains(expected);
+
+        return this;
+    }
+
+    @Nonnull
     public MethodSpecAssert hasNoAnnotation() {
         isNotNull();
 
