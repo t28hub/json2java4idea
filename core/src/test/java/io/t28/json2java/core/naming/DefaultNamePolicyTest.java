@@ -21,6 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class DefaultNamePolicyTest {
+    private DefaultNamePolicyTest() {
+    }
+
     @RunWith(Parameterized.class)
     public static class EnumTest {
         @Parameters(name = "{0}")

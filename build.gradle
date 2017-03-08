@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.9'
+    }
+}
+
 allprojects {
     group 'io.t28'
     version '0.1.0'
@@ -5,6 +16,7 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'net.ltgt.errorprone'
 }
 
 subprojects {
@@ -23,9 +35,28 @@ subprojects {
     }
 
     dependencies {
+        errorprone 'com.google.errorprone:error_prone_core:2.0.18'
+
         testCompile 'junit:junit:4.12'
         testCompile 'org.mockito:mockito-core:2.7.5'
         testCompile 'org.assertj:assertj-core:3.6.2'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += [
+                '-Xep:ImmutableEnumChecker:OFF',
+                '-Xep:ConstantField:ERROR',
+                '-Xep:MethodCanBeStatic:ERROR',
+                '-Xep:MixedArrayDimensions:ERROR',
+                '-Xep:MultiVariableDeclaration:ERROR',
+                '-Xep:MultipleTopLevelClasses:ERROR',
+                '-Xep:PackageLocation:ERROR',
+                '-Xep:PrivateConstructorForUtilityClass:ERROR',
+                '-Xep:RemoveUnusedImports:ERROR',
+                '-Xep:ThrowsUncheckedException:ERROR',
+                '-Xep:UnnecessaryStaticImport:ERROR',
+                '-Xep:WildcardImport:ERROR'
+        ]
     }
 
     jacoco {

@@ -1,7 +1,11 @@
 package io.t28.json2java.core;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 import io.t28.json2java.core.builder.ClassBuilder;
 import io.t28.json2java.core.json.JsonArray;
 import io.t28.json2java.core.json.JsonNull;
