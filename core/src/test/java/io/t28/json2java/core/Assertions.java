@@ -12,6 +12,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class Assertions extends org.assertj.core.api.Assertions {
+    private Assertions() {
+    }
+
     @Nonnull
     @CheckReturnValue
     public static JsonValueAssert assertThat(@Nullable JsonValue actual) {

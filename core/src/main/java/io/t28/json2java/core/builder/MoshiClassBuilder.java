@@ -1,7 +1,11 @@
 package io.t28.json2java.core.builder;
 
 import com.google.common.collect.ImmutableList;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.moshi.Json;
 import io.t28.json2java.core.naming.NamePolicy;
 

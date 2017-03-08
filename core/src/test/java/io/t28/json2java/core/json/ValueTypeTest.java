@@ -20,6 +20,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(Enclosed.class)
 public class ValueTypeTest {
+    private ValueTypeTest() {
+    }
+
     @RunWith(Parameterized.class)
     public static class IsAcceptableTest {
         @Parameters(name = "{0}")

@@ -21,6 +21,9 @@ import static io.t28.json2java.core.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class StyleTest {
+    private StyleTest() {
+    }
+
     @RunWith(Parameterized.class)
     public static class ToBuilderTest {
         @Parameters(name = "should return \"{1}\" when \"{0}\"")

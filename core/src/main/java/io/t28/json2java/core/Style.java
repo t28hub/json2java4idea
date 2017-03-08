@@ -69,4 +69,8 @@ public enum Style {
     public static Style fromName(@Nonnull String name, @Nonnull Style defaultStyle) {
         return fromName(name).orElse(defaultStyle);
     }
+
+    public String get() {
+        return "";
+    }
 }

@@ -1,8 +1,6 @@
 package io.t28.json2java.core.io;
 
 import com.squareup.javapoet.TypeSpec;
-import io.t28.json2java.core.io.JavaBuilderImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +26,7 @@ public class JavaBuilderImplTest {
         final String actual = underTest.build("io.t28.example", typeSpec);
 
         // verify
-        Assertions.assertThat(actual)
+        assertThat(actual)
                 .isEqualTo("package io.t28.example;\n\npublic class Test {\n}\n");
     }
 }
