@@ -1,5 +1,6 @@
 package io.t28.json2java.idea.view;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -27,8 +28,11 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 public class SettingsPanel implements Disposable, ActionListener {
+    private static final String PREVIEW_PANEL_NAME = "preview";
     private static final String EMPTY_TEXT = "";
     private static final int INITIAL_OFFSET = 0;
+    private static final int PREFERRED_PREVIEW_WIDTH = 1920;
+    private static final int PREFERRED_PREVIEW_HEIGHT = -1;
 
     private final ButtonGroup styleGroup;
 
@@ -135,6 +139,13 @@ public class SettingsPanel implements Disposable, ActionListener {
         }, null, null);
     }
 
+    @Nonnull
+    @CheckReturnValue
+    @VisibleForTesting
+    String getPreviewText() {
+        return previewDocument.getText();
+    }
+
     protected void onChanged() {
     }
 
@@ -164,6 +175,7 @@ public class SettingsPanel implements Disposable, ActionListener {
         settings.setAdditionalLinesCount(1);
 
         previewPanel = (JPanel) previewEditor.getComponent();
-        previewPanel.setPreferredSize(new Dimension(1920, -1));
+        previewPanel.setName(PREVIEW_PANEL_NAME);
+        previewPanel.setPreferredSize(new Dimension(PREFERRED_PREVIEW_WIDTH, PREFERRED_PREVIEW_HEIGHT));
     }
 }

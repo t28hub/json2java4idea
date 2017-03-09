@@ -75,6 +75,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     private Provider<JavaConverterFactory> javaConverterFactoryProvider;
 
     @Inject
+    @SuppressWarnings("unused")
     private Provider<JsonFormatter> jsonFormatterProvider;
 
     public NewClassAction() {
