@@ -33,8 +33,6 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
     private static final String SAMPLE_CLASS = "Sample";
     private static final String SAMPLE_JSON = "{\"id\":1}";
 
-    private final Injector injector;
-
     @Inject
     @SuppressWarnings("unused")
     private Json2JavaSettings settings;
@@ -53,6 +51,10 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
     @SuppressWarnings("unused")
     private Provider<InputValidator> suffixValidatorProvider;
 
+    @Inject
+    @SuppressWarnings("unused")
+    private Provider<JavaConverterFactory> javaConverterFactoryProvider;
+
     @Nullable
     private SettingsPanel panel;
 
@@ -64,8 +66,8 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
     // Provides this constructor which has 2 parameters due to avoid crash when instantiate from IntelliJ.
     @VisibleForTesting
     Json2JavaConfigurable(@SuppressWarnings("unused") @Nonnull Project project, @Nonnull GuiceManager guiceManager) {
-        this.injector = guiceManager.getInjector();
-        this.injector.injectMembers(this);
+        final Injector injector = guiceManager.getInjector();
+        injector.injectMembers(this);
     }
 
     @NotNull
@@ -190,14 +192,13 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             return;
         }
 
-        final Json2JavaSettings settings = Json2JavaSettings.getInstance()
-                .setStyle(panel.getStyle())
-                .setClassNamePrefix(panel.getClassNamePrefix())
-                .setClassNameSuffix(panel.getClassNameSuffix());
-        final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
-        final JavaConverter converter = converterFactory.create(settings);
-
         try {
+            final Json2JavaSettings settings = Json2JavaSettings.getInstance()
+                    .setStyle(panel.getStyle())
+                    .setClassNamePrefix(panel.getClassNamePrefix())
+                    .setClassNameSuffix(panel.getClassNameSuffix());
+            final JavaConverterFactory converterFactory = javaConverterFactoryProvider.get();
+            final JavaConverter converter = converterFactory.create(settings);
             final String java = converter.convert(SAMPLE_PACKAGE, SAMPLE_CLASS, SAMPLE_JSON);
             panel.setPreviewText(java);
         } catch (IOException ignore) {

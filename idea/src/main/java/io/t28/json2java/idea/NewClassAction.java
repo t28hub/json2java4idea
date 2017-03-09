@@ -1,6 +1,7 @@
 package io.t28.json2java.idea;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
@@ -37,7 +38,6 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -47,8 +47,6 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     private Project project;
 
     private IdeView ideView;
-
-    private Injector injector;
 
     @Inject
     @SuppressWarnings("unused")
@@ -68,6 +66,17 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     @SuppressWarnings("unused")
     private Provider<InputValidator> jsonValidatorProvider;
 
+    @Inject
+    @SuppressWarnings("unused")
+    private Provider<CommandActionFactory> commandActionFactoryProvider;
+
+    @Inject
+    @SuppressWarnings("unused")
+    private Provider<JavaConverterFactory> javaConverterFactoryProvider;
+
+    @Inject
+    private Provider<JsonFormatter> jsonFormatterProvider;
+
     public NewClassAction() {
         super(PlatformIcons.CLASS_ICON);
     }
@@ -80,7 +89,8 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
         project = event.getProject();
         ideView = event.getData(DataKeys.IDE_VIEW);
-        injector = GuiceManager.getInstance(project).getInjector();
+
+        final Injector injector = GuiceManager.getInstance(project).getInjector();
         injector.injectMembers(this);
 
         // 'selected' is null when directory selection is canceled although multiple directories are chosen.
@@ -112,8 +122,8 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             return;
         }
 
-        final CommandActionFactory actionFactory = injector.getInstance(CommandActionFactory.class);
-        final JavaConverterFactory converterFactory = injector.getInstance(JavaConverterFactory.class);
+        final CommandActionFactory actionFactory = commandActionFactoryProvider.get();
+        final JavaConverterFactory converterFactory = javaConverterFactoryProvider.get();
         final NewClassCommandAction action = actionFactory.create(
                 dialog.getClassName(),
                 dialog.getJson(),
@@ -136,7 +146,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onFormat(@Nonnull NewClassDialog dialog) {
-        final Formatter formatter = injector.getInstance(JsonFormatter.class);
+        final Formatter formatter = jsonFormatterProvider.get();
         final String formatted = formatter.format(dialog.getJson());
         dialog.setJson(formatted);
     }
