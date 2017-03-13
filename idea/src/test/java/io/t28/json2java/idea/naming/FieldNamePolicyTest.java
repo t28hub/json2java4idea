@@ -10,15 +10,15 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class ParameterNamePolicyTest extends IdeaProjectTest {
-    private ParameterNamePolicy underTest;
+public class FieldNamePolicyTest extends IdeaProjectTest {
+    private FieldNamePolicy underTest;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();
         final JavaCodeStyleManager codeStyleManager = JavaCodeStyleManager.getInstance(project);
-        underTest = new ParameterNamePolicy(codeStyleManager);
+        underTest = new FieldNamePolicy(codeStyleManager);
     }
 
     @Test
@@ -32,22 +32,31 @@ public class ParameterNamePolicyTest extends IdeaProjectTest {
     }
 
     @Test
-    public void convertShouldAppendPrefixWhenReserved() throws Exception {
+    public void convertShouldReturnTextWithPrefixWhenReserved() throws Exception {
         // exercise
-        final String actual = underTest.convert("Class", TypeName.OBJECT);
+        final String actual = underTest.convert("Private", TypeName.OBJECT);
 
         // verify
         assertThat(actual)
-                .isEqualTo("aClass");
+                .isEqualTo("aPrivate");
+    }
+
+    @Test
+    public void convertShouldRemoveInvalidCharacter() throws Exception {
+        // exercise
+        final String actual = underTest.convert("1nva|id", TypeName.OBJECT);
+
+        // verify
+        assertThat(actual)
+                .isEqualTo("a1nvaid");
     }
 
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void convertShouldThrowExceptionWhenInvalidText() throws Exception {
-        // verify
+    public void convertShouldThrowExceptionWhenInvalidName() throws Exception {
         assertThatThrownBy(() -> {
             // exercise
-            underTest.convert("+", TypeName.OBJECT);
+             underTest.convert("+-*/", TypeName.OBJECT);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 }
