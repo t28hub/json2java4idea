@@ -25,7 +25,7 @@ public class ParameterNamePolicy implements NamePolicy {
         final String propertyName = DefaultNamePolicy.format(name, CaseFormat.LOWER_CAMEL);
         final String parameterName = codeStyleManager.propertyNameToVariableName(propertyName, VariableKind.PARAMETER);
         if (Strings.isNullOrEmpty(parameterName)) {
-            throw new IllegalArgumentException("Cannot convert '" + name + "' to parameter name");
+            throw new IllegalArgumentException("Cannot convert '" + name + "' to a parameter name");
         }
         return parameterName;
     }
