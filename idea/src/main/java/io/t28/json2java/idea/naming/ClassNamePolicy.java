@@ -29,7 +29,7 @@ public class ClassNamePolicy implements NamePolicy {
                 .append(suffix);
         final String className = builder.toString();
         if (!nameHelper.isQualifiedName(className)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Cannot convert '" + name + "' to class name");
         }
         return className;
     }
