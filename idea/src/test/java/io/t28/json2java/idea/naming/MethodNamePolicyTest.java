@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiManager;
 import com.squareup.javapoet.TypeName;
 import io.t28.json2java.idea.IdeaProjectTest;
-import io.t28.json2java.idea.utils.PsiTypeConverter;
+import io.t28.json2java.idea.util.PsiTypeConverter;
 import org.junit.Before;
 import org.junit.Test;
 

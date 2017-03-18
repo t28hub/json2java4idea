@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.exceptions;
+package io.t28.json2java.idea.exception;
 
 import javax.annotation.Nonnull;
 

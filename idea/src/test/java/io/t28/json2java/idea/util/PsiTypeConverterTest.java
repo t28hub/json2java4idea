@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.utils;
+package io.t28.json2java.idea.util;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiManager;

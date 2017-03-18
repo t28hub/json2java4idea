@@ -16,10 +16,10 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import io.t28.json2java.core.JavaConverter;
-import io.t28.json2java.idea.exceptions.ClassAlreadyExistsException;
-import io.t28.json2java.idea.exceptions.ClassCreationException;
-import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
-import io.t28.json2java.idea.utils.Extensions;
+import io.t28.json2java.idea.exception.ClassAlreadyExistsException;
+import io.t28.json2java.idea.exception.ClassCreationException;
+import io.t28.json2java.idea.exception.InvalidDirectoryException;
+import io.t28.json2java.idea.util.Extensions;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

@@ -5,7 +5,9 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.intellij.json.JsonFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.JavaDirectoryService;
@@ -20,7 +22,8 @@ import io.t28.json2java.idea.naming.ClassNamePolicy;
 import io.t28.json2java.idea.naming.FieldNamePolicy;
 import io.t28.json2java.idea.naming.MethodNamePolicy;
 import io.t28.json2java.idea.naming.ParameterNamePolicy;
-import io.t28.json2java.idea.settings.Json2JavaSettings;
+import io.t28.json2java.idea.setting.Json2JavaSettings;
+import io.t28.json2java.idea.util.Formatter;
 import io.t28.json2java.idea.validator.ClassPrefixValidator;
 import io.t28.json2java.idea.validator.ClassSuffixValidator;
 import io.t28.json2java.idea.validator.JsonValidator;
@@ -117,6 +120,13 @@ public class ProjectModule implements Module {
     @Singleton
     public PsiFileFactory provideFileFactory(@Nonnull Project project) {
         return PsiFileFactory.getInstance(project);
+    }
+
+    @Nonnull
+    @Provides
+    @Named("Json")
+    public Formatter provideJsonFormatter(@Nonnull PsiFileFactory fileFactory) {
+        return new Formatter(fileFactory, JsonFileType.INSTANCE);
     }
 
     enum Name {

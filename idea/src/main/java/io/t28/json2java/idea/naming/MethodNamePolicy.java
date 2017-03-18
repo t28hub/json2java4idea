@@ -10,7 +10,7 @@ import com.intellij.psi.PsiType;
 import com.squareup.javapoet.TypeName;
 import io.t28.json2java.core.naming.DefaultNamePolicy;
 import io.t28.json2java.core.naming.NamePolicy;
-import io.t28.json2java.idea.utils.PsiTypeConverter;
+import io.t28.json2java.idea.util.PsiTypeConverter;
 
 import javax.annotation.Nonnull;
 

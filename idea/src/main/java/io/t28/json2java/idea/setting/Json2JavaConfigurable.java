@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.settings;
+package io.t28.json2java.idea.setting;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;

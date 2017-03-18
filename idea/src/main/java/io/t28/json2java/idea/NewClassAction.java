@@ -25,13 +25,12 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
 import io.t28.json2java.idea.command.CommandActionFactory;
 import io.t28.json2java.idea.command.NewClassCommandAction;
-import io.t28.json2java.idea.exceptions.ClassAlreadyExistsException;
-import io.t28.json2java.idea.exceptions.InvalidDirectoryException;
+import io.t28.json2java.idea.exception.ClassAlreadyExistsException;
+import io.t28.json2java.idea.exception.InvalidDirectoryException;
 import io.t28.json2java.idea.inject.GuiceManager;
 import io.t28.json2java.idea.inject.JavaConverterFactory;
-import io.t28.json2java.idea.settings.Json2JavaSettings;
-import io.t28.json2java.idea.utils.Formatter;
-import io.t28.json2java.idea.utils.JsonFormatter;
+import io.t28.json2java.idea.setting.Json2JavaSettings;
+import io.t28.json2java.idea.util.Formatter;
 import io.t28.json2java.idea.view.NewClassDialog;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
@@ -75,8 +74,9 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
     private Provider<JavaConverterFactory> javaConverterFactoryProvider;
 
     @Inject
+    @Named("Json")
     @SuppressWarnings("unused")
-    private Provider<JsonFormatter> jsonFormatterProvider;
+    private Provider<Formatter> jsonFormatterProvider;
 
     public NewClassAction() {
         super(PlatformIcons.CLASS_ICON);

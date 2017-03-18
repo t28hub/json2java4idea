@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.settings;
+package io.t28.json2java.idea.setting;
 
 import io.t28.json2java.core.Style;
 
