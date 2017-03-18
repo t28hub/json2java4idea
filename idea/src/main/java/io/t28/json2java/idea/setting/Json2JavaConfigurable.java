@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 public class Json2JavaConfigurable implements SearchableConfigurable {
     private static final String SAMPLE_PACKAGE = "sample";
     private static final String SAMPLE_CLASS = "Sample";
-    private static final String SAMPLE_JSON = "{\"id\":1}";
+    private static final String SAMPLE_JSON = "{\"id\":1,\"user\":{\"name\":null}}";
 
     @Inject
     @SuppressWarnings("unused")

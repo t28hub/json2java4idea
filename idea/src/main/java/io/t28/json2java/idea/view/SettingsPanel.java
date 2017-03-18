@@ -21,13 +21,15 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.stream.Stream;
 
-public class SettingsPanel implements Disposable, ActionListener {
+public class SettingsPanel implements Disposable, ActionListener, DocumentListener {
     private static final String PREVIEW_PANEL_NAME = "preview";
     private static final String EMPTY_TEXT = "";
     private static final int INITIAL_OFFSET = 0;
@@ -56,12 +58,16 @@ public class SettingsPanel implements Disposable, ActionListener {
         styleGroup.add(moshiStyleButton);
 
         Collections.list(styleGroup.getElements()).forEach(button -> button.addActionListener(this));
-        classNamePrefixField.addActionListener(this);
-        classNameSuffixField.addActionListener(this);
+        classNamePrefixField.getDocument().addDocumentListener(this);
+        classNameSuffixField.getDocument().addDocumentListener(this);
     }
 
     @Override
     public void dispose() {
+        Collections.list(styleGroup.getElements()).forEach(button -> button.removeActionListener(this));
+        classNamePrefixField.getDocument().removeDocumentListener(this);
+        classNameSuffixField.getDocument().removeDocumentListener(this);
+
         if (previewEditor == null || previewEditor.isDisposed()) {
             return;
         }
@@ -70,6 +76,21 @@ public class SettingsPanel implements Disposable, ActionListener {
 
     @Override
     public void actionPerformed(@Nonnull ActionEvent event) {
+        onChanged();
+    }
+
+    @Override
+    public void insertUpdate(@Nonnull DocumentEvent event) {
+        onChanged();
+    }
+
+    @Override
+    public void removeUpdate(@Nonnull DocumentEvent event) {
+        onChanged();
+    }
+
+    @Override
+    public void changedUpdate(@Nonnull DocumentEvent event) {
         onChanged();
     }
 
