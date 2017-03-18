@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.utils;
+package io.t28.json2java.idea.util;
 
 import com.intellij.json.JsonFileType;
 import com.intellij.openapi.project.Project;

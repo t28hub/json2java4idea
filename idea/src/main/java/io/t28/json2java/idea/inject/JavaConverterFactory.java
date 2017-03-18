@@ -8,7 +8,7 @@ import io.t28.json2java.core.Configuration;
 import io.t28.json2java.core.JavaConverter;
 import io.t28.json2java.core.naming.NamePolicy;
 import io.t28.json2java.idea.naming.ClassNamePolicy;
-import io.t28.json2java.idea.settings.Json2JavaSettings;
+import io.t28.json2java.idea.setting.Json2JavaSettings;
 
 import javax.annotation.Nonnull;
 

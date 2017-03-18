@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.settings;
+package io.t28.json2java.idea.setting;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;

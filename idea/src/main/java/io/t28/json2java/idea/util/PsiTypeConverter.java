@@ -1,4 +1,4 @@
-package io.t28.json2java.idea.utils;
+package io.t28.json2java.idea.util;
 
 import com.google.inject.Inject;
 import com.intellij.psi.PsiManager;

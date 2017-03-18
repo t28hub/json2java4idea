@@ -22,11 +22,11 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService
-                serviceInterface="io.t28.json2java.idea.settings.Json2JavaSettings"
-                serviceImplementation="io.t28.json2java.idea.settings.PersistentJson2JavaSettings"/>
+                serviceInterface="io.t28.json2java.idea.setting.Json2JavaSettings"
+                serviceImplementation="io.t28.json2java.idea.setting.PersistentJson2JavaSettings"/>
         <projectConfigurable
                 id="other"
-                instance="io.t28.json2java.idea.settings.Json2JavaConfigurable"/>
+                instance="io.t28.json2java.idea.setting.Json2JavaConfigurable"/>
     </extensions>
 
     <actions>
