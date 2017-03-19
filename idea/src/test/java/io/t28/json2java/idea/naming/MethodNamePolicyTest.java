@@ -34,6 +34,7 @@ public class MethodNamePolicyTest extends IdeaProjectTest {
     private MethodNamePolicy underTest;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         application = getApplication();

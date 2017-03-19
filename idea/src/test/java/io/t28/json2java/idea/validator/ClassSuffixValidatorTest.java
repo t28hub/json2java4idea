@@ -30,6 +30,7 @@ public class ClassSuffixValidatorTest extends IdeaProjectTest {
     private ClassSuffixValidator underTest;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();
