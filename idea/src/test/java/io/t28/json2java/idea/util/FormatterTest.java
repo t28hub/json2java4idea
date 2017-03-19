@@ -29,6 +29,7 @@ public class FormatterTest extends IdeaProjectTest {
     private PsiFileFactory fileFactory;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();

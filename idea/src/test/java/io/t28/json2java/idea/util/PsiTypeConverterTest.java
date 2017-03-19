@@ -62,6 +62,7 @@ public class PsiTypeConverterTest extends IdeaProjectTest {
     }
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();

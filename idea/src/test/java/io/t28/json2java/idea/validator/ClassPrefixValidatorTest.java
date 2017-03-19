@@ -30,6 +30,7 @@ public class ClassPrefixValidatorTest extends IdeaProjectTest {
     private ClassPrefixValidator underTest;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();

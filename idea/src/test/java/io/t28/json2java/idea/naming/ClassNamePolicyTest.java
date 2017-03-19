@@ -30,6 +30,7 @@ public class ClassNamePolicyTest extends IdeaProjectTest {
     private PsiNameHelper nameHelper;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();

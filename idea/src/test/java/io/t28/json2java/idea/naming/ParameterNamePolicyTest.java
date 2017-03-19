@@ -30,6 +30,7 @@ public class ParameterNamePolicyTest extends IdeaProjectTest {
     private ParameterNamePolicy underTest;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         final Project project = getProject();
