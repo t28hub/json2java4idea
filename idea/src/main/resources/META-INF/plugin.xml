@@ -1,21 +1,38 @@
+<!--
+  ~ Copyright (c) 2017 Tatsuya Maki
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <idea-plugin version="2">
-    <id>com.your.company.unique.plugin.id</id>
-    <name>Plugin display name here</name>
-    <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <id>io.t28.json2java</id>
+    <name>Json2Java4Idea</name>
+    <version>0.1.0</version>
+    <vendor email="t28oogle@gmail.com" url="https://github.com/t28hub">T28</vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
-    ]]></description>
+      <p>Json2Java4Idea is a code generation plugin which converts JSON to Java in IntelliJ IDEA or Android Studio.</p>
+    ]]>
+    </description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      <p><b>0.1.0:</b></p>
+      <ul>
+        <li>Initial release.</li>
+      </ul>
     ]]>
     </change-notes>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="171.0"/>
 
     <depends>com.intellij.modules.lang</depends>
