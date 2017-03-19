@@ -30,7 +30,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.RunResult;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -38,6 +42,7 @@ import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
 import io.t28.json2java.idea.command.CommandActionFactory;
 import io.t28.json2java.idea.command.NewClassCommandAction;
@@ -57,6 +62,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class NewClassAction extends AnAction implements NewClassDialog.ActionListener {
+    private static final Logger LOGGER = Logger.getInstance(NewClassAction.class);
     private static final String NOTIFICATION_DISPLAY_ID = "Json2Java4Idea";
 
     private Project project;
@@ -139,19 +145,30 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
             return;
         }
 
-        final CommandActionFactory actionFactory = commandActionFactoryProvider.get();
-        final JavaConverterFactory converterFactory = javaConverterFactoryProvider.get();
-        final NewClassCommandAction action = actionFactory.create(
-                dialog.getClassName(),
-                dialog.getJson(),
-                directory,
-                converterFactory.create(settings)
-        );
-
         try {
-            action.execute().getResultObject();
+            final CommandActionFactory actionFactory = commandActionFactoryProvider.get();
+            final JavaConverterFactory converterFactory = javaConverterFactoryProvider.get();
+            final NewClassCommandAction command = actionFactory.create(
+                    dialog.getClassName(),
+                    dialog.getJson(),
+                    directory,
+                    converterFactory.create(settings)
+            );
+
+            final ProgressManager progressManager = ProgressManager.getInstance();
+            progressManager.runProcessWithProgressSynchronously(() -> {
+                final ProgressIndicator indicator = progressManager.getProgressIndicator();
+                if (indicator != null) {
+                    indicator.setIndeterminate(true);
+                    indicator.setText(bundle.message("progress.text", dialog.getClassName()));
+                }
+
+                final RunResult<PsiFile> result = command.execute();
+                return result.getResultObject();
+            }, bundle.message("progress.title"), false, project);
             dialog.close();
         } catch (RuntimeException e) {
+            LOGGER.warn("Unable to create a class", e);
             onError(dialog, e.getCause());
         }
     }
