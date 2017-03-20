@@ -14,7 +14,7 @@ jobs:
         command: chmod +x ./gradlew; ./gradlew --version
       - type: shell
         name: Assemble the outputs of this project
-        command: ./gradlew assemble --full-stacktrace
+        command: ./gradlew :core:build --full-stacktrace; ./gradlew :idea:buildPlugin --full-stacktrace
       - type: shell
         name: Run all checks including unit test and static code analysis
         command: ./gradlew check --full-stacktrace
@@ -28,3 +28,6 @@ jobs:
       - type: artifacts-store
         path: idea/build/reports/jacoco/test
         destination: idea/jacoco
+      - type: artifacts-store
+        path: idea/build/distributions
+        destination: idea
