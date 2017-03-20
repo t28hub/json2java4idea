@@ -23,7 +23,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 public class Json2JavaBundle extends AbstractBundle {
-    private static final String BUNDLE = "messages.Json2JavaBundle";
+    private static final String BUNDLE = "messages.Json2Java4IdeaBundle";
 
     public Json2JavaBundle() {
         super(BUNDLE);

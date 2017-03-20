@@ -5,6 +5,8 @@ Json2Java4Idea
 
 **Json2Java4Idea** is a plugin which generates Java class from JSON.
 
+![Demo](demo.gif)
+
 ## Table of Contents
 * [Background](#background)
 * [Installation](#installation)
