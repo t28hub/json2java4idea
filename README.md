@@ -8,27 +8,40 @@ Json2Java4Idea
 ## Table of Contents
 * [Background](#background)
 * [Installation](#installation)
+* [Settings](#settings)
 * [Troubleshooting](#troubleshooting)
 * [License](#license)
 
 <a name="background"></a>
 ## Background
-There are several JSON Serializing and deserializing library something like Jackson or Gson, and you might use one of these library.<br/>
+There are several JSON Serializing and deserializing library something like Jackson or Gson.<br/>
 However implementing a class which is converted from JSON is a bored stuff.<br/>
 Json2Java4Idea could be a solution for the stuff.<br/>
-Also this plugin supports following libraries.<br/>
+The plugin generates immutable Java class from JSON and supports following libraries.<br/>
 * [Jackson](https://github.com/FasterXML/jackson)
 * [GSON](https://github.com/google/gson)
 * [Moshi](https://github.com/square/moshi)
 
 <a name="installation"></a>
 ## Installation
-1. Open the **Settings/Preferences** dialog
+1. Open the **Settings/Preferences** dialog.
 1. In the left pane, select **Plugins**.
 1. In the right pane, click the **Browse repositories...** button.
 1. In the dialog which opens, enter **Json2Java4Idea** into the search box.
 1. In the right pane, click the **Install** button.
 1. After installation, restart your IDE.
+
+<a name="settings"></a>
+## Settings
+1. Open the **Settings/Preferences** dialog.
+1. In the left pane, select **Other Settings**.
+1. In the right pane, click the **Json2Java4Idea** link.
+1. After configuration changing finished, click the **Apply** button.
+
+Currently there are 3 types of settings you can configure.
+1. Class style
+1. Prefix of class name
+1. Suffix of class name
 
 <a name="troubleshooting"></a>
 ## Troubleshooting
