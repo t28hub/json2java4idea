@@ -33,9 +33,10 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="171.0"/>
+    <idea-version since-build="160.0" until-build="171.0"/>
 
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService

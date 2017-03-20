@@ -10,7 +10,20 @@ plugins {
     id 'org.jetbrains.intellij' version '0.2.5'
 }
 
-apply plugin: 'org.jetbrains.intellij'
+intellij {
+    version '171.3780.52'
+    pluginName 'Json2Java4Idea'
+    updateSinceUntilBuild false
+    sameSinceUntilBuild false
+
+    publish {
+        if (project.hasProperty('INTELLIJ_USERNAME')) {
+            username INTELLIJ_USERNAME
+            password INTELLIJ_PASSWORD
+            pluginId INTELLIJ_PLUGIN_ID
+        }
+    }
+}
 
 dependencies {
     compile project(':core')
