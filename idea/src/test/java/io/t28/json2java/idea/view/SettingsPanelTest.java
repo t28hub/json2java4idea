@@ -269,13 +269,13 @@ public class SettingsPanelTest {
 
     @Nonnull
     @CheckReturnValue
-    private JRadioButtonFixture findRadioButtonByName(@Nonnull @PropertyKey(resourceBundle = "messages.Json2JavaBundle") String key) {
+    private JRadioButtonFixture findRadioButtonByName(@Nonnull @PropertyKey(resourceBundle = "messages.Json2Java4IdeaBundle") String key) {
         return window.radioButton(bundle.message(key));
     }
 
     @Nonnull
     @CheckReturnValue
-    private JTextComponentFixture findTextFieldByName(@Nonnull @PropertyKey(resourceBundle = "messages.Json2JavaBundle") String key) {
+    private JTextComponentFixture findTextFieldByName(@Nonnull @PropertyKey(resourceBundle = "messages.Json2Java4IdeaBundle") String key) {
         return window.textBox(bundle.message(key));
     }
 }
