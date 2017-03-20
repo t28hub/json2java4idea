@@ -4,10 +4,6 @@ Json2Java4Idea
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/t28hub/json2java4idea/blob/master/LICENSE)
 
 **Json2Java4Idea** is a plugin which generates Java class from JSON.
-This plugin supports the following libraries for serializing and deserializing JSON.
-* [Jackson](https://github.com/FasterXML/jackson)
-* [GSON](https://github.com/google/gson)
-* [Moshi](https://github.com/square/moshi)
 
 ## Table of Contents
 * Background
@@ -17,6 +13,13 @@ This plugin supports the following libraries for serializing and deserializing J
 * License
 
 ## Background
+There are several JSON Serializing and deserializing library something like Jackson or Gson, and you might use one of these library.<br/>
+However implementing a class which is converted from JSON is a bored stuff.<br/>
+Json2Java4Idea could be a solution for the stuff.<br/>
+Also this plugin supports following libraries.<br/>
+* [Jackson](https://github.com/FasterXML/jackson)
+* [GSON](https://github.com/google/gson)
+* [Moshi](https://github.com/square/moshi)
 
 ## Installation
 
