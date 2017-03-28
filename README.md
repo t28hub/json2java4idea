@@ -2,6 +2,7 @@ Json2Java4Idea
 =====
 [![CircleCI](https://circleci.com/gh/t28hub/json2java4idea/tree/master.svg?style=shield&circle-token=30a68b03ab00d912be2f9f93b619ca8f4e36f061)](https://circleci.com/gh/t28hub/json2java4idea/tree/master)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/t28hub/json2java4idea/blob/master/LICENSE)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Json2Java4Idea-blue.svg)](https://android-arsenal.com/details/1/5450)
 [![Codacy Grade](https://api.codacy.com/project/badge/Grade/9fe5c57cf41a4cefb571dccdb68de994)](https://www.codacy.com/app/t28/json2java4idea?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=t28hub/json2java4idea&amp;utm_campaign=Badge_Grade)
 [![Codacy Coverage](https://api.codacy.com/project/badge/Coverage/9fe5c57cf41a4cefb571dccdb68de994)](https://www.codacy.com/app/t28/json2java4idea?utm_source=github.com&utm_medium=referral&utm_content=t28hub/json2java4idea&utm_campaign=Badge_Coverage)
 
