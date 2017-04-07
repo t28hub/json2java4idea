@@ -19,11 +19,8 @@ jobs:
         name: Run all checks including unit test and static code analysis
         command: ./gradlew check --full-stacktrace
       - type: shell
-        name: Upload code coverage for core module
-        command: ./gradlew :core:sendCoverageToCodacy
-      - type: shell
-        name: Upload code coverage for idea module
-        command: ./gradlew :idea:sendCoverageToCodacy
+        name: Upload code coverage report to codacy
+        command: ./gradlew sendCoverageToCodacy
       - type: test-results-store
         path: core/build/test-results/
       - type: test-results-store
