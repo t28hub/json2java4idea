@@ -17,6 +17,15 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone'
+
+    repositories {
+        jcenter()
+    }
+
+    jacoco {
+        toolVersion = '0.7.9'
+        reportsDir = file("${project.buildDir}/reports/jacoco")
+    }
 }
 
 subprojects {
@@ -59,47 +68,64 @@ subprojects {
         ]
     }
 
-    jacoco {
-        toolVersion = '0.7.9'
-        reportsDir = file("${project.buildDir}/reports/jacoco")
-    }
-
     jacocoTestReport {
         group = 'verification'
         description = 'Generate test coverage reports'
         dependsOn = ['test']
 
         reports {
-            xml.enabled = true
+            xml.enabled = false
             csv.enabled = false
-            html.enabled = true
+            html.enabled = false
         }
     }
     check.dependsOn jacocoTestReport
+}
 
-    // see https://github.com/codacy/codacy-coverage-reporter
-    configurations {
-        codacy
+task jacocoRootReport(type: JacocoReport, group: 'verification') {
+    description = 'Generate an aggregated coverage report from all projects'
+
+    dependsOn = subprojects.findAll().test
+
+    additionalSourceDirs = files(subprojects.findAll().sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.findAll().sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.findAll().sourceSets.main.output)
+    executionData = files(subprojects.findAll().jacocoTestReport.executionData)
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
     }
-    repositories {
-        maven {
-            url "https://jitpack.io"
-        }
-        maven {
-            url "http://dl.bintray.com/typesafe/maven-releases"
-        }
+
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
     }
-    dependencies {
-        codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
+}
+
+// see https://github.com/codacy/codacy-coverage-reporter
+configurations {
+    codacy
+}
+repositories {
+    maven {
+        url "https://jitpack.io"
     }
-    task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoTestReport) {
-        main = "com.codacy.CodacyCoverageReporter"
-        classpath = configurations.codacy
-        args = [
-                "-l",
-                "Java",
-                "-r",
-                "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-        ]
+    maven {
+        url "http://dl.bintray.com/typesafe/maven-releases"
     }
+}
+dependencies {
+    codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
+}
+task sendCoverageToCodacy(type: JavaExec, group: 'other') {
+    dependsOn = ['jacocoRootReport']
+    main = "com.codacy.CodacyCoverageReporter"
+    classpath = configurations.codacy
+    args = [
+            "-l",
+            "Java",
+            "-r",
+            "${rootProject.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+    ]
 }
