@@ -76,7 +76,7 @@ subprojects {
         reports {
             xml.enabled = false
             csv.enabled = false
-            html.enabled = false
+            html.enabled = true
         }
     }
     check.dependsOn jacocoTestReport
@@ -93,7 +93,7 @@ task jacocoRootReport(type: JacocoReport, group: 'verification') {
     executionData = files(subprojects.findAll().jacocoTestReport.executionData)
 
     reports {
-        html.enabled = true
+        html.enabled = false
         xml.enabled = true
         csv.enabled = false
     }
