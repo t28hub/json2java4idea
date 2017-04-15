@@ -33,6 +33,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -61,6 +62,8 @@ public class SettingsPanel implements Disposable, ActionListener, DocumentListen
     private JRadioButton moshiStyleButton;
     private JTextField classNameSuffixField;
     private JTextField classNamePrefixField;
+    private JCheckBox generatedAnnotationCheckBox;
+    private JCheckBox suppressWarningsAnnotationCheckBox;
     private JPanel previewPanel;
 
     private Editor previewEditor;
@@ -76,6 +79,9 @@ public class SettingsPanel implements Disposable, ActionListener, DocumentListen
         Collections.list(styleGroup.getElements()).forEach(button -> button.addActionListener(this));
         classNamePrefixField.getDocument().addDocumentListener(this);
         classNameSuffixField.getDocument().addDocumentListener(this);
+
+        generatedAnnotationCheckBox.addActionListener(this);
+        suppressWarningsAnnotationCheckBox.addActionListener(this);
     }
 
     @Override
@@ -83,6 +89,8 @@ public class SettingsPanel implements Disposable, ActionListener, DocumentListen
         Collections.list(styleGroup.getElements()).forEach(button -> button.removeActionListener(this));
         classNamePrefixField.getDocument().removeDocumentListener(this);
         classNameSuffixField.getDocument().removeDocumentListener(this);
+        generatedAnnotationCheckBox.removeActionListener(this);
+        suppressWarningsAnnotationCheckBox.removeActionListener(this);
 
         if (previewEditor == null || previewEditor.isDisposed()) {
             return;
@@ -158,6 +166,24 @@ public class SettingsPanel implements Disposable, ActionListener, DocumentListen
 
     public void setClassNameSuffix(@Nonnull String suffix) {
         classNameSuffixField.setText(suffix);
+    }
+
+    @CheckReturnValue
+    public boolean isGeneratedAnnotationEnabled() {
+        return generatedAnnotationCheckBox.isSelected();
+    }
+
+    public void setGeneratedAnnotationEnabled(boolean enabled) {
+        generatedAnnotationCheckBox.setSelected(enabled);
+    }
+
+    @CheckReturnValue
+    public boolean isSuppressWarningsAnnotationEnabled() {
+        return suppressWarningsAnnotationCheckBox.isSelected();
+    }
+
+    public void setSuppressWarningsAnnotationEnabled(boolean enabled) {
+        suppressWarningsAnnotationCheckBox.setSelected(enabled);
     }
 
     public void setPreviewText(@Nonnull String text) {

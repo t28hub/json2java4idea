@@ -20,6 +20,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.FieldSpecAssert;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.MethodSpecAssert;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeSpecAssert;
 import io.t28.json2java.core.json.JsonValue;
 import io.t28.json2java.core.json.JsonValueAssert;
 
@@ -47,5 +49,11 @@ public class Assertions extends org.assertj.core.api.Assertions {
     @CheckReturnValue
     public static MethodSpecAssert assertThat(@Nullable MethodSpec actual) {
         return new MethodSpecAssert(actual);
+    }
+
+    @Nonnull
+    @CheckReturnValue
+    public static TypeSpecAssert assertThat(@Nullable TypeSpec actual) {
+        return new TypeSpecAssert(actual);
     }
 }

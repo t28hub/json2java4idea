@@ -17,11 +17,11 @@
 package io.t28.json2java.core;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import io.t28.json2java.core.annotation.AnnotationPolicy;
 import io.t28.json2java.core.builder.ClassBuilder;
 import io.t28.json2java.core.json.JsonArray;
 import io.t28.json2java.core.json.JsonNull;
@@ -30,7 +30,6 @@ import io.t28.json2java.core.json.JsonValue;
 import io.t28.json2java.core.naming.NamePolicy;
 
 import javax.annotation.CheckReturnValue;
-import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -47,17 +46,12 @@ public class JavaConverter {
     @CheckReturnValue
     public String convert(@Nonnull String packageName, @Nonnull String className, @Nonnull String json) throws IOException {
         final JsonValue value = configuration.jsonParser().parse(json);
+        final TypeSpec.Builder builder = fromValue(className, value).toBuilder();
         // Adding root class specific annotations
-        final TypeSpec typeSpec = fromValue(className, value)
-                .toBuilder()
-                .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
-                        .addMember("value", "$S", "all")
-                        .build())
-                .addAnnotation(AnnotationSpec.builder(Generated.class)
-                        .addMember("value", "$S", getClass().getCanonicalName())
-                        .build())
-                .build();
-        return configuration.javaBuilder().build(packageName, typeSpec);
+        for (final AnnotationPolicy policy : configuration.annotationPolicies()) {
+            policy.apply(builder);
+        }
+        return configuration.javaBuilder().build(packageName, builder.build());
     }
 
     @Nonnull

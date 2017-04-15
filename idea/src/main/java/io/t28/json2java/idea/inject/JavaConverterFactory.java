@@ -22,6 +22,8 @@ import com.google.inject.name.Named;
 import com.intellij.psi.PsiNameHelper;
 import io.t28.json2java.core.Configuration;
 import io.t28.json2java.core.JavaConverter;
+import io.t28.json2java.core.annotation.GeneratedAnnotationPolicy;
+import io.t28.json2java.core.annotation.SuppressWarningsAnnotationPolicy;
 import io.t28.json2java.core.naming.NamePolicy;
 import io.t28.json2java.idea.naming.ClassNamePolicy;
 import io.t28.json2java.idea.setting.Json2JavaSettings;
@@ -47,7 +49,7 @@ public class JavaConverterFactory {
 
     @Nonnull
     public JavaConverter create(@Nonnull Json2JavaSettings settings) {
-        final Configuration configuration = Configuration.builder()
+        final Configuration.Builder builder = Configuration.builder()
                 .style(settings.getStyle())
                 .classNamePolicy(new ClassNamePolicy(
                         nameHelperProvider.get(),
@@ -56,8 +58,15 @@ public class JavaConverterFactory {
                 )
                 .fieldNamePolicy(fieldNamePolicyProvider.get())
                 .methodNamePolicy(methodNamePolicyProvider.get())
-                .parameterNamePolicy(parameterNamePolicyProvider.get())
-                .build();
-        return new JavaConverter(configuration);
+                .parameterNamePolicy(parameterNamePolicyProvider.get());
+
+        // It is necessary to refactor the following code because condition branch makes code dirty
+        if (settings.isGeneratedAnnotationEnabled()) {
+            builder.annotationPolicy(new GeneratedAnnotationPolicy(JavaConverter.class));
+        }
+        if (settings.isSuppressWarningsAnnotationEnabled()) {
+            builder.annotationPolicy(new SuppressWarningsAnnotationPolicy("all"));
+        }
+        return new JavaConverter(builder.build());
     }
 }

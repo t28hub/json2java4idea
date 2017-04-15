@@ -17,6 +17,8 @@
 package io.t28.json2java.core;
 
 import com.google.common.io.Files;
+import io.t28.json2java.core.annotation.GeneratedAnnotationPolicy;
+import io.t28.json2java.core.annotation.SuppressWarningsAnnotationPolicy;
 import io.t28.json2java.core.io.JsonParserImpl;
 import io.t28.json2java.core.naming.DefaultNamePolicy;
 import io.t28.json2java.core.io.JavaBuilderImpl;
@@ -45,6 +47,8 @@ public class JavaConverterTest {
                 .methodNamePolicy(DefaultNamePolicy.METHOD)
                 .fieldNamePolicy(DefaultNamePolicy.FIELD)
                 .parameterNamePolicy(DefaultNamePolicy.PARAMETER)
+                .annotationPolicy(new SuppressWarningsAnnotationPolicy("all"))
+                .annotationPolicy(new GeneratedAnnotationPolicy(JavaConverter.class))
                 .jsonParser(new JsonParserImpl())
                 .javaBuilder(new JavaBuilderImpl())
                 .build();

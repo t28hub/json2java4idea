@@ -17,6 +17,8 @@
 package io.t28.json2java.core;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import io.t28.json2java.core.annotation.AnnotationPolicy;
 import io.t28.json2java.core.builder.ClassBuilder;
 import io.t28.json2java.core.io.JavaBuilder;
 import io.t28.json2java.core.io.JavaBuilderImpl;
@@ -27,6 +29,8 @@ import io.t28.json2java.core.naming.NamePolicy;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 public class Configuration {
@@ -35,6 +39,7 @@ public class Configuration {
     private final NamePolicy fieldNamePolicy;
     private final NamePolicy methodNamePolicy;
     private final NamePolicy parameterNamePolicy;
+    private final Set<AnnotationPolicy> annotationPolicies;
     private final JsonParser jsonParser;
     private final JavaBuilder javaBuilder;
 
@@ -44,6 +49,7 @@ public class Configuration {
         fieldNamePolicy = builder.fieldNamePolicy;
         methodNamePolicy = builder.methodNamePolicy;
         parameterNamePolicy = builder.parameterNamePolicy;
+        annotationPolicies = ImmutableSet.copyOf(builder.annotationPolicies);
         jsonParser = builder.jsonParser;
         javaBuilder = builder.javaBuilder;
     }
@@ -86,6 +92,12 @@ public class Configuration {
 
     @Nonnull
     @CheckReturnValue
+    public Set<AnnotationPolicy> annotationPolicies() {
+        return ImmutableSet.copyOf(annotationPolicies);
+    }
+
+    @Nonnull
+    @CheckReturnValue
     public JsonParser jsonParser() {
         return jsonParser;
     }
@@ -112,6 +124,7 @@ public class Configuration {
         private NamePolicy fieldNamePolicy;
         private NamePolicy methodNamePolicy;
         private NamePolicy parameterNamePolicy;
+        private Set<AnnotationPolicy> annotationPolicies;
         private JsonParser jsonParser;
         private JavaBuilder javaBuilder;
 
@@ -121,54 +134,54 @@ public class Configuration {
             fieldNamePolicy = DefaultNamePolicy.FIELD;
             methodNamePolicy = DefaultNamePolicy.METHOD;
             parameterNamePolicy = DefaultNamePolicy.PARAMETER;
+            annotationPolicies = new LinkedHashSet<>();
             jsonParser = new JsonParserImpl();
             javaBuilder = new JavaBuilderImpl();
         }
 
         @Nonnull
-        @CheckReturnValue
         public Builder style(@Nonnull Style style) {
             this.style = Preconditions.checkNotNull(style);
             return this;
         }
 
         @Nonnull
-        @CheckReturnValue
         public Builder classNamePolicy(@Nonnull NamePolicy classNamePolicy) {
             this.classNamePolicy = Preconditions.checkNotNull(classNamePolicy);
             return this;
         }
 
         @Nonnull
-        @CheckReturnValue
         public Builder fieldNamePolicy(@Nonnull NamePolicy fieldNamePolicy) {
             this.fieldNamePolicy = Preconditions.checkNotNull(fieldNamePolicy);
             return this;
         }
 
         @Nonnull
-        @CheckReturnValue
         public Builder methodNamePolicy(@Nonnull NamePolicy methodNamePolicy) {
             this.methodNamePolicy = Preconditions.checkNotNull(methodNamePolicy);
             return this;
         }
 
         @Nonnull
-        @CheckReturnValue
         public Builder parameterNamePolicy(@Nonnull NamePolicy parameterNamePolicy) {
             this.parameterNamePolicy = Preconditions.checkNotNull(parameterNamePolicy);
             return this;
         }
 
         @Nonnull
-        @CheckReturnValue
+        public Builder annotationPolicy(@Nonnull AnnotationPolicy annotationPolicy) {
+            this.annotationPolicies.add(annotationPolicy);
+            return this;
+        }
+
+        @Nonnull
         Builder jsonParser(@Nonnull JsonParser jsonParser) {
             this.jsonParser = Preconditions.checkNotNull(jsonParser);
             return this;
         }
 
         @Nonnull
-        @CheckReturnValue
         Builder javaBuilder(@Nonnull JavaBuilder javaBuilder) {
             this.javaBuilder = Preconditions.checkNotNull(javaBuilder);
             return this;

@@ -35,7 +35,9 @@ public class TemporaryJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(false);
 
         // exercise
         final Style actual = underTest.getStyle();
@@ -51,7 +53,9 @@ public class TemporaryJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(false);
 
         // exercise
         final String actual = underTest.getClassNamePrefix();
@@ -67,7 +71,9 @@ public class TemporaryJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(false);
 
         // exercise
         final String actual = underTest.getClassNameSuffix();
@@ -76,5 +82,41 @@ public class TemporaryJson2JavaSettingsTest {
         assertThat(actual)
                 .overridingErrorMessage("Expected suffix to be <%s> but was <%s>", "Bar", actual)
                 .isEqualTo("Bar");
+    }
+
+    @Test
+    public void isGeneratedAnnotationEnabledShouldReturnFlagForGenerated() throws Exception {
+        // setup
+        underTest.setStyle(Style.GSON)
+                .setClassNamePrefix("Foo")
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
+
+        // exercise
+        final boolean actual = underTest.isGeneratedAnnotationEnabled();
+
+        // verify
+        assertThat(actual)
+                .overridingErrorMessage("Expected setting to be true but was false")
+                .isTrue();
+    }
+
+    @Test
+    public void isSuppressWarningsAnnotationEnabledShouldReturnFlagForSuppressWarnings() throws Exception {
+        // setup
+        underTest.setStyle(Style.GSON)
+                .setClassNamePrefix("Foo")
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
+
+        // exercise
+        final boolean actual = underTest.isSuppressWarningsAnnotationEnabled();
+
+        // verify
+        assertThat(actual)
+                .overridingErrorMessage("Expected setting to be true but was false")
+                .isTrue();
     }
 }
