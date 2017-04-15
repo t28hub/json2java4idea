@@ -187,7 +187,7 @@ public class NewClassAction extends AnAction implements NewClassDialog.ActionLis
 
     @Override
     public void onSettings(@Nonnull NewClassDialog dialog) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(project, "Json2Java");
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, bundle.message("settings.name"));
     }
 
     private void onError(@Nonnull NewClassDialog dialog, @Nullable Throwable cause) {
