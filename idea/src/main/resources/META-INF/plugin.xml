@@ -17,7 +17,7 @@
 <idea-plugin version="2">
     <id>io.t28.json2java</id>
     <name>Json2Java4Idea</name>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <vendor email="t28oogle@gmail.com" url="https://github.com/t28hub">T28</vendor>
 
     <description><![CDATA[
@@ -26,6 +26,11 @@
     </description>
 
     <change-notes><![CDATA[
+      <p><b>0.2.0:</b></p>
+      <ul>
+        <li>Added annotation style settings <a href="https://github.com/t28hub/json2java4idea/issues/129">#129</a></li>
+        <li>Fixed transition from dialog</li>
+      </ul>
       <p><b>0.1.0:</b></p>
       <ul>
         <li>Initial release.</li>
