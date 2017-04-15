@@ -47,6 +47,8 @@ Currently there are 3 types of settings you can configure.
 1. Class style
 1. Prefix of class name
 1. Suffix of class name
+1. Whether insert `@Generated` annotation
+1. Whether insert `@SuppressWarnings` annotation
 
 <a name="troubleshooting"></a>
 ## Troubleshooting
