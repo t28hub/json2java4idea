@@ -56,4 +56,16 @@ public interface Json2JavaSettings {
 
     @Nonnull
     Json2JavaSettings setClassNameSuffix(@Nonnull String classNameSuffix);
+
+    @CheckReturnValue
+    boolean isGeneratedAnnotationEnabled();
+
+    @Nonnull
+    Json2JavaSettings setGeneratedAnnotationEnabled(boolean enabled);
+
+    @CheckReturnValue
+    boolean isSuppressWarningsAnnotationEnabled();
+
+    @Nonnull
+    Json2JavaSettings setSuppressWarningsAnnotationEnabled(boolean enabled);
 }

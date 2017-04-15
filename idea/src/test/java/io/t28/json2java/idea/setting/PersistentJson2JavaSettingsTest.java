@@ -21,8 +21,8 @@ import org.jdom.Element;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static io.t28.json2java.idea.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PersistentJson2JavaSettingsTest {
     private PersistentJson2JavaSettings underTest;
@@ -37,7 +37,9 @@ public class PersistentJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(false);
 
         // exercise
         final Element actual = underTest.getState();
@@ -48,7 +50,9 @@ public class PersistentJson2JavaSettingsTest {
                 .hasName("component")
                 .hasAttribute("style", "GSON")
                 .hasAttribute("classNamePrefix", "Foo")
-                .hasAttribute("classNameSuffix", "Bar");
+                .hasAttribute("classNameSuffix", "Bar")
+                .hasAttribute("annotationGenerated", "true")
+                .hasAttribute("annotationSuppressWarnings", "false");
     }
 
     @Test
@@ -58,6 +62,8 @@ public class PersistentJson2JavaSettingsTest {
         state.setAttribute("style", "JACKSON");
         state.setAttribute("classNamePrefix", "Foo");
         state.setAttribute("classNameSuffix", "Baz");
+        state.setAttribute("annotationGenerated", "true");
+        state.setAttribute("annotationSuppressWarnings", "false");
 
         // exercise
         underTest.loadState(state);
@@ -69,7 +75,9 @@ public class PersistentJson2JavaSettingsTest {
                 .hasName("component")
                 .hasAttribute("style", "JACKSON")
                 .hasAttribute("classNamePrefix", "Foo")
-                .hasAttribute("classNameSuffix", "Baz");
+                .hasAttribute("classNameSuffix", "Baz")
+                .hasAttribute("annotationGenerated", "true")
+                .hasAttribute("annotationSuppressWarnings", "false");
     }
 
     @Test
@@ -87,7 +95,9 @@ public class PersistentJson2JavaSettingsTest {
                 .hasName("component")
                 .hasAttribute("style", "NONE")
                 .hasAttribute("classNamePrefix", "")
-                .hasAttribute("classNameSuffix", "");
+                .hasAttribute("classNameSuffix", "")
+                .hasAttribute("annotationGenerated", "true")
+                .hasAttribute("annotationSuppressWarnings", "true");
     }
 
     @Test
@@ -102,7 +112,9 @@ public class PersistentJson2JavaSettingsTest {
                 .hasName("component")
                 .hasAttribute("style", "NONE")
                 .hasAttribute("classNamePrefix", "")
-                .hasAttribute("classNameSuffix", "");
+                .hasAttribute("classNameSuffix", "")
+                .hasAttribute("annotationGenerated", "true")
+                .hasAttribute("annotationSuppressWarnings", "true");
     }
 
     @Test
@@ -110,7 +122,9 @@ public class PersistentJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
 
         // exercise
         final Style actual = underTest.getStyle();
@@ -126,7 +140,9 @@ public class PersistentJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
 
         // exercise
         final String actual = underTest.getClassNamePrefix();
@@ -142,7 +158,9 @@ public class PersistentJson2JavaSettingsTest {
         // setup
         underTest.setStyle(Style.GSON)
                 .setClassNamePrefix("Foo")
-                .setClassNameSuffix("Bar");
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
 
         // exercise
         final String actual = underTest.getClassNameSuffix();
@@ -151,5 +169,41 @@ public class PersistentJson2JavaSettingsTest {
         assertThat(actual)
                 .overridingErrorMessage("Expected suffix to be <%s> but was <%s>", "Bar", actual)
                 .isEqualTo("Bar");
+    }
+
+    @Test
+    public void isGeneratedAnnotationEnabledShouldReturnFlagForGenerated() throws Exception {
+        // setup
+        underTest.setStyle(Style.GSON)
+                .setClassNamePrefix("Foo")
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
+
+        // exercise
+        final boolean actual = underTest.isGeneratedAnnotationEnabled();
+
+        // verify
+        assertThat(actual)
+                .overridingErrorMessage("Expected setting to be true but was false")
+                .isTrue();
+    }
+
+    @Test
+    public void isSuppressWarningsAnnotationEnabledShouldReturnFlagForSuppressWarnings() throws Exception {
+        // setup
+        underTest.setStyle(Style.GSON)
+                .setClassNamePrefix("Foo")
+                .setClassNameSuffix("Bar")
+                .setGeneratedAnnotationEnabled(true)
+                .setSuppressWarningsAnnotationEnabled(true);
+
+        // exercise
+        final boolean actual = underTest.isSuppressWarningsAnnotationEnabled();
+
+        // verify
+        assertThat(actual)
+                .overridingErrorMessage("Expected setting to be true but was false")
+                .isTrue();
     }
 }

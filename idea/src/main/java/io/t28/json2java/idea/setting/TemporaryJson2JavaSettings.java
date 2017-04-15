@@ -27,6 +27,8 @@ public class TemporaryJson2JavaSettings implements Json2JavaSettings {
     private String classNamePrefix;
     @Nonnull
     private String classNameSuffix;
+    private boolean isGeneratedAnnotationEnabled;
+    private boolean isSuppressWarningsAnnotationEnabled;
 
     TemporaryJson2JavaSettings() {
         style = Style.NONE;
@@ -70,6 +72,30 @@ public class TemporaryJson2JavaSettings implements Json2JavaSettings {
     @Override
     public TemporaryJson2JavaSettings setClassNameSuffix(@Nonnull String classNameSuffix) {
         this.classNameSuffix = classNameSuffix;
+        return this;
+    }
+
+    @Override
+    public boolean isGeneratedAnnotationEnabled() {
+        return isGeneratedAnnotationEnabled;
+    }
+
+    @Nonnull
+    @Override
+    public Json2JavaSettings setGeneratedAnnotationEnabled(boolean enabled) {
+        isGeneratedAnnotationEnabled = enabled;
+        return this;
+    }
+
+    @Override
+    public boolean isSuppressWarningsAnnotationEnabled() {
+        return isSuppressWarningsAnnotationEnabled;
+    }
+
+    @Nonnull
+    @Override
+    public Json2JavaSettings setSuppressWarningsAnnotationEnabled(boolean enabled) {
+        isSuppressWarningsAnnotationEnabled = enabled;
         return this;
     }
 }

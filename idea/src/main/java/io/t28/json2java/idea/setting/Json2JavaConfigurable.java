@@ -138,7 +138,12 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         if (!Objects.equal(panel.getClassNameSuffix(), settings.getClassNameSuffix())) {
             return true;
         }
-        return false;
+
+        if (panel.isGeneratedAnnotationEnabled() != settings.isGeneratedAnnotationEnabled()) {
+            return true;
+        }
+
+        return panel.isSuppressWarningsAnnotationEnabled() != settings.isSuppressWarningsAnnotationEnabled();
     }
 
     @Override
@@ -179,6 +184,8 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         settings.setStyle(panel.getStyle());
         settings.setClassNamePrefix(panel.getClassNamePrefix());
         settings.setClassNameSuffix(panel.getClassNameSuffix());
+        settings.setGeneratedAnnotationEnabled(panel.isGeneratedAnnotationEnabled());
+        settings.setSuppressWarningsAnnotationEnabled(panel.isSuppressWarningsAnnotationEnabled());
     }
 
     @Override
@@ -190,6 +197,8 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         panel.setStyle(settings.getStyle());
         panel.setClassNamePrefix(settings.getClassNamePrefix());
         panel.setClassNameSuffix(settings.getClassNameSuffix());
+        panel.setGeneratedAnnotationEnabled(settings.isGeneratedAnnotationEnabled());
+        panel.setSuppressWarningsAnnotationEnabled(settings.isSuppressWarningsAnnotationEnabled());
         updatePreview();
     }
 
@@ -212,7 +221,9 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
             final Json2JavaSettings settings = Json2JavaSettings.getInstance()
                     .setStyle(panel.getStyle())
                     .setClassNamePrefix(panel.getClassNamePrefix())
-                    .setClassNameSuffix(panel.getClassNameSuffix());
+                    .setClassNameSuffix(panel.getClassNameSuffix())
+                    .setGeneratedAnnotationEnabled(panel.isGeneratedAnnotationEnabled())
+                    .setSuppressWarningsAnnotationEnabled(panel.isSuppressWarningsAnnotationEnabled());
             final JavaConverterFactory converterFactory = javaConverterFactoryProvider.get();
             final JavaConverter converter = converterFactory.create(settings);
             final String java = converter.convert(SAMPLE_PACKAGE, SAMPLE_CLASS, SAMPLE_JSON);
