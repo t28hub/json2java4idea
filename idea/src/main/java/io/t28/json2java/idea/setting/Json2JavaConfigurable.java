@@ -212,6 +212,14 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         panel = null;
     }
 
+    @Nonnull
+    @Override
+    public Runnable enableSearch(String option) {
+        // To avoid a crash for AndroidStudio 2.3.x
+        return () -> {
+        };
+    }
+
     private void updatePreview() {
         if (panel == null) {
             return;
