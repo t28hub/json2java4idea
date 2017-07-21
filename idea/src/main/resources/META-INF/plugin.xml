@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin version="2">
+<idea-plugin>
     <id>io.t28.json2java</id>
     <name>Json2Java4Idea</name>
     <version>0.2.1</version>
@@ -51,7 +51,7 @@
                 serviceInterface="io.t28.json2java.idea.setting.Json2JavaSettings"
                 serviceImplementation="io.t28.json2java.idea.setting.PersistentJson2JavaSettings"/>
         <projectConfigurable
-                id="other"
+                id="io.t28.json2java"
                 instance="io.t28.json2java.idea.setting.Json2JavaConfigurable"/>
     </extensions>
 
