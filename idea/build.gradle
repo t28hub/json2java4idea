@@ -11,7 +11,7 @@ plugins {
 }
 
 intellij {
-    version '171.3780.52'
+    version 'IC-2017.2'
     pluginName 'Json2Java4Idea'
     updateSinceUntilBuild false
     sameSinceUntilBuild false

@@ -89,7 +89,7 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
     @NotNull
     @Override
     public String getId() {
-        return getDisplayName();
+        return "io.t28.json2java";
     }
 
     @Nls
@@ -101,7 +101,7 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
     @Nullable
     @Override
     public String getHelpTopic() {
-        return getDisplayName();
+        return null;
     }
 
     @Nullable
@@ -212,7 +212,6 @@ public class Json2JavaConfigurable implements SearchableConfigurable {
         panel = null;
     }
 
-    @Nonnull
     @Override
     public Runnable enableSearch(String option) {
         // To avoid a crash for AndroidStudio 2.3.x
