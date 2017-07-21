@@ -17,7 +17,7 @@
 <idea-plugin>
     <id>io.t28.json2java</id>
     <name>Json2Java4Idea</name>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <vendor email="t28oogle@gmail.com" url="https://github.com/t28hub">T28</vendor>
 
     <description><![CDATA[
@@ -26,6 +26,10 @@
     </description>
 
     <change-notes><![CDATA[
+      <p><b>0.2.2:</b></p>
+      <ul>
+        <li>Fixed a preferences dialog freezing bug <a href="https://github.com/t28hub/json2java4idea/issues/142">#142</a></li>
+      </ul>
       <p><b>0.2.1:</b></p>
       <ul>
         <li>Fixed a crash for AndroidStudio 2.3.x <a href="https://github.com/t28hub/json2java4idea/issues/139">#139</a></li>
